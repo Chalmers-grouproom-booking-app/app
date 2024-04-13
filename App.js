@@ -40,7 +40,7 @@ export default function App() {
           <Text key={index}>{`${key}: ${item[key]}`}</Text>
         ))}
         {Array.isArray(reservationResult) && reservationResult.map((res, index) => (
-          <View>
+          <View key ={index}>
             <Text>{`Reservation nr ${index+1}`}</Text>
             {Object.keys(res).map((key, innerIndex) => (
               <Text key={innerIndex}>{`${key}: ${res[key]}`}</Text>
