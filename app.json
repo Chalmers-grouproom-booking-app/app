@@ -21,11 +21,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }    
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins":[ [ "expo-build-properties", { "android": { "usesCleartextTraffic": true } } ] ]
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "expo-font"
+    ]
   }
 }
