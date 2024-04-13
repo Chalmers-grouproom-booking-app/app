@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { SearchBar, Button } from '@rneui/base';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity} from 'react-native';
 
 
 export default function App() {
@@ -42,8 +42,12 @@ export default function App() {
         />
       </View>
       <ScrollView style={styles.resultContainer}>
-        <Text style={styles.resultText}>{searchResult}</Text>
-      </ScrollView>
+        {/* Assuming searchResult is a JSON stringified response */}
+        <TouchableOpacity onPress={() => handleItemClick(searchResult)}>
+          <Text style={searchResult}>Click me</Text>
+        </TouchableOpacity>
+    </ScrollView>
+
     </View>
   );
 }
