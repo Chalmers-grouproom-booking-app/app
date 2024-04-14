@@ -1,36 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
 import { SearchBar, Button } from '@rneui/base';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-
 
 export default function App() {
   const [search, setSearch] = useState('');
   const [searchResult, setSearchResult] = useState('');
 
-  const handleSearch = (search) => {
-    console.log(search); // Debug: log the search variable to ensure it has the expected value
-      fetch(`https://chalmers_grouproom.sacic.dev/api/v1/search/${encodeURIComponent(search)}`,{
-          headers:{
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          }
+  const handleSearch = async (search) => {
+    console.log( ` Search for ${search} `)
+    setSearchResult( `Search for ${search}`)
+    try {
+      const response = await fetch(`https://strawhats.info/api/v1/search/${encodeURIComponent(search)}`,{
+        headers:{
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         }
-      )
-      .then((response) => response.json())
-      .then((json) => {
-        setSearchResult(JSON.stringify(json, null, 2)); // Convert and save the response in state
-      })
-      .catch((error) => {
-        console.error(error);
-        setSearchResult( error.toString() );
+      });
+      console.log( ` Response ${response} `)
+      if (!response.ok) {
+        setSearchResult('No results found');
+        return;
       }
-      );
+      const json = await response.json();
+      setSearchResult(JSON.stringify(json, null, 2)); // Convert and save the response in state
+    } catch (error) {
+      console.error(error);
+      setSearchResult('An error occurred');      
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
+        <Text>Search for a room</Text>
         <SearchBar
           placeholder="Type here"
           onChangeText={text => setSearch(text)}
