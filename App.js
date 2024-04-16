@@ -51,7 +51,7 @@ export default function App() {
   };
 
   const handleReservations = (room) => {
-    fetch(`https://strawhats.info/api/v1//room/reservation/${encodeURIComponent(search)}`,{
+    fetch(`https://strawhats.info/api/v1/room/reservation/${encodeURIComponent(search)}`,{
         headers:{
           'Content-Type': 'application/json',
           'Accept': 'application/json',
