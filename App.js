@@ -34,7 +34,9 @@ export default function App() {
   const renderExpandedItem = (item) => {
     return (
       <View>
-        <Text style={styles.resultText}>{item['Room Name']}</Text>
+        <TouchableOpacity onPress={() => handleItemClick(item)}>
+          <Text style={styles.resultText}>{item['Room Name']}</Text>
+        </TouchableOpacity>        
         {Object.keys(item).map((key, index) => (
           <Text key={index}>{`${key}: ${item[key]}`}</Text>
         ))}
