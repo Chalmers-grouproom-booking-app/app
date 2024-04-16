@@ -33,7 +33,7 @@ export default function App() {
 
   const renderNoReservation = (reservationResult) => {
     return (
-      <Text>{reservationResult}</Text>
+      <Text>No reservation found</Text>
     );
   };
 
@@ -60,16 +60,14 @@ export default function App() {
           <Text key={index}>{`${key}: ${item[key]}`}</Text>
         ))}
         <Text>Reservations:</Text>
-        {/* if reservationResult.map[0] == 'No reservations found' show only that. Else do the following*/}
-        {/* {reservationResult === 'No reservations found' && <Text>{reservationResult}</Text>} */}
         {console.log(reservationResult)}
-        {Array.isArray(reservationResult) && reservationResult[0].includes("No reservations found") ? renderNoReservation(reservationResult[0][0]) : renderReservation(reservationResult)}
+        {Array.isArray(reservationResult) && reservationResult.length > 0 ? renderReservation(reservationResult) : renderNoReservation(reservationResult[0])}
       </View>
     );
   };
 
   const handleReservations = (room) => {
-    fetch(`https://strawhats.info/api/v1/room/reservation/${encodeURIComponent(search)}`,{
+    fetch(`https://strawhats.info/api/v1/room/reservation/${encodeURIComponent(room)}`,{
         headers:{
           'Content-Type': 'application/json',
           'Accept': 'application/json',
