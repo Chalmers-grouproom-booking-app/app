@@ -61,29 +61,33 @@ export default function App() {
         ))}
         <Text>Reservations:</Text>
         {console.log(reservationResult)}
-        {Array.isArray(reservationResult) && reservationResult.length > 0 ? renderReservation(reservationResult) : renderNoReservation(reservationResult[0])}
-      </View>
+        {Array.isArray(reservationResult) && reservationResult.length == 0 ? renderNoReservation(reservationResult[0]) : renderReservation(reservationResult)}
+
+       </View>
     );
   };
 
-  const handleReservations = (room) => {
-    fetch(`https://strawhats.info/api/v1/room/reservation/${encodeURIComponent(room)}`,{
+  const handleReservations = async (room) => {
+    try {
+      const response = await fetch(`https://strawhats.info/api/v1/room/reservation/${encodeURIComponent(room)}`,{
         headers:{
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         }
+      });
+      //console.log( ` Response ${response} `)
+      if (!response.ok) {
+        setReservationResult([]);
+        return;
       }
-    )
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json);
-      setReservationResult(json); // Store the JSON object directly, not stringified
-    })
-    .catch((error) => {
+      const json = await response.json();
+      setReservationResult(json); // Convert and save the response in state
+    } catch (error) {
       console.error(error);
-      setReservationResult( error.toString() );
-    });
-  }
+      setReservationResult('An error occurred');      
+    }
+  };
+
   const handleSearch = async (search) => {
     console.log( ` Search for ${search} `)
     setSearchResult( `Search for ${search}`)
