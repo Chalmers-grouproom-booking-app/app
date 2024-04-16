@@ -31,21 +31,39 @@ export default function App() {
     );
   };
 
+  const renderNoReservation = (reservationResult) => {
+    return (
+      <Text>{reservationResult}</Text>
+    );
+  };
+
+  const renderReservation = (reservationResult) => {
+    return (
+      Array.isArray(reservationResult) && reservationResult.map((res, index) => (
+        <View key={index}>
+          <Text>{`Reservation nr ${index + 1}`}</Text>
+          {Object.keys(res).map((key, innerIndex) => (
+            <Text key={innerIndex}>{`${key}: ${res[key]}`}</Text>
+          ))}
+        </View>
+      ))
+    );
+  }
+
   const renderExpandedItem = (item) => {
     return (
       <View>
-        <Text style={styles.resultText}>{item['Room Name']}</Text>
+        <TouchableOpacity onPress={() => handleItemClick(item)}>
+          <Text style={styles.resultText}>{item['Room Name']}</Text>
+        </TouchableOpacity>        
         {Object.keys(item).map((key, index) => (
           <Text key={index}>{`${key}: ${item[key]}`}</Text>
         ))}
-        {Array.isArray(reservationResult) && reservationResult.map((res, index) => (
-          <View key ={index}>
-            <Text>{`Reservation nr ${index+1}`}</Text>
-            {Object.keys(res).map((key, innerIndex) => (
-              <Text key={innerIndex}>{`${key}: ${res[key]}`}</Text>
-            ))}
-          </View>
-        ))}
+        <Text>Reservations:</Text>
+        {/* if reservationResult.map[0] == 'No reservations found' show only that. Else do the following*/}
+        {/* {reservationResult === 'No reservations found' && <Text>{reservationResult}</Text>} */}
+        {console.log(reservationResult)}
+        {Array.isArray(reservationResult) && reservationResult[0].includes("No reservations found") ? renderNoReservation(reservationResult[0][0]) : renderReservation(reservationResult)}
       </View>
     );
   };
