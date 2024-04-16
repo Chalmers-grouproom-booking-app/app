@@ -50,28 +50,8 @@ export default function App() {
     );
   };
 
-  const handleSearch = (search) => {
-    console.log(search);
-    fetch(`https://chalmers_grouproom.sacic.dev/api/v1/search/${encodeURIComponent(search)}`,{
-        headers:{
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }
-      }
-    )
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json);
-      setSearchResult(json); // Store the JSON object directly, not stringified
-    })
-    .catch((error) => {
-      console.error(error);
-      setSearchResult( error.toString() );
-    });
-  };
-
   const handleReservations = (room) => {
-    fetch(`https://chalmers_grouproom.sacic.dev/api/v1/room/reservation/${encodeURIComponent(room)}`,{
+    fetch(`https://strawhats.info/api/v1//room/reservation/${encodeURIComponent(search)}`,{
         headers:{
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -98,13 +78,13 @@ export default function App() {
           'Accept': 'application/json',
         }
       });
-      console.log( ` Response ${response} `)
+      //console.log( ` Response ${response} `)
       if (!response.ok) {
         setSearchResult('No results found');
         return;
       }
       const json = await response.json();
-      setSearchResult(JSON.stringify(json, null, 2)); // Convert and save the response in state
+      setSearchResult(json); // Convert and save the response in state
     } catch (error) {
       console.error(error);
       setSearchResult('An error occurred');      
