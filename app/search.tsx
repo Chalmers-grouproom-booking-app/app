@@ -1,42 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { router } from 'expo-router';
-
-type RoomInfo = {
-  room_name: string;
-  room_size: number;
-  building: string;
-  campus: string;
-  equipment: string;
-  longitude: number;
-  latitude: number;
-  entrance_latitude: number;
-  entrance_longitude: number;
-  description: string;
-  first_come_first_served: boolean;
-  floor_level: number;
-  stair: string;
-};
-
-type RoomData = {
-  building?: RoomInfo[];
-  room_name?: RoomInfo[];
-  room_size?: RoomInfo[];
-  floor_level?: RoomInfo[];
-  first_come_first_served?: RoomInfo[];
-};
-
-type TimeSlot = {
-  start_date: string;
-  start_time: string;
-  end_time: string;
-  end_date: string;
-};
+import { RoomInfo, RoomData, TimeSlot } from '../constants/types';
 
 const Search: React.FC = () => {
-
 
   const [searchText, setSearchText] = useState<string>('');
   const [searchResult, setSearchResult] = useState<RoomData | null>(null);
