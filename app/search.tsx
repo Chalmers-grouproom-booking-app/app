@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { router } from 'expo-router';
+import Filter from '../components/Filter'
 
 type RoomInfo = {
   room_name: string;
@@ -127,6 +128,10 @@ const Search: React.FC = () => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchInputContainer}
         />
+        <TouchableOpacity style={styles.filterButton}>
+          <Ionicons name="filter" size={26} color="gray" />
+          {/* <Filter></Filter> */}
+        </TouchableOpacity>
       </View>
       {error && <Text
         style={{
@@ -206,6 +211,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     paddingVertical: 10,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
   }
 });
 
