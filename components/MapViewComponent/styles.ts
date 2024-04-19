@@ -31,7 +31,7 @@ export default StyleSheet.create({
   },
   infoContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 80,
     left: 20,
     right: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
