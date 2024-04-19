@@ -41,7 +41,7 @@ export default function App() {
     <View
       style={{ flex: 1 }}
       onLayout={onLayoutRootView}>
-      <MapViewComponent />
+      <MapViewComponent/>
     </View>
   );
 }

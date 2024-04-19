@@ -49,6 +49,15 @@ export default function MapViewComponent() {
         router.push('/search');
     }
 
+    const navigateToSearchBuilding = (building) => {
+        router.push({
+            pathname: "search",
+            params: {
+                building: building
+            }
+        })
+    }
+
     return (
         <View style={globalStyles.container}>
             <MapView
@@ -67,7 +76,7 @@ export default function MapViewComponent() {
                     strokeColor="#000"
                     fillColor={selectedBuilding === building.name ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
                     strokeWidth={0.75}
-                    onPress={() => handleBuildingSelect(building.name)}
+                    onPress={() => navigateToSearchBuilding(building.name)}
                     tappable={true}
                 />
             ))} 
