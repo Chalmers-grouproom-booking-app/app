@@ -83,6 +83,8 @@ const Search: React.FC = () => {
     }
   };
 
+  const firstComeRooms = searchResult && searchResult.room_name.filter(item => item.first_come_first_served);
+  const otherRooms = searchResult && searchResult.room_name.filter(item => !item.first_come_first_served);
 
   return (
     <View style={styles.container}>
@@ -109,31 +111,51 @@ const Search: React.FC = () => {
           paddingTop: 20,
         }}
         >{error}</Text>}
+
+      {/* Bookable group rooms */}
       <ScrollView style={styles.resultContainer}>
-        {searchResult && searchResult.room_name.map((item, index) => (
+        {searchResult && otherRooms.map((item, index) => (
           <TouchableOpacity key={index} onPress={() => handleItemClick(item)}>
             <Text style={styles.resultText}>{item.room_name}</Text>
-            {expandedItem && expandedItem.room_name === item.room_name &&
-              <View>
-                <Text>{`Size: ${expandedItem.room_size}`}</Text>
-                <Text>{`Description: ${expandedItem.description}`}</Text>
-                <Text>{`Building: ${expandedItem.building}`}</Text>
-                <Text>{`Campus: ${expandedItem.campus}`}</Text>
-                <Text>{`Equipment: ${expandedItem.equipment}`}</Text>
-                <Text>{`Floor Level: ${expandedItem.floor_level}`}</Text>
-                <Text>{`Stair: ${expandedItem.stair}`}</Text>
-                {reservationResult && reservationResult.length > 0 ? (
-                  reservationResult.map((res, idx) => (
-                    <Text key={idx}>{`Reservation from ${res.start_time} to ${res.end_time}`} on { new Date(res.start_date).toDateString() }</Text>
-                  ))
-                ) : (
-                  <Text>No reservations found</Text>
-                )}
-              </View>
-            }
+            {expandedItem && expandedItem.room_name === item.room_name && renderExpandedItemDetails(expandedItem, reservationResult)}
           </TouchableOpacity>
         ))}
+        
+        <View style={styles.separatorFirstComeFirstServed}>
+          <Text style={styles.separatorText}>{`First come first served`}</Text>
+        </View>
+        
+        {/* First come first served rooms */}
+        <ScrollView style={styles.resultContainer}>
+          {searchResult && firstComeRooms.map((item, index) => (
+            <TouchableOpacity key={index} onPress={() => handleItemClick(item)}>
+              <Text style={styles.resultTextFirstComeFirstServed}>{item.room_name}</Text>
+              {expandedItem && expandedItem.room_name === item.room_name && renderExpandedItemDetails(expandedItem, reservationResult)}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </ScrollView>
+    </View>
+  );
+};
+
+const renderExpandedItemDetails = (expandedItem, reservationResult) => {
+  return (
+    <View>
+      <Text>{`Size: ${expandedItem.room_size}`}</Text>
+      <Text>{`Description: ${expandedItem.description}`}</Text>
+      <Text>{`Building: ${expandedItem.building}`}</Text>
+      <Text>{`Campus: ${expandedItem.campus}`}</Text>
+      <Text>{`Equipment: ${expandedItem.equipment}`}</Text>
+      <Text>{`Floor Level: ${expandedItem.floor_level}`}</Text>
+      <Text>{`Stair: ${expandedItem.stair}`}</Text>
+      {reservationResult && reservationResult.length > 0 ? (
+        reservationResult.map((res, idx) => (
+          <Text key={idx}>{`Reservation from ${res.start_time} to ${res.end_time}`} on { new Date(res.start_date).toDateString() }</Text>
+        ))
+      ) : (
+        <Text>No reservations found</Text>
+      )}
     </View>
   );
 };
@@ -178,6 +200,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     paddingVertical: 10,
+  },
+  resultTextFirstComeFirstServed: {
+    color: 'black',
+    fontSize: 16,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingVertical: 10,
+  },
+  separatorFirstComeFirstServed: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
+  },
+  separatorText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 });
 
