@@ -161,7 +161,7 @@ const renderExpandedItemDetails = (expandedItem, reservationResult) => {
       <Text>{`Stair: ${expandedItem.stair}`}</Text>
       {reservationResult && reservationResult.length > 0 ? (
         reservationResult.map((res, idx) => (
-          <Text key={idx}>{`Reservation from ${res.start_time} to ${res.end_time}`} on { new Date(res.start_date).toDateString() }</Text>
+          <Text key={idx}>{`Reservation from ${res.start_time} to ${res.end_time}`} on { res.start_date }</Text>
         ))
       ) : (
         <Text>No reservations found</Text>
