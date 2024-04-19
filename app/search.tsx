@@ -46,7 +46,6 @@ const Search: React.FC = () => {
         setReservationResult([]);
         return;
       }
-      console.log(response);
       const json = await response.json() as TimeSlot[];
       setReservationResult(json);
     } catch (error) {
