@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { RoomInfo, RoomData, TimeSlot } from '../constants/types';
 
 const Search: React.FC = () => {
+  const { building } = useLocalSearchParams();
 
   const [searchText, setSearchText] = useState<string>('');
   const [searchResult, setSearchResult] = useState<RoomData | null>(null);
@@ -13,6 +14,16 @@ const Search: React.FC = () => {
   const [error, setError] = useState<string>(''); // Add this line
   const [expandedItem, setExpandedItem] = useState<RoomInfo | null>(null);
 
+  useEffect(() => {
+    if (building) {
+        console.log(`Fetching data for building: ${building}`);
+        if(Array.isArray(building)){
+          handleSearch(building[0]);
+        } else {
+          handleSearch(building)
+        }
+    }
+  }, [building]); 
 
   const handleItemClick = (item: RoomInfo) => {
     if (expandedItem && expandedItem.room_name === item.room_name) {
@@ -25,7 +36,7 @@ const Search: React.FC = () => {
 
   const handleReservations = async (room_name: string) => {
     try {
-      const response = await fetch(`https://strawhats.info/api/v1/room/reservation?room_name=${room_name}`, {
+      const response = await fetch(`https://strawhats.info/api/v1/room/reservation?input=${room_name}`, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -49,7 +60,7 @@ const Search: React.FC = () => {
     setSearchText(search);
     setError(''); 
     try {
-      const response = await fetch('https://strawhats.info/api/v1/search?room_name=' + encodeURIComponent(search), {
+      const response = await fetch('https://strawhats.info/api/v1/search?input=' + encodeURIComponent(search), {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
