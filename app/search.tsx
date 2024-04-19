@@ -36,11 +36,14 @@ type TimeSlot = {
 };
 
 const Search: React.FC = () => {
+
+
   const [searchText, setSearchText] = useState<string>('');
   const [searchResult, setSearchResult] = useState<RoomData | null>(null);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [error, setError] = useState<string>(''); // Add this line
   const [expandedItem, setExpandedItem] = useState<RoomInfo | null>(null);
+
 
   const handleItemClick = (item: RoomInfo) => {
     if (expandedItem && expandedItem.room_name === item.room_name) {
