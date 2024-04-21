@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { router, useLocalSearchParams } from 'expo-router';
 import { RoomInfo, RoomData, TimeSlot } from '../constants/types';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MapViewComponent from '../components/MapViewComponent/mapView';
 
 const Search: React.FC = () => {
   const { building } = useLocalSearchParams();
@@ -15,6 +17,7 @@ const Search: React.FC = () => {
   const [expandedItem, setExpandedItem] = useState<RoomInfo | null>(null);
 
   useEffect(() => {
+    
     if (building) {
         console.log(`Fetching data for building: ${building}`);
         if(Array.isArray(building)){
@@ -24,6 +27,7 @@ const Search: React.FC = () => {
         }
     }
   }, [building]); 
+
 
   const handleItemClick = (item: RoomInfo) => {
     if (expandedItem && expandedItem.room_name === item.room_name) {
@@ -75,17 +79,19 @@ const Search: React.FC = () => {
 
       const json = await response.json() as RoomData;
       let isEmpty = true;
+      let rooms = [];
       Object.keys(json).forEach((key) => {
-        if (json[key].length > 0) {
-          isEmpty = false;
-        }
+        rooms = rooms.concat(json[key].filter(item => 
+          item.room_name.toLowerCase().includes(search.toLowerCase()) ||
+          item.building.toLowerCase().includes(search.toLowerCase())
+        ));
       });
-      if (isEmpty) {
+      if (rooms.length === 0) {
         setError('No search results found');
         setSearchResult(null);
         return;
       }
-      setSearchResult(json);
+      setSearchResult({ room_name: rooms });
     } catch (error) {
       console.error('An unexpected error occurred:', error.message || error.toString());
       setError("Failed to fetch data. Please try again."); // Update the UI to show a friendly error message
@@ -96,6 +102,16 @@ const Search: React.FC = () => {
   const firstComeRooms = searchResult && searchResult.room_name.filter(item => item.first_come_first_served);
   const otherRooms = searchResult && searchResult.room_name.filter(item => !item.first_come_first_served);
 
+  const navigateToMap = (latitude, longitude) => {
+    router.replace({
+      pathname: "/mapView",
+      params: {
+        latitude,
+        longitude
+      }
+    });
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -127,7 +143,7 @@ const Search: React.FC = () => {
         {searchResult && otherRooms.map((item, index) => (
           <TouchableOpacity key={index} onPress={() => handleItemClick(item)}>
             <Text style={styles.resultText}>{item.room_name}</Text>
-            {expandedItem && expandedItem.room_name === item.room_name && renderExpandedItemDetails(expandedItem, reservationResult)}
+            {expandedItem && expandedItem.room_name === item.room_name && renderExpandedItemDetails(expandedItem, reservationResult, navigateToMap)}
           </TouchableOpacity>
         ))}
         
@@ -140,7 +156,7 @@ const Search: React.FC = () => {
           {searchResult && firstComeRooms.map((item, index) => (
             <TouchableOpacity key={index} onPress={() => handleItemClick(item)}>
               <Text style={styles.resultTextFirstComeFirstServed}>{item.room_name}</Text>
-              {expandedItem && expandedItem.room_name === item.room_name && renderExpandedItemDetails(expandedItem, reservationResult)}
+              {expandedItem && expandedItem.room_name === item.room_name && renderExpandedItemDetails(expandedItem, reservationResult, navigateToMap)}
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -149,23 +165,33 @@ const Search: React.FC = () => {
   );
 };
 
-const renderExpandedItemDetails = (expandedItem, reservationResult) => {
+const renderExpandedItemDetails = (expandedItem, reservationResult, navigateToMap) => {
   return (
-    <View>
-      <Text>{`Size: ${expandedItem.room_size}`}</Text>
-      <Text>{`Description: ${expandedItem.description}`}</Text>
-      <Text>{`Building: ${expandedItem.building}`}</Text>
-      <Text>{`Campus: ${expandedItem.campus}`}</Text>
-      <Text>{`Equipment: ${expandedItem.equipment}`}</Text>
-      <Text>{`Floor Level: ${expandedItem.floor_level}`}</Text>
-      <Text>{`Stair: ${expandedItem.stair}`}</Text>
-      {reservationResult && reservationResult.length > 0 ? (
-        reservationResult.map((res, idx) => (
-          <Text key={idx}>{`Reservation from ${res.start_time} to ${res.end_time}`} on { res.start_date }</Text>
-        ))
-      ) : (
-        <Text>No reservations found</Text>
-      )}
+    <View style={styles.detailContainer}>
+      <View style={styles.textContainer}>
+        <Text>{`Size: ${expandedItem.room_size}`}</Text>
+        <Text>{`Description: ${expandedItem.description}`}</Text>
+        <Text>{`Building: ${expandedItem.building}`}</Text>
+        <Text>{`Campus: ${expandedItem.campus}`}</Text>
+        <Text>{`Equipment: ${expandedItem.equipment}`}</Text>
+        <Text>{`Floor Level: ${expandedItem.floor_level}`}</Text>
+        <Text>{`Stair: ${expandedItem.stair}`}</Text>
+        {reservationResult && reservationResult.length > 0 ? (
+          reservationResult.map((res, idx) => (
+            <Text key={idx} style={styles.reservationText} numberOfLines={1}>
+              {`Reservation from ${res.start_time} to ${res.end_time} on ${res.start_date}`}
+            </Text>
+          ))
+        ) : (
+          <Text>No reservations found</Text>
+        )}
+      </View>
+      <Pressable
+        onPress={() => navigateToMap(expandedItem.latitude, expandedItem.longitude)}
+        style={({ pressed }) => [styles.iconContainer, pressed && styles.iconPressed]}
+        android_ripple={{color: '#dddddd', borderless: true}}>
+        <Icon name="location-sharp" size={25} color="#007AFF" />
+      </Pressable>
     </View>
   );
 };
@@ -227,7 +253,30 @@ const styles = StyleSheet.create({
   separatorText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  detailContainer: {
+    position: 'relative', // Ensures that absolute positioning is relative to this container
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  textContainer: {
+    // Full width taken by text container
+  },
+  reservationText: {
+    flexShrink: 1, // Allows text to shrink to prevent wrapping
+  },
+  iconContainer: {
+    position: 'absolute', // Position the icon absolutely
+    right: 10, // Right align 10 pixels from the right edge
+    top: 10, // Top align 10 pixels from the top edge
+    padding: 10, // Padding to increase touch area
+    borderRadius: 20, // Rounded corners for the touchable area
+  },
+  iconPressed: {
+    backgroundColor: 'rgba(0, 123, 255, 0.1)' // Light blue background on press
   }
 });
+
 
 export default Search;

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
-import MapViewComponent from '../components/MapViewComponent/index';
+import MapViewComponent from '../components/MapViewComponent/mapView';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
