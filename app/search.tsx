@@ -21,9 +21,9 @@ const Search: React.FC = () => {
     if (building) {
         console.log(`Fetching data for building: ${building}`);
         if(Array.isArray(building)){
-          handleSearch(building[0]);
+          handleSearch(building[0], 'building');
         } else {
-          handleSearch(building)
+          handleSearch(building, 'building')
         }
     }
   }, [building]); 
@@ -59,7 +59,7 @@ const Search: React.FC = () => {
     }
   };
 
-  const handleSearch = async (search: string) => {
+  const handleSearch = async (search: string, filterType: 'roomName' | 'building' = 'roomName') => {
     setSearchText(search);
     setError(''); 
     try {
@@ -69,35 +69,37 @@ const Search: React.FC = () => {
           'Accept': 'application/json',
         }
       });
-
+  
       if (!response.ok) {
         console.log('Error response:', response.status, response.statusText);
-        const errorResponse = await response.json(); // Attempt to parse error response
-        setError(errorResponse.detail); // Set the error state to display the message to the user
+        const errorResponse = await response.json();
+        setError(errorResponse.detail);
         return;
       }
-
+  
       const json = await response.json() as RoomData;
-      let isEmpty = true;
-      let rooms = [];
-      Object.keys(json).forEach((key) => {
-        rooms = rooms.concat(json[key].filter(item => 
-          item.room_name.toLowerCase().includes(search.toLowerCase()) ||
-          item.building.toLowerCase().includes(search.toLowerCase())
-        ));
+      let filteredRooms = [];
+      Object.keys(json).forEach(key => {
+        if (filterType === 'roomName' && key === 'room_name') {
+          filteredRooms = filteredRooms.concat(json[key].filter(item => item.room_name.toLowerCase().includes(search.toLowerCase())));
+        } else if (filterType === 'building' && key === 'building') {
+          filteredRooms = filteredRooms.concat(json[key]);
+        }
       });
-      if (rooms.length === 0) {
+  
+      if (filteredRooms.length === 0) {
         setError('No search results found');
         setSearchResult(null);
         return;
       }
-      setSearchResult({ room_name: rooms });
+      setSearchResult({ room_name: filteredRooms });
     } catch (error) {
-      console.error('An unexpected error occurred:', error.message || error.toString());
-      setError("Failed to fetch data. Please try again."); // Update the UI to show a friendly error message
+      console.error('An unexpected error occurred:', error.toString());
+      setError("Failed to fetch data. Please try again.");
       setSearchResult(null);
     }
   };
+  
 
   const firstComeRooms = searchResult && searchResult.room_name.filter(item => item.first_come_first_served);
   const otherRooms = searchResult && searchResult.room_name.filter(item => !item.first_come_first_served);
@@ -121,7 +123,7 @@ const Search: React.FC = () => {
         <SearchBar
           placeholder="Search..."
           value={searchText}
-          onChangeText={handleSearch}
+          onChangeText={(text) => handleSearch(text, 'roomName')}
           round={true}
           lightTheme={true}
           containerStyle={styles.searchBarContainer}

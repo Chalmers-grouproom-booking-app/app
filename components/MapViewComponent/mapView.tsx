@@ -23,7 +23,7 @@ export default function MapViewComponent() {
         // Ensure latitude and longitude are treated as strings if they might be arrays
         const currentLatitude = Array.isArray(latitude) ? latitude[0] : latitude;
         const currentLongitude = Array.isArray(longitude) ? longitude[0] : longitude;
-        console.log(`I AM HEREEEEEEEEEEE`);
+        //console.log(`I AM HEREEEEEEEEEEE`);
         if (currentLatitude && currentLongitude) {
           const lat = parseFloat(currentLatitude);
           const lng = parseFloat(currentLongitude);
