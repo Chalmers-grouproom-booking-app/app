@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Animated, Text } from 'react-native';
 import MapView, { Polygon } from 'react-native-maps';
 import { globalStyles } from '../../styles/styles';
 import { mapStyle } from '../../styles/map';
 import { InitRegion } from '../../constants';
+import { requestForegroundPermissionsAsync } from 'expo-location';
 import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,11 +12,18 @@ import { router } from 'expo-router';
 import {buildings} from '../../constants/buildings'
 
 export default function MapViewComponent() {
-
+    const [locationPermission, setLocationPermission] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState<string>(null);
+    const scaleAnimation = useRef(new Animated.Value(1)).current; 
     const mapRef = useRef(null);
-    const scaleAnimation = useRef(new Animated.Value(1)).current;  // Initial scale is 1
 
+    useEffect(() => {
+        (async () => {
+            let { status } = await requestForegroundPermissionsAsync();
+            setLocationPermission(status === 'granted');
+        })();
+    }, []);
+    
     const resetRegion = () => {
         mapRef.current.animateToRegion( InitRegion, 1000)
     };
@@ -36,28 +44,10 @@ export default function MapViewComponent() {
         }).start();
     };
 
-    const handleBuildingSelect = (buildingName) => {
-        console.log(`Building pressed: ${buildingName}`); // Log the building name
-        if (selectedBuilding === buildingName) {
-          setSelectedBuilding(null); // Unselect the building if it's already selected
-        } else {
-          setSelectedBuilding(buildingName);
-        }
-      };
-
-    const navigateToSearch = () => {
-        router.push('/search');
-    }
-
-    const navigateToSearchBuilding = (building) => {
-        router.push({
-            pathname: "search",
-            params: {
-                building: building
-            }
-        })
-    }
-
+    const navigateToSearchBuilding = (buildingName: string) => {
+        router.push({ pathname: 'search', params: { building: buildingName } });
+    };
+    
     return (
         <View style={globalStyles.container}>
             <MapView
@@ -65,34 +55,51 @@ export default function MapViewComponent() {
                 style={globalStyles.map}
                 customMapStyle={mapStyle}
                 initialRegion={InitRegion}
-                showsUserLocation={true}
-                followsUserLocation={true}
-                showsCompass={true}
+                showsUserLocation
+                followsUserLocation
+                showsCompass={false}
             >
-            {buildings.map((building, index) => (
-                <Polygon
-                    key={index}
-                    coordinates={building.coordinates}
-                    strokeColor="#000"
-                    fillColor={selectedBuilding === building.name ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)"}
-                    strokeWidth={0.75}
-                    onPress={() => navigateToSearchBuilding(building.name)}
-                    tappable={true}
-                />
-            ))} 
+                {buildings.map((building, index) => (
+                    <Polygon
+                        key={index}
+                        coordinates={building.coordinates}
+                        strokeColor="rgba(165, 176, 118, 1)"  // Green similar to park areas
+                        fillColor="rgba(165, 176, 118, 0.5)"  // Transparent green similar to park areas
+                        strokeWidth={3}
+                        lineCap="round"
+                        lineJoin="round"
+                        miterLimit={10}
+                        geodesic={true}
+                        tappable={true}
+                        onPress={() => {
+                            setSelectedBuilding(building.name);
+                            navigateToSearchBuilding(building.name);
+                        }}
+                        zIndex={index}
+                    />
+          
+                ))}
             </MapView>
-            <MapButton scaleAnimation={scaleAnimation} onPress={navigateToSearch} onPressIn={animatePressIn} onPressOut={animatePressOut}  custom_style={ styles.SearchBarButton }>
-                <Icon name="search" size={25} color="#fff" />
+            <MapButton
+                scaleAnimation={scaleAnimation}
+                onPress={() => router.push('/search')}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.SearchBarButton}
+            >
+               <Icon name="search" size={25} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
 
-            <MapButton scaleAnimation={scaleAnimation} onPress={resetRegion} onPressIn={animatePressIn} onPressOut={animatePressOut}  custom_style={ styles.backToCampusButton }>
-                <Icon name="school" size={25} color="#fff" />
+            <MapButton
+                scaleAnimation={scaleAnimation}
+                onPress={resetRegion}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.backToCampusButton}
+            >
+                <Icon name="school" size={25} color="#333" accessibilityLabel="Back to Campus Button" />
                 <Text style={styles.buttonText}>Chalmers Campus</Text>
             </MapButton>
-
-            <View style={styles.infoContainer}>
-                <Text style={styles.infoText}>Selected Building: {selectedBuilding}</Text>
-            </View>
         </View>
     );
 }
