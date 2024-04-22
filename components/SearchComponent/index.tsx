@@ -8,7 +8,7 @@ import useDebounce from './useDebounce';
 import useRoomSearch from './useRoomSearch'; 
 import type { RoomInfo, TimeSlot} from '../../constants/types'; 
 import { useLocalSearchParams } from 'expo-router';
-import SearchNotFoundSVG from './searchNotFound';
+import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
 
 const Search = () => {
