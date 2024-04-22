@@ -42,6 +42,12 @@
         }
       ],
       [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Roboto-Black.ttf"]
+        }
+      ],
+      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."

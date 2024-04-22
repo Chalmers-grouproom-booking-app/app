@@ -55,13 +55,13 @@ export default function MapViewComponent() {
                 style={globalStyles.map}
                 customMapStyle={mapStyle}
                 initialRegion={InitRegion}
-                showsUserLocation
-                followsUserLocation
+                showsUserLocation={true}
+                followsUserLocation={false}
                 showsCompass={false}
             >
                 {buildings.map((building, index) => (
                     <Polygon
-                        key={index}
+                        key={building.name + index}
                         coordinates={building.coordinates}
                         strokeColor="rgba(165, 176, 118, 1)"  // Green similar to park areas
                         fillColor="rgba(165, 176, 118, 0.5)"  // Transparent green similar to park areas
