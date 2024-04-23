@@ -62,4 +62,20 @@ export default StyleSheet.create({
   infoText: {
     fontSize: 16,
   },
+  calloutStyle: {
+        width: 160, // Adjust the width of the Callout
+        padding: 10,
+    },
+    calloutView: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    calloutTitle: {
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    calloutDescription: {
+        fontSize: 12,
+    }
 });
