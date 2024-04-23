@@ -3,7 +3,7 @@ import { View, Animated, Text } from 'react-native';
 import MapView, { Polygon, Marker } from 'react-native-maps';
 import { globalStyles } from '../../styles/styles';
 import { mapStyle } from '../../styles/map';
-import { InitRegion } from '../../constants';
+import { InitRegion, Johanneberg, Lindholmen } from '../../constants';
 import { requestForegroundPermissionsAsync } from 'expo-location';
 import MapButton from './MapButton';
 import styles from './styles';
@@ -17,6 +17,7 @@ export default function MapViewComponent() {
     const [markerCoordinates, setMarkerCoordinates] = useState(null);
     const [isMarkerSelected, setIsMarkerSelected] = useState(false);
     const scaleAnimation = useRef(new Animated.Value(1)).current;
+    const scaleAnimation1 = useRef(new Animated.Value(1)).current;
     const mapRef = useRef(null);
     const { latitude, longitude, room_name } = useLocalSearchParams();
     const [RoomName, setRoomName] = useState(null);
@@ -56,6 +57,14 @@ export default function MapViewComponent() {
     const resetRegion = () => {
         mapRef.current.animateToRegion(InitRegion, 1000)
     };
+
+    const navigateToJohanneberg = () => {
+        mapRef.current.animateToRegion(Johanneberg, 1000)
+    }
+
+    const navigateToLindholmen = () => {
+        mapRef.current.animateToRegion(Lindholmen, 1000)
+    }
 
     const animatePressIn = () => {
         Animated.spring(scaleAnimation, {
@@ -139,13 +148,23 @@ export default function MapViewComponent() {
 
             <MapButton
                 scaleAnimation={scaleAnimation}
-                onPress={resetRegion}
+                onPress={navigateToJohanneberg}
                 onPressIn={animatePressIn}
                 onPressOut={animatePressOut}
-                custom_style={styles.backToCampusButton}
+                custom_style={styles.backToJohannebergButton}
             >
                 <Icon name="school" size={25} color="#333" accessibilityLabel="Back to Campus Button" />
-                <Text style={styles.buttonText}>Chalmers Campus</Text>
+                <Text style={styles.buttonJohannebergText}>Campus Johanneberg</Text>
+            </MapButton>
+            <MapButton
+                scaleAnimation={scaleAnimation}
+                onPress={navigateToLindholmen}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.backToLindholmenButton}
+            >
+                <Icon name="school" size={25} color="#333" accessibilityLabel="Back to Campus Button" />
+                <Text style={styles.buttonLindholmenText}>Campus Lindholmen</Text>
             </MapButton>
         </View>
     );

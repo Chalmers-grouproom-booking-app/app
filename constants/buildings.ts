@@ -723,7 +723,165 @@ export const The_Copper_Dome = [
     { latitude: 57.685597411623135, longitude: 11.981661341383967 }
   ];
 
+  /////////////////////Lindholmen//////////////////////////////////////////////////////
 
+  export const Kuggen = [
+    { latitude: 57.70658485308469, longitude: 11.93870853343453 },
+    { latitude: 57.70659726846973, longitude: 11.938671322378989 },
+    { latitude: 57.706607657599335, longitude: 11.938648523603256 },
+    { latitude: 57.70661267304017, longitude: 11.938636453663163 },
+    { latitude: 57.706616971988886, longitude: 11.938628407036433 },
+    { latitude: 57.70662664462161, longitude: 11.938613654887428 },
+    { latitude: 57.70663524251523, longitude: 11.938602926051791 },
+    { latitude: 57.706647422860996, longitude: 11.93858683279833 },
+    { latitude: 57.70666569337201, longitude: 11.938570068992647 },
+    { latitude: 57.70667644072708, longitude: 11.9385640340226 },
+    { latitude: 57.7066975771828, longitude: 11.938552634634734 },
+    { latitude: 57.70671728064828, longitude: 11.938549281873437 },
+    { latitude: 57.70674164128057, longitude: 11.938549281873437 },
+    { latitude: 57.706763852432594, longitude: 11.938556657948306 },
+    { latitude: 57.7067860635694, longitude: 11.938570739545082 },
+    { latitude: 57.70680791644879, longitude: 11.938586832798538 },
+    { latitude: 57.70682582863516, longitude: 11.938616337096546 },
+    { latitude: 57.70684302432573, longitude: 11.938647182499007 },
+    { latitude: 57.70685842879164, longitude: 11.938682051214835 },
+    { latitude: 57.70687060906397, longitude: 11.938718261038536 },
+    { latitude: 57.70687741568406, longitude: 11.938762517485548 },
+    { latitude: 57.706884222302854, longitude: 11.938802750619194 },
+    { latitude: 57.70688565527507, longitude: 11.93885035982734 },
+    { latitude: 57.70688171460134, longitude: 11.938889922408759 },
+    { latitude: 57.70687705744091, longitude: 11.938934178855769 },
+    { latitude: 57.70686881784794, longitude: 11.938975082541642 },
+    { latitude: 57.7068548463599, longitude: 11.939014645123061 },
+    { latitude: 57.706839441892036, longitude: 11.939048172738168 },
+    { latitude: 57.706822604443175, longitude: 11.939072312619725 },
+    { latitude: 57.70680110981628, longitude: 11.939098464157095 },
+    { latitude: 57.70677925693277, longitude: 11.939117239619462 },
+    { latitude: 57.70677854044393, longitude: 11.939117910173401 },
+    { latitude: 57.70675704579113, longitude: 11.939131991770177 },
+    { latitude: 57.70673375990289, longitude: 11.93913400342686 },
+    { latitude: 57.70670939926423, longitude: 11.939136685635924 },
+    { latitude: 57.706687904570394, longitude: 11.93912729790474 },
+    { latitude: 57.706665335127305, longitude: 11.939112545754897 },
+    { latitude: 57.70664455689819, longitude: 11.939092429188072 },
+    { latitude: 57.70662556988531, longitude: 11.93906694820343 },
+    { latitude: 57.706608374091445, longitude: 11.939037443905423 },
+    { latitude: 57.70659261127325, longitude: 11.939001234085142 },
+    { latitude: 57.70659332776427, longitude: 11.93899989297695 },
+    { latitude: 57.70657469897061, longitude: 11.938922108918568 },
+    { latitude: 57.70657075826306, longitude: 11.938876511367102 },
+    { latitude: 57.706570041770725, longitude: 11.938830913815638 },
+    { latitude: 57.70657075826306, longitude: 11.938786657368627 },
+    { latitude: 57.7065764902012, longitude: 11.938755141413937 },
+    { latitude: 57.70658258038433, longitude: 11.938717590488807 },
+    { latitude: 57.70658485308469, longitude: 11.93870853343453 }
+  ];
+
+  export const Jupiter = [
+    { latitude: 57.7062012409209, longitude: 11.938036068174736 },
+    { latitude: 57.70601984280591, longitude: 11.938719976547201 },
+    { latitude: 57.706058533959414, longitude: 11.938754845263027 },
+    { latitude: 57.70605172718539, longitude: 11.938787031769943 },
+    { latitude: 57.70609113480665, longitude: 11.938823241590224 },
+    { latitude: 57.70611191335461, longitude: 11.938790384531526 },
+    { latitude: 57.70630480944329, longitude: 11.938970376988957 },
+    { latitude: 57.706296569720095, longitude: 11.93900591625701 },
+    { latitude: 57.706315556905494, longitude: 11.939020668406014 },
+    { latitude: 57.70633060334722, longitude: 11.939003904600328 },
+    { latitude: 57.70638613183051, longitude: 11.939050843259272 },
+    { latitude: 57.70656350341829, longitude: 11.938363576526895 },
+    { latitude: 57.70651549838977, longitude: 11.938319320078648 },
+    { latitude: 57.70650869170167, longitude: 11.938281098601685 },
+    { latitude: 57.70648182318348, longitude: 11.93825829982595 },
+    { latitude: 57.7064703592756, longitude: 11.93830188572166 },
+    { latitude: 57.70628084603166, longitude: 11.9381322360021 },
+    { latitude: 57.706287294513636, longitude: 11.938104072808548 },
+    { latitude: 57.70628550326806, longitude: 11.938071215747774 },
+    { latitude: 57.70623857261957, longitude: 11.938028300401745 },
+    { latitude: 57.706229183354424, longitude: 11.93806316911757 },
+    { latitude: 57.7062012409209, longitude: 11.938036068174736 }
+  ];
+  
+  export const Tessin = [
+    { latitude: 57.70632312613183, longitude: 11.935627835727876 },
+    { latitude: 57.70625486098717, longitude: 11.935898234409251 },
+    { latitude: 57.706590180772956, longitude: 11.936194618503142 },
+    { latitude: 57.70665788919944, longitude: 11.935925056504823 },
+    { latitude: 57.70632312613183, longitude: 11.935627835727876 }
+  ];
+  
+  export const Najaden = [
+    { latitude: 57.70672747655292, longitude: 11.936005861717993 },
+    { latitude: 57.70665905176738, longitude: 11.936294199175789 },
+    { latitude: 57.707009772211606, longitude: 11.936588571618985 },
+    { latitude: 57.707078196336624, longitude: 11.93629956360462 },
+    { latitude: 57.70672747655292, longitude: 11.936005861717993 }
+  ];
+
+  export const Svea = [
+    { latitude: 57.70622877103126, longitude: 11.936013386188257 },
+    { latitude:  57.7060655088605, longitude: 11.93664587016801 },
+    { latitude: 57.70642412520434, longitude: 11.936969744286525 },
+    { latitude: 57.70658748575003, longitude: 11.936336742972077 },
+    { latitude: 57.70622877103126, longitude: 11.936013386188257 }
+  ];
+  
+  export const StudentUnion_Lindholmen = [
+    { latitude: 57.706579698554094, longitude: 11.936381275826058 },
+    { latitude: 57.70643639983927, longitude: 11.936931799216953 },
+    { latitude: 57.706492286404824, longitude: 11.936980749529555 },
+    { latitude: 57.706635584899324, longitude: 11.93643492000346 },
+    { latitude: 57.706579698554094, longitude: 11.936381275826058 }
+  ];
+  
+  export const Patricia = [
+    { latitude: 57.70664996539764, longitude: 11.936393235861617 },
+    { latitude: 57.70648791622897, longitude: 11.93702527856229 },
+    { latitude: 57.70684508671388, longitude: 11.937349155297346 },
+    { latitude: 57.70701095305419, longitude: 11.93671816564058 },
+    { latitude: 57.70664996539764, longitude: 11.936393235861617 }
+  ];
+  
+  export const Saga = [
+    { latitude: 57.70599000664979, longitude: 11.93673662028934 },
+    { latitude: 57.70582272324301, longitude: 11.937369182529428 },
+    { latitude: 57.70617625846718, longitude: 11.937687233848093 },
+    { latitude: 57.70634450585747, longitude: 11.937055849998456 },
+    { latitude: 57.70599000664979, longitude: 11.93673662028934 }
+  ];
+  
+  export const Aran = [
+    { latitude: 57.7048693325583, longitude: 11.936645127552639 },
+    { latitude: 57.70463789392162, longitude: 11.93748130621132 },
+    { latitude: 57.70468020860137, longitude: 11.937520786804365 },
+    { latitude: 57.704679492071634, longitude: 11.937525480669956 },
+    { latitude: 57.70489015120784, longitude: 11.937721952487841 },
+    { latitude: 57.704879045059684, longitude: 11.937760844517031 },
+    { latitude: 57.70499082291345, longitude: 11.937863439006433 },
+    { latitude: 57.70501661775353, longitude: 11.937766208933246 },
+    { latitude: 57.705296777197546, longitude: 11.938021689338864 },
+    { latitude: 57.7053483664244, longitude: 11.937823876426824 },
+    { latitude: 57.7053354691249, longitude: 11.937809794830049 },
+    { latitude: 57.70548127999616, longitude: 11.937221049954905 },
+    { latitude: 57.7048693325583, longitude: 11.936645127552639 }
+  ];
+  
+  export const Anglia = [
+    { latitude: 57.704285961107544, longitude: 11.936375356328446 },
+    { latitude: 57.70417418107831, longitude: 11.936788416511872 },
+    { latitude: 57.704259807478095, longitude: 11.936870223883748 },
+    { latitude: 57.70418421263372, longitude: 11.937147832518972 },
+    { latitude: 57.70413835407345, longitude: 11.937103576071701 },
+    { latitude: 57.704110408985024, longitude: 11.937208182219182 },
+    { latitude: 57.704191019758376, longitude: 11.937285966277564 },
+    { latitude: 57.70420033476978, longitude: 11.937252468824001 },
+    { latitude: 57.704280228807015, longitude: 11.937329582335126 },
+    { latitude: 57.704264106706404, longitude: 11.937393284796732 },
+    { latitude: 57.70430781549583, longitude: 11.937435529587061 },
+    { latitude: 57.704532104424715, longitude: 11.936608962828453 },
+    { latitude: 57.704285961107544, longitude: 11.936375356328446 }
+  ];
+  
 export const buildings = [
     { name: "Kårhuset", coordinates: StudentUnion },
     { name: "Fysik", coordinates: Fysik },
@@ -763,5 +921,18 @@ export const buildings = [
     { name: "Kopparbunken", coordinates: The_Copper_Dome },
     { name: "NC", coordinates: NC },
     { name: "HSB Living Lab", coordinates: HSB_Living_Lab },
-    { name: "Eklandagatan 86", coordinates: Eklandagatan_86 }
+    { name: "Eklandagatan 86", coordinates: Eklandagatan_86 },
+
+    /////////////////////LINDHOLMEN///////////////////////////
+    {name: "Kuggen", coordinates: Kuggen},
+    {name: "Jupiter", coordinates: Jupiter},
+    {name: "Tessin", coordinates: Tessin},
+    {name: "Najaden", coordinates: Najaden},
+    {name: "Kårhus Lindholmen", coordinates: StudentUnion_Lindholmen},
+    {name: "Patricia", coordinates: Patricia},
+    {name: "Svea", coordinates: Svea},
+    {name: "Saga", coordinates: Saga},
+    {name: "Äran", coordinates: Aran},
+    {name: "Anglia", coordinates: Anglia},
+
   ];

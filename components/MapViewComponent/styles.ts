@@ -20,9 +20,14 @@ export default StyleSheet.create({
     shadowRadius: 2.22,
     elevation: 3,
   },
-  backToCampusButton: {
+  backToJohannebergButton: {
     paddingHorizontal: 12,
     bottom: 8, 
+    right: 8,
+  },
+  backToLindholmenButton: {
+    paddingHorizontal: 12,
+    bottom: 65, 
     right: 8,
   },
   SearchBarButton: {
@@ -40,13 +45,21 @@ export default StyleSheet.create({
     minWidth: 50,
     minHeight: 50,
   },
-  buttonText: {
+  buttonJohannebergText: {
     marginLeft: 5,
     color: '#333', 
     fontSize: 14,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
     paddingHorizontal: 5,
+  },
+  buttonLindholmenText: {
+    marginLeft: -4,
+    color: '#333', 
+    fontSize: 14,
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
+    paddingHorizontal: 14,
   },
   infoContainer: {
     position: 'absolute',
