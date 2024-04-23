@@ -10,6 +10,7 @@ import type { RoomInfo, TimeSlot} from '../../constants/types';
 import { useLocalSearchParams } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
+import FilterPanel from '../FilterComponent/FilterPopUp';
 
 const Search = () => {
   const { building } = useLocalSearchParams() as { building: string };
@@ -17,6 +18,11 @@ const Search = () => {
   const navigation = useNavigation(); 
   const { searchResult, error, loading, setLoading,  searchRooms } = useRoomSearch();
   const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
+  const [panelVisible, setPanelVisible] = useState(false);
+
+  const togglePanel = () => {
+    setPanelVisible(!panelVisible);
+  };
 
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
@@ -49,7 +55,7 @@ const Search = () => {
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+        <TouchableOpacity onPress={handleBack} style={styles.button}>
           <Ionicons name="arrow-back" size={26} color="gray" />
         </TouchableOpacity>
         <SearchBar
@@ -61,12 +67,15 @@ const Search = () => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchInputContainer}
         />
+      <TouchableOpacity onPress={togglePanel} style={styles.button}>
+        <Ionicons name='filter' size={26} color="gray"/>
+      </TouchableOpacity>
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
       {loading ? (
-          <ActivityIndicator size="large" style={{ marginTop: 50 }} />
-        ) : searchText && searchResult?.length > 0 ? (
-          <ScrollView style={styles.resultContainer}>
+        <ActivityIndicator size="large" style={{ marginTop: 50 }} />
+      ) : searchText && searchResult?.length > 0 ? (
+        <ScrollView style={styles.resultContainer}>
             {searchResult.map((item, index) => (
               <RoomItem key={index} item={item} />
             ))}
@@ -86,6 +95,7 @@ const Search = () => {
             <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
           </View>
         )}
+    <FilterPanel visible={panelVisible} onClose={() => setPanelVisible(false)} />
     </View>
   );
 };
@@ -120,6 +130,7 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
       setLoadingReservations(false);
     }
   };
+
   const convertStringToDate = (dateString: string) => {
     const [year, month, day] = dateString.split('/').map(Number);
     return new Date(year, month - 1, day);

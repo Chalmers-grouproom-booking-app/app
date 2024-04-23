@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
       paddingHorizontal: 10,
       borderBottomWidth: 0
     },
-    backButton: {
+    button: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: 'white',
