@@ -10,6 +10,7 @@ import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import {buildings} from '../../constants/buildings'
+import BackToCampus from './BackToCampus';
 
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
@@ -87,19 +88,10 @@ export default function MapViewComponent() {
                 onPressOut={animatePressOut}
                 custom_style={styles.SearchBarButton}
             >
-               <Icon name="search" size={25} color="#333" accessibilityLabel="Search Button" />
+               <Icon name="search" size={32} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
 
-            <MapButton
-                scaleAnimation={scaleAnimation}
-                onPress={resetRegion}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.backToCampusButton}
-            >
-                <Icon name="school" size={25} color="#333" accessibilityLabel="Back to Campus Button" />
-                <Text style={styles.buttonText}>Chalmers Campus</Text>
-            </MapButton>
+            <BackToCampus lindholmen={resetRegion} johanneberg={resetRegion} />
         </View>
     );
 }
