@@ -60,6 +60,11 @@ export default StyleSheet.create({
       fontWeight: 'bold',
       paddingHorizontal: 4,
   },
+  backToLindholmenButton: {
+    paddingHorizontal: 12,
+    bottom: 65, 
+    right: 8,
+  },
   SearchBarButton: {
     top: 8, 
     left: 8,
@@ -75,13 +80,21 @@ export default StyleSheet.create({
     minWidth: 50,
     minHeight: 50,
   },
-  buttonText: {
+  buttonJohannebergText: {
     marginLeft: 5,
     color: '#333', 
     fontSize: 14,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
     paddingHorizontal: 5,
+  },
+  buttonLindholmenText: {
+    marginLeft: -4,
+    color: '#333', 
+    fontSize: 14,
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
+    paddingHorizontal: 14,
   },
   infoContainer: {
     position: 'absolute',
@@ -97,4 +110,20 @@ export default StyleSheet.create({
   infoText: {
     fontSize: 16,
   },
+  calloutStyle: {
+        width: 160, // Adjust the width of the Callout
+        padding: 10,
+    },
+    calloutView: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    calloutTitle: {
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    calloutDescription: {
+        fontSize: 12,
+    }
 });
