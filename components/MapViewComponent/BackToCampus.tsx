@@ -61,7 +61,7 @@ const BackToCampus = ( { lindholmen, johanneberg } ) => {
         transform: [{
             translateX: optionsAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [200, 0]  // Slide up from below
+                outputRange: [100, 0]  // Slide up from below
             })
         }],
         opacity: optionsAnim
