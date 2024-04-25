@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import useDebounce from './useDebounce'; 
 import useRoomSearch from './useRoomSearch'; 
-import type { RoomInfo, TimeSlot} from '../../constants/types'; 
+import type { FilterData, RoomInfo, TimeSlot} from '../../constants/types'; 
 import { useLocalSearchParams } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
@@ -19,6 +19,13 @@ const Search = () => {
   const { searchResult, error, loading, setLoading,  searchRooms } = useRoomSearch();
   const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
   const [panelVisible, setPanelVisible] = useState(false);
+  const [filterData, setFilterData] = useState<FilterData>({
+    room_size: 20,
+    building: '',
+    campus: '',
+    equipment: [],
+    first_come_first_served: null
+  });
 
   const togglePanel = () => {
     setPanelVisible(!panelVisible);
@@ -95,7 +102,7 @@ const Search = () => {
             <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
           </View>
         )}
-    <FilterPanel visible={panelVisible} onClose={() => setPanelVisible(false)} />
+    <FilterPanel visible={panelVisible} onClose={() => setPanelVisible(false)} handleFilterData={setFilterData} filterData={filterData}/>
     </View>
   );
 };

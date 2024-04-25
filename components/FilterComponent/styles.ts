@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
       top: 0,
       bottom: 0,
       right: 0,
-      width: screenWidth,
+      width: screenWidth * 0.8,
       backgroundColor: '#FFF',
       paddingTop: 20,
       paddingRight: 20,
@@ -48,10 +48,10 @@ export const styles = StyleSheet.create({
     },
     placeholder: {
       color: 'gray',
-      fontSize: 20,
+      fontSize: 16,
     },
     pickerItemStyling: {
-      fontSize: 15,
+      fontSize: 12,
       color: 'black',
     },
     sliderContainer: {

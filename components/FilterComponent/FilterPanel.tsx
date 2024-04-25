@@ -1,45 +1,77 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated, ScrollView } from 'react-native';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+import { View, Text, TouchableOpacity, Animated, ScrollView, PanResponder, Dimensions } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import {Slider} from '@miblanchard/react-native-slider';
-import { styles } from './styles';
-import {buildings} from '../../constants/buildings'
+import { Slider } from '@miblanchard/react-native-slider';
 import Checkbox from 'expo-checkbox';
+import { styles } from './styles';
+import { buildings } from '../../constants/buildings';
 import { FilterData } from '../../constants/types';
+import { screenWidth }from '../../constants/index';
 
 
-const FilterPanel = ({ visible, onClose }) => {
-  const panelWidth = styles.panel.width; // Panel width is based on screen width defined in styles
-  const translateX = useRef(new Animated.Value(panelWidth)).current;
 
-  const [filterData, setFilterData] = useState<FilterData>({
-    room_size: 20,
-    building: '',
-    campus: '',
-    equipment: [],
-    first_come_first_served: null
-  });
+const FilterPanel = ({ visible, onClose, handleFilterData, filterData }) => {
+  const translateX = useRef(new Animated.Value(screenWidth)).current; // Initially positioned off-screen
 
   useEffect(() => {
-    // Set the translation for the visible state
-    const visibleWidth = panelWidth * 0.8;
+    // Animate the panel into view or out of view based on 'visible'
     Animated.timing(translateX, {
-      toValue: visible ? panelWidth - visibleWidth : panelWidth,
+      toValue: visible ? 0 : screenWidth,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: true
     }).start();
-  }, [visible, panelWidth]);
+  }, [visible, screenWidth]);
 
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Adjust sensitivity to distinguish more clearly between horizontal and vertical swipes
+        const isHorizontalSwipe = Math.abs(gestureState.dx) > Math.abs(gestureState.dy * 2) && Math.abs(gestureState.dx) > 30; // Requires a more definite horizontal movement
+      
+        return isHorizontalSwipe;
+      },
+      
+      onPanResponderMove: (evt, gestureState) => {
+        // Only update translateX if the gesture is clearly horizontal
+        if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy * 2) && gestureState.dx > 0) {
+          const newTranslateX = Math.min(gestureState.dx, screenWidth);
+          translateX.setValue(newTranslateX);
+        }
+      },
+      
+      onPanResponderRelease: (evt, gestureState) => {
+        // Check both direction and magnitude again on release to decide on action
+        if (gestureState.dx > screenWidth * 0.2 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy * 2)) {
+          Animated.timing(translateX, {
+            toValue: screenWidth,
+            duration: 300,
+            useNativeDriver: true
+          }).start(onClose);
+        } else {
+          Animated.spring(translateX, {
+            toValue: 0,
+            useNativeDriver: true
+          }).start();
+        }
+      }
+      
+    })
+  ).current;
+
+  useEffect(() => {
+    console.log(filterData);  // This will log the updated state after changes
+  }, [filterData]);  // Dependency array tells React to run the effect when filterData changes
+  
   const handleFilterChange = (field, value) => {
-    setFilterData(prev => ({
+    handleFilterData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
   const handleEquipmentChange = (item) => {
-    setFilterData(prev => ({
+    handleFilterData(prev => ({
       ...prev,
       equipment: prev.equipment.includes(item)
         ? prev.equipment.filter(equip => equip !== item)
@@ -49,9 +81,11 @@ const FilterPanel = ({ visible, onClose }) => {
 
   return (
     <View style={styles.container}>
-      {visible && <View style={styles.backdrop} onTouchStart={onClose} />}
-      <Animated.View style={[styles.panel, { transform: [{ translateX }] }]}>
-        <ScrollView>
+    {visible && <View style={styles.backdrop} onTouchStart={onClose} />}
+      <Animated.View style={[styles.panel, { transform: [{ translateX }] }]}
+      {...panResponder.panHandlers}
+      >
+        <ScrollView persistentScrollbar={true}>
 
         <View style={styles.pickerContainer}>
           <Text style={styles.filterTitle}>Building:</Text>
