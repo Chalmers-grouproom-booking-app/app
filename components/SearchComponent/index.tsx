@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -13,12 +13,25 @@ import StartSearchSVG from './StartSearch';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MarkerButton from './MarkerButton';
 
+const ITEMS_PER_PAGE = 15;
+
 const Search = () => {
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
   const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(ITEMS_PER_PAGE);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
+
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
 
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
@@ -69,11 +82,18 @@ const Search = () => {
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 50 }} />
       ) : searchText && searchResult?.length > 0 ? (
+        <>
         <ScrollView style={styles.resultContainer}>
-          {searchResult.map((item, index) => (
+          {currentItems.map((item, index) => (
             <RoomItem key={index} item={item} />
           ))}
         </ScrollView>
+        <View style={styles.paginationContainer}>
+        <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+        <Text>{currentPage}</Text>
+        <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
+        </View>
+        </>
       ) : null}
 
       {searchText && !searchResult?.length && !loading && (
@@ -242,7 +262,7 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
             onPressOut={animatePressOut}
             custom_style={styles.iconContainer}
           >
-           <Icon name="location-sharp" size={30} color="#007bff" accessibilityLabel="Marker Button" />
+            <Icon name="location-sharp" size={30} color="#007bff" accessibilityLabel="Marker Button" />
           </MarkerButton>
         </View>
       )
