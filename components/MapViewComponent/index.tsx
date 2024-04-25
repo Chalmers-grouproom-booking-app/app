@@ -8,7 +8,7 @@ import { requestForegroundPermissionsAsync } from 'expo-location';
 import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import {buildings} from '../../constants/buildings'
 import BackToCampus from './BackToCampus';
 
