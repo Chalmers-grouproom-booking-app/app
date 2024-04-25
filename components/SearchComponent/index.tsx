@@ -10,7 +10,7 @@ import type { RoomInfo, TimeSlot} from '../../constants/types';
 import { useLocalSearchParams } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
-import FilterPanel from '../FilterComponent/FilterPopUp';
+import FilterPanel from '../FilterComponent/FilterPanel';
 
 const Search = () => {
   const { building } = useLocalSearchParams() as { building: string };

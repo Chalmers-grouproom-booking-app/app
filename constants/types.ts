@@ -28,4 +28,12 @@ export type TimeSlot = {
     end_time: string;
     end_date: string;
   };
+
+export type FilterData = {
+  room_size: number;
+  building: string;
+  campus: string;
+  equipment: string[];
+  first_come_first_served: boolean | null;
+}
   
