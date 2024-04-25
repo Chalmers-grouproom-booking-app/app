@@ -12,13 +12,16 @@ import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MarkerButton from './MarkerButton';
+import ReservationComponent from '../ReservationComponent';
+import useReservations from '../ReservationComponent/useReservations';
 
 const Search = () => {
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
-  const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
+  const { showModal, selectedRoom, openModal, closeModal} = useReservations();
+  const debouncedSearch = useDebounce(searchText, 300); 
 
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
@@ -50,49 +53,55 @@ const Search = () => {
 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={26} color="gray" />
-        </TouchableOpacity>
-        <SearchBar
-          placeholder="Search..."
-          value={searchText}
-          onChangeText={handleSearchChange}
-          round
-          lightTheme
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={styles.searchInputContainer}
-        />
+    <>
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={26} color="gray" />
+          </TouchableOpacity>
+          <SearchBar
+            placeholder="Search..."
+            value={searchText}
+            onChangeText={handleSearchChange}
+            round
+            lightTheme
+            containerStyle={styles.searchBarContainer}
+            inputContainerStyle={styles.searchInputContainer}
+          />
+        </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        {loading ? (
+          <ActivityIndicator size="large" style={{ marginTop: 50 }}  color="#007bff" />
+        ) : searchText && searchResult?.length > 0 ? (
+          <ScrollView style={styles.resultContainer}>
+            {searchResult.map((item, index) => (
+              <RoomItem key={index} item={item} openModal={openModal} />
+            ))}
+          </ScrollView>
+        ) : null}
+
+        {searchText && !searchResult?.length && !loading && (
+          <View style={styles.noResultsContainer}>
+            <SearchNotFoundSVG width={64} height={64} />
+            <Text style={styles.noResultsText}>No rooms found.</Text>
+          </View>
+        )}
+
+        {!searchText && (
+          <View style={styles.noResultsContainer}>
+            <StartSearchSVG width={64} height={64} />
+            <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
+          </View>
+        )}
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      {loading ? (
-        <ActivityIndicator size="large" style={{ marginTop: 50 }} />
-      ) : searchText && searchResult?.length > 0 ? (
-        <ScrollView style={styles.resultContainer}>
-          {searchResult.map((item, index) => (
-            <RoomItem key={index} item={item} />
-          ))}
-        </ScrollView>
-      ) : null}
-
-      {searchText && !searchResult?.length && !loading && (
-        <View style={styles.noResultsContainer}>
-          <SearchNotFoundSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>No rooms found.</Text>
-        </View>
-      )}
-
-      {!searchText && (
-        <View style={styles.noResultsContainer}>
-          <StartSearchSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
-        </View>
-      )}
-    </View>
+      {showModal && (
+          <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
+        )
+      }
+    </>
   );
 };
-const RoomItem = ({ item }: { item: RoomInfo }) => {
+const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: RoomInfo) => void }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
@@ -251,15 +260,30 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
               </View>
             )
           }
-          <MarkerButton
-            scaleAnimation={scaleAnimation}
-            onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
-            onPressIn={animatePressIn}
-            onPressOut={animatePressOut}
-            custom_style={styles.iconContainer}
-          >
-           <Icon name="location-sharp" size={30} color="#007bff" accessibilityLabel="Marker Button" />
-          </MarkerButton>
+          {
+            !item.first_come_first_served && (
+              <>
+              <MarkerButton
+                scaleAnimation={scaleAnimation}
+                onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.iconContainer}
+              >
+              <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
+              </MarkerButton>
+              <MarkerButton
+                scaleAnimation={scaleAnimation}
+                onPress={() =>  openModal(item)}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.makeReservationButton}
+              >
+                <Icon name="calendar-sharp" size={26} color="#007bff" accessibilityLabel="Make Reservation Button" />
+              </MarkerButton>
+              </>
+          )
+          }
         </View>
       )
       }

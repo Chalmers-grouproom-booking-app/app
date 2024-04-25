@@ -29,3 +29,9 @@ export type TimeSlot = {
     end_date: string;
   };
   
+
+export type User = {
+  username : string;
+  password : string;
+  cookie : string;
+};

@@ -155,11 +155,19 @@ export const styles = StyleSheet.create({
     },
     iconContainer: {
       position: 'absolute', // Position the icon absolutely
-      right: 10, // Right align 10 pixels from the right edge
-      top: 10, // Top align 10 pixels from the top edge
-      padding: 10, // Padding to increase touch area
+      right: 20, // Right align 10 pixels from the right edge
+      top: 0, // Top align 10 pixels from the top edge
+      padding: 6, // Padding to increase touch area
       borderRadius: 20, // Rounded corners for the touchable area
     },
+    makeReservationButton: {
+        position: 'absolute', // Position the icon absolutely
+        right: 20,
+        top: 55,
+        padding: 6, // Padding to increase touch area
+        borderRadius: 20, // Rounded corners for the touchable area
+        backgroundColor: '#fff',
+      },
     button: {
       position: 'absolute',
       backgroundColor: '#fff',
