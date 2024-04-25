@@ -131,25 +131,36 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
   };
   const convertStringToDate = (dateString: string) => {
     const [year, month, day] = dateString.split('/').map(Number);
-    return new Date(year, month - 1, day);
-  }
+    return new Date(Date.UTC(year, month - 1, day));
+}
   const getRelativeDate = (dateString: string) => {
-    const today = new Date();
+    const stockholmOffset = 60; // Stockholm is UTC+1, or +60 minutes
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    today.setMinutes(today.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
+  
     const reservationDate = new Date(dateString);
-    const timeDiff = reservationDate.getTime() - today.getTime();
-    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
+    const reservationStart = new Date(reservationDate.getFullYear(), reservationDate.getMonth(), reservationDate.getDate());
+    reservationStart.setMinutes(reservationStart.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
+    
+    const timeDiff = Number(reservationStart) - Number(today);
+    const dayDiff = Math.round(timeDiff / (1000 * 3600 * 24)); // Round to handle edge cases around midnight
+  
     if (dayDiff === 0) {
       return 'Today';
     } else if (dayDiff === 1) {
       return 'Tomorrow';
-    } else if (dayDiff < 7) {
+    } else if (dayDiff > -1 && dayDiff < 6) {
+      // Use the original date object to get the weekday in local language settings
       return reservationDate.toLocaleDateString('en-US', { weekday: 'long' });
     } else {
+      // Use the original date object for formatting date in local language settings
       return reservationDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
   };
-
+  
+  
+  
   const animatePressIn = () => {
     Animated.spring(scaleAnimation, {
       toValue: 0.95,  // Slightly scale down to 0.95
@@ -178,7 +189,7 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
   };
 
   return (
-    <TouchableOpacity onPress={toggleExpand} style={styles.itemContainer}>
+    <TouchableOpacity onPress={toggleExpand} style={styles.itemContainer} activeOpacity={1}>
       <View style={isExpanded ? styles.iteamHeaderExpanded : styles.itemHeader}>
         <Text style={isExpanded ? styles.resultTextExpanded : styles.resultText}>{item.room_name}</Text>
         {

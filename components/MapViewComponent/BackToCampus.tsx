@@ -75,7 +75,7 @@ const BackToCampus = ( { lindholmen, johanneberg } ) => {
                 </Animated.View>
             ) : (
                 <Animated.View style={[styles.backToCampusButton, { opacity: fadeAnim }]}>
-                    <TouchableOpacity onPress={toggleOptions}>
+                    <TouchableOpacity onPress={toggleOptions} activeOpacity={1}>
                         <Icon name="school" size={32} color="#333" accessibilityLabel="Back to Campus Button" />
                     </TouchableOpacity>
                 </Animated.View>
@@ -87,7 +87,7 @@ const BackToCampus = ( { lindholmen, johanneberg } ) => {
 const Options = ({ closeOptions , lindholmen, johanneberg }) => {
     return (
         <>
-            <TouchableOpacity style={[styles.optionButton, { justifyContent: 'flex-start' }]} onPress={
+            <TouchableOpacity activeOpacity={1} style={[styles.optionButton, { justifyContent: 'flex-start' }]} onPress={
                 () => {
                     closeOptions();
                     lindholmen();
@@ -95,7 +95,7 @@ const Options = ({ closeOptions , lindholmen, johanneberg }) => {
                 <Icon name="arrow-back" size={32} color="#333" accessibilityLabel="Back to Lindholmen" />
                 <Text style={styles.optionText}>Lindholmen</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.optionButton, { justifyContent: 'flex-end' }]} 
+            <TouchableOpacity activeOpacity={1} style={[styles.optionButton, { justifyContent: 'flex-end' }]} 
                 onPress={()=>{
                     closeOptions();
                     johanneberg();
