@@ -8,8 +8,10 @@ import { requestForegroundPermissionsAsync } from 'expo-location';
 import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { router, useLocalSearchParams } from 'expo-router';
-import { buildings } from '../../constants/buildings'
+import { router } from 'expo-router';
+import {buildings} from '../../constants/buildings'
+import BackToCampus from './BackToCampus';
+
 
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
@@ -143,29 +145,11 @@ export default function MapViewComponent() {
                 onPressOut={animatePressOut}
                 custom_style={styles.SearchBarButton}
             >
-                <Icon name="search" size={25} color="#333" accessibilityLabel="Search Button" />
-            </MapButton>
 
-            <MapButton
-                scaleAnimation={scaleAnimation}
-                onPress={navigateToJohanneberg}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.backToJohannebergButton}
-            >
-                <Icon name="school" size={25} color="#333" accessibilityLabel="Back to Campus Button" />
-                <Text style={styles.buttonJohannebergText}>Campus Johanneberg</Text>
+               <Icon name="search" size={32} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
-            <MapButton
-                scaleAnimation={scaleAnimation}
-                onPress={navigateToLindholmen}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.backToLindholmenButton}
-            >
-                <Icon name="school" size={25} color="#333" accessibilityLabel="Back to Campus Button" />
-                <Text style={styles.buttonLindholmenText}>Campus Lindholmen</Text>
-            </MapButton>
+            <BackToCampus lindholmen={navigateToLindholmen} johanneberg={navigateToJohanneberg} />
+
         </View>
     );
 }
