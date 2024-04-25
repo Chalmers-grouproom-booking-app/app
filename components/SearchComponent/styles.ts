@@ -11,6 +11,12 @@ export const styles = StyleSheet.create({
       paddingHorizontal: 10,
       borderBottomWidth: 0
     },
+    paginationContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between', // This spreads out the child components
+      alignItems: 'center',
+      padding: 10,
+    },
     backButton: {
       flexDirection: 'row',
       alignItems: 'center',

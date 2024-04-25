@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -15,6 +15,8 @@ import MarkerButton from './MarkerButton';
 import ReservationComponent from '../ReservationComponent';
 import useReservations from '../ReservationComponent/useReservations';
 
+const ITEMS_PER_PAGE = 15;
+
 const Search = () => {
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
@@ -22,6 +24,17 @@ const Search = () => {
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
   const { showModal, selectedRoom, openModal, closeModal} = useReservations();
   const debouncedSearch = useDebounce(searchText, 300); 
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(ITEMS_PER_PAGE);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
+
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
@@ -68,6 +81,28 @@ const Search = () => {
             containerStyle={styles.searchBarContainer}
             inputContainerStyle={styles.searchInputContainer}
           />
+        </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        {loading ? (
+          <ActivityIndicator size="large" style={{ marginTop: 50 }} />
+        ) : searchText && searchResult?.length > 0 ? (
+          <>
+          <ScrollView style={styles.resultContainer}>
+            {currentItems.map((item, index) => (
+               <RoomItem key={index} item={item} openModal={openModal} />
+            ))}
+          </ScrollView>
+          <View style={styles.paginationContainer}>
+          <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+          <Text>{currentPage}</Text>
+          <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
+          </View>
+          </>
+        ) : null}
+      {searchText && !searchResult?.length && !loading && (
+        <View style={styles.noResultsContainer}>
+          <SearchNotFoundSVG width={64} height={64} />
+          <Text style={styles.noResultsText}>No rooms found.</Text>
         </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
         {loading ? (
