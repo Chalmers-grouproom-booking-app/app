@@ -114,6 +114,11 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
           'Accept': 'application/json',
         },
       });
+      if( !response.ok ) {
+        setReservationResult([]);
+        return;
+      }
+
       const json = await response.json();
       setReservationResult(json as TimeSlot[]);
     } catch (error) {

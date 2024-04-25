@@ -145,7 +145,7 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 50,
+      height: '80%',
       maxWidth: '80%',
       alignSelf: 'center',
     },

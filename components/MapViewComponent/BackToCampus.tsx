@@ -24,14 +24,14 @@ const BackToCampus = ( { lindholmen, johanneberg } ) => {
             // Fade out the main button and slide up the options
             Animated.timing(fadeAnim, {
                 toValue: 0,
-                duration: 500,
+                duration: 200,
                 useNativeDriver: true,
             }).start(() => {
                 setShowOptions(true);
                 // Start slide-up animation once the main button is faded out
                 Animated.timing(optionsAnim, {
                     toValue: 1,
-                    duration: 500,
+                    duration: 200,
                     useNativeDriver: true,
                 }).start();
             });
@@ -59,7 +59,7 @@ const BackToCampus = ( { lindholmen, johanneberg } ) => {
 
     const optionStyle = {
         transform: [{
-            translateY: optionsAnim.interpolate({
+            translateX: optionsAnim.interpolate({
                 inputRange: [0, 1],
                 outputRange: [200, 0]  // Slide up from below
             })
