@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import {buildings} from '../../constants/buildings'
 import BackToCampus from './BackToCampus';
+import { PROVIDER_GOOGLE } from 'react-native-maps';
 
 
 export default function MapViewComponent() {
@@ -106,6 +107,7 @@ export default function MapViewComponent() {
                 followsUserLocation={false}
                 showsCompass={false}
                 onPress={handleMapPress}
+                provider={PROVIDER_GOOGLE}
             >
                 {buildings.map((building, index) => (
                     <Polygon
