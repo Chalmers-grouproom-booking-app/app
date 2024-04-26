@@ -30,10 +30,10 @@ export type TimeSlot = {
   };
 
 export type FilterData = {
-  room_size: number;
+  room_size: string;
   building: string;
   campus: string;
   equipment: string[];
-  first_come_first_served: boolean | null;
+  first_come_first_served: number | null;
 }
   

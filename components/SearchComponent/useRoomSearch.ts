@@ -1,16 +1,49 @@
 import { useState, useCallback } from 'react';
-import { RoomInfo } from '../../constants/types'; // Importing types from your constants
+import { FilterData, RoomInfo } from '../../constants/types'; // Importing types from your constants
 
 function useRoomSearch() {
     const [searchResult, setSearchResult] = useState<RoomInfo[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
 
-    const searchRooms = useCallback(async (searchQuery) => {
+    const createQueryString = (searchQuery: string, filterData: FilterData): string => {
+        interface Params {
+          [key: string]: string;
+        }
+      
+        const params: Params = {};
+      
+        // Always include 'input', empty if searchQuery is blank
+        params.input = searchQuery.trim() !== '' ? encodeURIComponent(searchQuery) : '';
+      
+        // Iterate over filterData keys
+        Object.keys(filterData).forEach(key => {
+          const value = filterData[key];
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value) && value.length > 0) {
+              params[key] = value.join(',');
+            } else if (typeof value === 'string' && value !== '') {
+              params[key] = encodeURIComponent(value);
+            }
+          }
+        });
+      
+        // Use URLSearchParams to build the query string
+        return new URLSearchParams(params).toString();
+      };
+      
+      
+      
+      
+
+    const searchRooms = useCallback(async (searchQuery, filterQuery) => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://strawhats.info/api/v1/search?input=${encodeURIComponent(searchQuery)}`, {
+            const queryString: string = createQueryString(searchQuery, filterQuery);
+            console.log(queryString);
+            const response = await fetch(`https://strawhats.info/api/v1/search?${queryString}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',

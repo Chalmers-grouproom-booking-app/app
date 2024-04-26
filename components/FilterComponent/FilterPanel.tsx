@@ -152,8 +152,8 @@ const FilterPanel = ({ visible, onClose, handleFilterData, filterData }) => {
         <View style={styles.checkBoxContainer}>
         <Text style={styles.filterTitle}>Room Type:</Text>
         {[
-            { label: 'First Come, First Served', value: true },
-            { label: 'Reservation Room', value: false }
+            { label: 'First Come, First Served', value: 1 },
+            { label: 'Reservation Room', value: 0 }
         ].map((option) => (
             <View key={option.label} style={styles.checkBoxOptionRow}>
               <Checkbox

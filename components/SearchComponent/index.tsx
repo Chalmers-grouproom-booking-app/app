@@ -20,7 +20,7 @@ const Search = () => {
   const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
   const [panelVisible, setPanelVisible] = useState(false);
   const [filterData, setFilterData] = useState<FilterData>({
-    room_size: 20,
+    room_size: '',
     building: '',
     campus: '',
     equipment: [],
@@ -42,10 +42,21 @@ const Search = () => {
 
   // Search room whenever debouncedSearch changes
   useEffect(() => {
-    if (debouncedSearch) {
-      searchRooms(debouncedSearch);
+    // Check if there is a debounced search term or any active filters
+    if (debouncedSearch || filterDataHasActiveFilters(filterData)) {
+      searchRooms(debouncedSearch, filterData);
     }
-  }, [debouncedSearch, searchRooms]);
+  }, [debouncedSearch, filterData, searchRooms]); // Still depend on both debouncedSearch and filterData
+
+  function filterDataHasActiveFilters(filterData) {
+    // Check for non-default filter settings (assuming default values are either empty strings, null, or an empty array)
+    return Object.keys(filterData).some(key => {
+      const value = filterData[key];
+      if (Array.isArray(value)) return value.length > 0;
+      return value !== null && value !== '' && value !== undefined;
+    });
+  }
+  
 
   const handleSearchChange = (text) => {
     setLoading(true);
@@ -74,37 +85,34 @@ const Search = () => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchInputContainer}
         />
-      <TouchableOpacity onPress={togglePanel} style={styles.button}>
-        <Ionicons name='filter' size={26} color="gray"/>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={togglePanel} style={styles.button}>
+          <Ionicons name='filter' size={26} color="gray"/>
+        </TouchableOpacity>
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 50 }} />
-      ) : searchText && searchResult?.length > 0 ? (
+      ) : searchResult?.length > 0 ? (
         <ScrollView style={styles.resultContainer}>
-            {searchResult.map((item, index) => (
-              <RoomItem key={index} item={item} />
-            ))}
-          </ScrollView>
-        ) : null}
-
-        {searchText && !searchResult?.length && !loading && (
-          <View style={styles.noResultsContainer}>
-            <SearchNotFoundSVG width={64} height={64} />
-            <Text style={styles.noResultsText}>No rooms found.</Text>
-          </View>
-        )}
-
-        {!searchText && (
-          <View style={styles.noResultsContainer}>
-            <StartSearchSVG width={64} height={64} />
-            <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
-          </View>
-        )}
-    <FilterPanel visible={panelVisible} onClose={() => setPanelVisible(false)} handleFilterData={setFilterData} filterData={filterData}/>
+          {searchResult.map((item, index) => (
+            <RoomItem key={index} item={item} />
+          ))}
+        </ScrollView>
+      ) : !loading && (searchText || filterDataHasActiveFilters(filterData)) ? (
+        <View style={styles.noResultsContainer}>
+          <SearchNotFoundSVG width={64} height={64} />
+          <Text style={styles.noResultsText}>No rooms found.</Text>
+        </View>
+      ) : (
+        <View style={styles.noResultsContainer}>
+          <StartSearchSVG width={64} height={64} />
+          <Text style={styles.noResultsText}>Start your search with filters or by entering text.</Text>
+        </View>
+      )}
+      <FilterPanel visible={panelVisible} onClose={() => setPanelVisible(false)} handleFilterData={setFilterData} filterData={filterData}/>
     </View>
   );
+  
 };
 const RoomItem = ({ item }: { item: RoomInfo }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -120,6 +128,7 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
 
   const fetchReservations = async (roomName) => {
     setLoadingReservations(true);
+
     try {
       const response = await fetch(`https://strawhats.info/api/v1/room/reservation?input=${encodeURIComponent(roomName)}`, {
         headers: {
