@@ -10,27 +10,41 @@ import type { FilterData, RoomInfo, TimeSlot} from '../../constants/types';
 import { useLocalSearchParams } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
-import FilterPanel from '../FilterComponent/FilterPanel';
+import FilterPanel from '../FilterComponent';
+import useFilter from '../FilterComponent/useFilter';
+import { Drawer } from 'react-native-drawer-layout';
 
-const Search = () => {
+const SearchDrawer = () => {
+  const [visible, setVisible] = useState(false);
+  const { filterData, setFilterData, filterDataHasActiveFilters } = useFilter();
+
+  return (
+      <Drawer
+        open={visible}
+        onOpen={() => setVisible(true)}
+        onClose={ () => setVisible(false)}
+        renderDrawerContent={() => {
+          return (
+            <FilterPanel handleFilterData={setFilterData} filterData={filterData} />
+          );
+        }}
+        drawerPosition='right'
+        drawerType='front'
+        drawerStyle={{ width : '73%'}}
+        overlayStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+      >
+      <Search toggleFilter={() => setVisible(!visible)} filterDataHasActiveFilters={filterDataHasActiveFilters}  filterData={filterData} />
+    </Drawer>
+  );
+
+};
+
+const Search = ({ toggleFilter , filterDataHasActiveFilters, filterData } ) => {
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation(); 
   const { searchResult, error, loading, setLoading,  searchRooms } = useRoomSearch();
   const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
-  const [panelVisible, setPanelVisible] = useState(false);
-  const [filterData, setFilterData] = useState<FilterData>({
-    room_size: '',
-    building: '',
-    campus: '',
-    equipment: [],
-    first_come_first_served: null
-  });
-
-  const togglePanel = () => {
-    setPanelVisible(!panelVisible);
-  };
-
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
     if (building) {
@@ -46,17 +60,7 @@ const Search = () => {
     if (debouncedSearch || filterDataHasActiveFilters(filterData)) {
       searchRooms(debouncedSearch, filterData);
     }
-  }, [debouncedSearch, filterData, searchRooms]); // Still depend on both debouncedSearch and filterData
-
-  function filterDataHasActiveFilters(filterData) {
-    // Check for non-default filter settings (assuming default values are either empty strings, null, or an empty array)
-    return Object.keys(filterData).some(key => {
-      const value = filterData[key];
-      if (Array.isArray(value)) return value.length > 0;
-      return value !== null && value !== '' && value !== undefined;
-    });
-  }
-  
+  }, [debouncedSearch, filterData, searchRooms]); 
 
   const handleSearchChange = (text) => {
     setLoading(true);
@@ -68,6 +72,34 @@ const Search = () => {
 
   const handleBack = () => {
     navigation.goBack(); 
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
+    } else if (searchResult?.length > 0) {
+      return (
+        <ScrollView style={styles.resultContainer}>
+          {searchResult.map((item, index) => (
+            <RoomItem key={`${item.room_name}_${index}`} item={item} />
+          ))}
+        </ScrollView>
+      );
+    } else if (!loading && (searchText || filterDataHasActiveFilters(filterData))) {
+      return (
+        <View style={styles.noResultsContainer}>
+          <SearchNotFoundSVG width={64} height={64} />
+          <Text style={styles.noResultsText}>No rooms found.</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.noResultsContainer}>
+          <StartSearchSVG width={64} height={64} />
+          <Text style={styles.noResultsText}>Start your search with filters or by entering text.</Text>
+        </View>
+      );
+    }
   };
 
   return (
@@ -85,35 +117,16 @@ const Search = () => {
           containerStyle={styles.searchBarContainer}
           inputContainerStyle={styles.searchInputContainer}
         />
-        <TouchableOpacity onPress={togglePanel} style={styles.button}>
+        <TouchableOpacity onPress={toggleFilter} style={styles.button}>
           <Ionicons name='filter' size={26} color="gray"/>
         </TouchableOpacity>
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      {loading ? (
-        <ActivityIndicator size="large" style={{ marginTop: 50 }} />
-      ) : searchResult?.length > 0 ? (
-        <ScrollView style={styles.resultContainer}>
-          {searchResult.map((item, index) => (
-            <RoomItem key={index} item={item} />
-          ))}
-        </ScrollView>
-      ) : !loading && (searchText || filterDataHasActiveFilters(filterData)) ? (
-        <View style={styles.noResultsContainer}>
-          <SearchNotFoundSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>No rooms found.</Text>
-        </View>
-      ) : (
-        <View style={styles.noResultsContainer}>
-          <StartSearchSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>Start your search with filters or by entering text.</Text>
-        </View>
-      )}
-      <FilterPanel visible={panelVisible} onClose={() => setPanelVisible(false)} handleFilterData={setFilterData} filterData={filterData}/>
+      {!!error && <Text style={styles.errorText}>{error}</Text>}
+      {renderContent()}
     </View>
   );
-  
 };
+
 const RoomItem = ({ item }: { item: RoomInfo }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
@@ -238,4 +251,4 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
 };
 
 
-export default Search;
+export default SearchDrawer;

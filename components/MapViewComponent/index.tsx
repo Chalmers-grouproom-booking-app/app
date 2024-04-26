@@ -9,6 +9,7 @@ import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router } from 'expo-router';
+import 'react-native-gesture-handler';
 import {buildings} from '../../constants/buildings'
 
 export default function MapViewComponent() {

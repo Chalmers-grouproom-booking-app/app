@@ -1,89 +1,66 @@
-import { StyleSheet } from 'react-native';
-import { screenWidth } from '../../constants';
+import { StyleSheet, Dimensions } from 'react-native';
 
+const { width } = Dimensions.get('window'); // Get the device width
 
 export const styles = StyleSheet.create({
     container: {
       flex: 1,
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      right: 0,
-    },  
-    backdrop: {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    panel: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      right: 0,
-      width: screenWidth * 0.8,
-      backgroundColor: '#FFF',
-      paddingTop: 20,
-      paddingRight: 20,
-      paddingBottom: 20,
-      paddingLeft: 0,  // Reduced padding on the left
-      elevation: 5,
-    },
-    filterTitle: {
-      fontSize: 20,
-      fontWeight: 'bold',
+      backgroundColor: '#f4f4f4', // Set a neutral background color
+      paddingVertical: 20,
     },
     pickerContainer: {
-      marginBottom: 5,
-      marginLeft: '5%', // Explicitly set to 0
+      backgroundColor: '#ffffff', // White background for picker sections
+      padding: 10, // Add padding to give space around the pickers
+      marginBottom: 10, // Space between different sections
+      borderRadius: 10, // Rounded corners for modern design
+      shadowOpacity: 0.1, // Slight shadow for elevation effect
+      shadowRadius: 5, // Soft shadow
+      shadowColor: '#000',
+      shadowOffset: { height: 2, width: 0 },
+      elevation: 3, // Elevation for Android
+    },
+    filterTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 8, // More space between title and picker
+      color: '#333', // Dark color for better readability
     },
     picker: {
-      height: 50,
-      width: '80%',
-      marginBottom: 5,
-      marginLeft: 0, // Explicitly set to 0
-    },
-    placeholder: {
-      color: 'gray',
-      fontSize: 16,
-    },
-    pickerItemStyling: {
-      fontSize: 12,
-      color: 'black',
+      height: 44,
+      width: '100%', // Ensure it takes the full width of its container
     },
     sliderContainer: {
-      height: 50,
-      width: '70%',
-      marginBottom: '15%',
-      marginLeft: '5%', // Explicitly set to 0
-    },
-    switchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      width: '80%',
-      justifyContent: 'space-between',
-      paddingVertical: 0,
-      marginLeft: '5%', // Explicitly set to 0
+      backgroundColor: '#ffffff',
+      padding: 10,
+      marginBottom: 10,
+      borderRadius: 10,
+      shadowOpacity: 0.1,
+      shadowRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: { height: 2, width: 0 },
+      elevation: 3,
     },
     checkBoxContainer: {
-      flexDirection: 'column',
-      marginLeft: '5%', // Explicitly set to 0
-    },
-    checkBoxOption: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 10,
+      backgroundColor: '#ffffff',
+      padding: 10,
+      borderRadius: 10,
+      shadowOpacity: 0.1,
+      shadowRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: { height: 2, width: 0 },
+      elevation: 3,
     },
     checkBoxOptionRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingLeft: 10,
-    }, checkBoxColumn: {
+      marginBottom: 5, // Adds spacing between each checkbox option
+    },
+    checkBoxOption: {
+      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-    }
+      paddingVertical: 10, // More padding for touchability
+    },
 });
+
+export default styles;
