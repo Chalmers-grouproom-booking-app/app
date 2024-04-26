@@ -10,8 +10,6 @@ export const InitRegion = {
 
 export const screenWidth = Dimensions.get('window').width;
 
-export const screenWidth = Dimensions.get('window').width;
-
 export const Johanneberg = {
     latitude: 57.689131,
     longitude: 11.974257,
