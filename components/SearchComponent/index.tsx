@@ -100,6 +100,7 @@ const Search = () => {
           </>
         ) : null}
       {searchText && !searchResult?.length && !loading && (
+        <View>
         <View style={styles.noResultsContainer}>
           <SearchNotFoundSVG width={64} height={64} />
           <Text style={styles.noResultsText}>No rooms found.</Text>
@@ -114,6 +115,8 @@ const Search = () => {
             ))}
           </ScrollView>
         ) : null}
+        </View>
+      )}
 
         {searchText && !searchResult?.length && !loading && (
           <View style={styles.noResultsContainer}>
