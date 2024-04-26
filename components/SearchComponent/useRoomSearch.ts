@@ -41,7 +41,6 @@ function useRoomSearch() {
         setError('');
         try {
             const queryString: string = createQueryString(searchQuery, filterQuery);
-            console.log(queryString);
             const response = await fetch(`https://strawhats.info/api/v1/search?${queryString}`, {
                 method: 'GET',
                 headers: {

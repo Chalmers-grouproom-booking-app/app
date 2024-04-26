@@ -4,7 +4,6 @@ import Checkbox from 'expo-checkbox';
 import { Slider } from '@miblanchard/react-native-slider';
 import { styles } from './styles';
 import { buildings } from '../../constants/buildings';
-import { Select } from 'native-base';
 
 const FilterPanel = ({ handleFilterData, filterData }) => {
   const handleFilterChange = (field, value) => {
@@ -27,7 +26,7 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
       <ScrollView persistentScrollbar={true}>
         <View style={styles.pickerContainer}>
           <Text style={styles.filterTitle}>Building:</Text>
-          <Select
+          {/* <Select
             placeholder="Select a building"
             selectedValue={filterData.building}
             onValueChange={value => handleFilterChange('building', value)}
@@ -35,19 +34,19 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
             {sortedBuildings.map((building) => (
               <Select.Item key={building.name} label={building.name} value={building.name} />
             ))}
-          </Select>
+          </Select> */}
         </View>
 
         <View style={styles.pickerContainer}>
           <Text style={styles.filterTitle}>Campus:</Text>
-          <Select
+          {/* <Select
             placeholder="Select a campus"
             selectedValue={filterData.campus}
             onValueChange={value => handleFilterChange('campus', value)}
           >
             <Select.Item label="Johanneberg" value="Johanneberg" />
             <Select.Item label="Lindholmen" value="Lindholmen" />
-          </Select>
+          </Select> */}
         </View> 
 
         <View style={styles.sliderContainer}>

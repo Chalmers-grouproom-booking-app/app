@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator  } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Button  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -15,8 +15,7 @@ import { Drawer } from 'react-native-drawer-layout';
 import FilterPanel from '../FilterComponent';
 import useFilter  from '../FilterComponent/useFilter';
 import RoomItem from './RoomItem';
-
-const ITEMS_PER_PAGE = 15;
+import { FlatList } from 'react-native';
 
 const SearchDrawer = () => {
   const [visible, setVisible] = useState(false);
@@ -43,41 +42,33 @@ const SearchDrawer = () => {
 
 };
 
-const Search = ( { toggleFilter, filterDataHasActiveFilters, filterData }: { toggleFilter: () => void, filterDataHasActiveFilters: (filterData: any) => boolean, filterData: any }) => {
+const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
+  const ITEMS_PER_PAGE = 13;  // Set items per page
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
   const { showModal, selectedRoom, openModal, closeModal} = useReservations();
-  const debouncedSearch = useDebounce(searchText, 300); 
+  const debouncedSearch = useDebounce(searchText, 300);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(ITEMS_PER_PAGE);
+  const totalPageCount = Math.ceil(searchResult?.length / ITEMS_PER_PAGE);
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
+  const paginate = (pageNumber) => {
+    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPageCount)));
+  };
 
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // if building is passed in params, search for rooms in that building
   useEffect(() => {
     if (building) {
-      // clear  searchText and result before searching
-      setSearchText('');
       setSearchText(building);
     }
   }, [building]);
 
-  // Search room whenever debouncedSearch changes
   useEffect(() => {
-    // Check if there is a debounced search term or any active filters
     if (debouncedSearch || filterDataHasActiveFilters(filterData)) {
       searchRooms(debouncedSearch, filterData);
     }
-  }, [debouncedSearch, filterData, searchRooms]); // Still depend on both debouncedSearch and filterData
+  }, [debouncedSearch, filterData]);
 
   const handleSearchChange = (text) => {
     setLoading(true);
@@ -91,64 +82,66 @@ const Search = ( { toggleFilter, filterDataHasActiveFilters, filterData }: { tog
     navigation.goBack();
   };
 
+  const renderPaginationControls = () => (
+    <View style={styles.paginationContainer}>
+      <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+      <Text>{`${currentPage} of ${totalPageCount}`}</Text>
+      <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === totalPageCount} />
+    </View>
+  );
+
   const renderContent = () => {
     if (loading) {
       return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
-    } else if (searchResult?.length > 0) {
+    } else if (searchText && searchResult?.length > 0) {
       return (
-        <ScrollView style={styles.resultContainer}>
-          {searchResult.map((item, index) => (
-            <RoomItem key={`${item.room_name}_${index}`} item={item}  openModal={openModal} />
-          ))}
-        </ScrollView>
+        <FlatList
+          data={searchResult.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)}
+          keyExtractor={(item, index) => `${index}`}
+          renderItem={({ item, index }) => <RoomItem key={index} item={item} openModal={openModal} />}
+          contentContainerStyle={styles.resultContainer}
+          ListFooterComponent={renderPaginationControls}
+        />
       );
-    } else if (!loading && (searchText || filterDataHasActiveFilters(filterData))) {
-      return (
-        <View style={styles.noResultsContainer}>
-          <SearchNotFoundSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>No rooms found.</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.noResultsContainer}>
-          <StartSearchSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>Start your search with filters or by entering text.</Text>
-        </View>
-      );
+    } else if (!loading && searchText && !searchResult?.length) {
+      return <View style={styles.noResultsContainer}>
+        <SearchNotFoundSVG width={64} height={64} />
+        <Text style={styles.noResultsText}>No rooms found.</Text>
+      </View>;
+    } else if (!searchText) {
+      return <View style={styles.noResultsContainer}>
+        <StartSearchSVG width={64} height={64} />
+        <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
+      </View>;
     }
   };
 
   return (
     <>
-      <View style={styles.container}></View>
-      <View style={styles.searchContainer}>
-        <TouchableOpacity onPress={handleBack} style={styles.button}>
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity onPress={handleBack} style={styles.button}>
             <Ionicons name="arrow-back" size={26} color="gray" />
-        </TouchableOpacity>
-        <SearchBar
-          placeholder="Search..."
-          value={searchText}
-          onChangeText={handleSearchChange}
-          round
-          lightTheme
-          containerStyle={styles.searchBarContainer}
-          inputContainerStyle={styles.searchInputContainer}
-        />
-        <TouchableOpacity onPress={toggleFilter} style={styles.button}>
-          <Ionicons name="filter" size={26} color="gray" />
-        </TouchableOpacity>
-
+          </TouchableOpacity>
+          <SearchBar
+            placeholder="Search..."
+            value={searchText}
+            onChangeText={handleSearchChange}
+            round
+            lightTheme
+            containerStyle={styles.searchBarContainer}
+            inputContainerStyle={styles.searchInputContainer}
+          />
+          <TouchableOpacity onPress={toggleFilter} style={styles.button}>
+            <Ionicons name="filter" size={26} color="gray" />
+          </TouchableOpacity>
+        </View>
+        {!!error && <Text style={styles.errorText}>{error}</Text>}
+        {renderContent()}
+        {showModal && <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />}
       </View>
-      {!!error && <Text style={styles.errorText}>{error}</Text>}
-      {renderContent()}
-      {showModal && (
-          <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
-        )
-      }
     </>
   );
 };
 
-
-export default Search;
+export default SearchDrawer;
