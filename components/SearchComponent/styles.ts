@@ -11,6 +11,12 @@ export const styles = StyleSheet.create({
       paddingHorizontal: 10,
       borderBottomWidth: 0
     },
+    paginationContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between', // This spreads out the child components
+      alignItems: 'center',
+      padding: 10,
+    },
     button: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -145,12 +151,51 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 50,
+      height: '80%',
       maxWidth: '80%',
       alignSelf: 'center',
     },
     noResultText: {
       fontSize: 16,
       color: '#666',
+    },
+    iconContainer: {
+      position: 'absolute', // Position the icon absolutely
+      right: 20, // Right align 10 pixels from the right edge
+      top: 0, // Top align 10 pixels from the top edge
+      padding: 6, // Padding to increase touch area
+      borderRadius: 20, // Rounded corners for the touchable area
+    },
+    makeReservationButton: {
+        position: 'absolute', // Position the icon absolutely
+        right: 20,
+        top: 55,
+        padding: 6, // Padding to increase touch area
+        borderRadius: 20, // Rounded corners for the touchable area
+        backgroundColor: '#fff',
+      },
+    button: {
+      position: 'absolute',
+      backgroundColor: '#fff',
+      borderRadius: 6,
+      opacity: 0.8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 0.3,
+      },
+      shadowOpacity: 0.22,
+      shadowRadius: 2.22,
+      elevation: 3,
+    },
+    touchableArea: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 35,
+      minHeight: 35,
     },
   });

@@ -51,7 +51,8 @@ function useRoomSearch() {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                setSearchResult(null);
+                return;
             }
 
             const json = await response.json();

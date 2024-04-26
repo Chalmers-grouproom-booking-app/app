@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
-import useDebounce from './useDebounce'; 
-import useRoomSearch from './useRoomSearch'; 
-import type { FilterData, RoomInfo, TimeSlot} from '../../constants/types'; 
-import { useLocalSearchParams } from 'expo-router';
+import useDebounce from './useDebounce';
+import useRoomSearch from './useRoomSearch';
+import type { FilterData, RoomInfo, TimeSlot } from '../../constants/types';
+import { useLocalSearchParams, router } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MarkerButton from './MarkerButton';
+import ReservationComponent from '../ReservationComponent';
+import useReservations from '../ReservationComponent/useReservations';
+
+const ITEMS_PER_PAGE = 15;
 import FilterPanel from '../FilterComponent';
 import useFilter from '../FilterComponent/useFilter';
 import { Drawer } from 'react-native-drawer-layout';
@@ -42,9 +48,21 @@ const SearchDrawer = () => {
 const Search = ({ toggleFilter , filterDataHasActiveFilters, filterData } ) => {
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
-  const navigation = useNavigation(); 
-  const { searchResult, error, loading, setLoading,  searchRooms } = useRoomSearch();
-  const debouncedSearch = useDebounce(searchText, 300); // Debouncing search text
+  const navigation = useNavigation();
+  const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
+  const { showModal, selectedRoom, openModal, closeModal} = useReservations();
+  const debouncedSearch = useDebounce(searchText, 300); 
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(ITEMS_PER_PAGE);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
+
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
     if (building) {
@@ -71,7 +89,7 @@ const Search = ({ toggleFilter , filterDataHasActiveFilters, filterData } ) => {
   };
 
   const handleBack = () => {
-    navigation.goBack(); 
+    navigation.goBack();
   };
 
   const renderContent = () => {
@@ -102,7 +120,79 @@ const Search = ({ toggleFilter , filterDataHasActiveFilters, filterData } ) => {
     }
   };
 
+
   return (
+    <>
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={26} color="gray" />
+          </TouchableOpacity>
+          <SearchBar
+            placeholder="Search..."
+            value={searchText}
+            onChangeText={handleSearchChange}
+            round
+            lightTheme
+            containerStyle={styles.searchBarContainer}
+            inputContainerStyle={styles.searchInputContainer}
+          />
+        </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        {loading ? (
+          <ActivityIndicator size="large" style={{ marginTop: 50 }} />
+        ) : searchText && searchResult?.length > 0 ? (
+          <>
+          <ScrollView style={styles.resultContainer}>
+            {currentItems.map((item, index) => (
+               <RoomItem key={index} item={item} openModal={openModal} />
+            ))}
+          </ScrollView>
+          <View style={styles.paginationContainer}>
+          <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+          <Text>{currentPage}</Text>
+          <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
+          </View>
+          </>
+        ) : null}
+      {searchText && !searchResult?.length && !loading && (
+        <View>
+        <View style={styles.noResultsContainer}>
+          <SearchNotFoundSVG width={64} height={64} />
+          <Text style={styles.noResultsText}>No rooms found.</Text>
+        </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        {loading ? (
+          <ActivityIndicator size="large" style={{ marginTop: 50 }}  color="#007bff" />
+        ) : searchText && searchResult?.length > 0 ? (
+          <ScrollView style={styles.resultContainer}>
+            {searchResult.map((item, index) => (
+              <RoomItem key={index} item={item} openModal={openModal} />
+            ))}
+          </ScrollView>
+        ) : null}
+        </View>
+      )}
+
+        {searchText && !searchResult?.length && !loading && (
+          <View style={styles.noResultsContainer}>
+            <SearchNotFoundSVG width={64} height={64} />
+            <Text style={styles.noResultsText}>No rooms found.</Text>
+          </View>
+        )}
+
+        {!searchText && (
+          <View style={styles.noResultsContainer}>
+            <StartSearchSVG width={64} height={64} />
+            <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
+          </View>
+        )}
+      </View>
+      {showModal && (
+          <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
+        )
+      }
+    </>
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <TouchableOpacity onPress={handleBack} style={styles.button}>
@@ -127,11 +217,12 @@ const Search = ({ toggleFilter , filterDataHasActiveFilters, filterData } ) => {
   );
 };
 
-const RoomItem = ({ item }: { item: RoomInfo }) => {
+const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: RoomInfo) => void }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
-
+  const scaleAnimation = useRef(new Animated.Value(1)).current;
+  const navigation = useNavigation();
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
     if (!isExpanded && !reservationResult) { // Fetch reservations only if not already fetched
@@ -149,6 +240,11 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
           'Accept': 'application/json',
         },
       });
+      if( !response.ok ) {
+        setReservationResult([]);
+        return;
+      }
+
       const json = await response.json();
       setReservationResult(json as TimeSlot[]);
     } catch (error) {
@@ -162,27 +258,65 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
 
   const convertStringToDate = (dateString: string) => {
     const [year, month, day] = dateString.split('/').map(Number);
-    return new Date(year, month - 1, day);
-  }
-  const getRelativeDate = (dateString : string) => {
-    const today = new Date();
-    const reservationDate =  new Date(dateString);
-    const timeDiff = reservationDate.getTime() - today.getTime();
-    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
+    return new Date(Date.UTC(year, month - 1, day));
+}
+  const getRelativeDate = (dateString: string) => {
+    const stockholmOffset = 60; // Stockholm is UTC+1, or +60 minutes
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    today.setMinutes(today.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
+  
+    const reservationDate = new Date(dateString);
+    const reservationStart = new Date(reservationDate.getFullYear(), reservationDate.getMonth(), reservationDate.getDate());
+    reservationStart.setMinutes(reservationStart.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
+    
+    const timeDiff = Number(reservationStart) - Number(today);
+    const dayDiff = Math.round(timeDiff / (1000 * 3600 * 24)); // Round to handle edge cases around midnight
+  
     if (dayDiff === 0) {
       return 'Today';
     } else if (dayDiff === 1) {
       return 'Tomorrow';
-    } else if (dayDiff < 7) {
+    } else if (dayDiff > -1 && dayDiff < 6) {
+      // Use the original date object to get the weekday in local language settings
       return reservationDate.toLocaleDateString('en-US', { weekday: 'long' });
     } else {
+      // Use the original date object for formatting date in local language settings
       return reservationDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
   };
+  
+  
+  
+  const animatePressIn = () => {
+    Animated.spring(scaleAnimation, {
+      toValue: 0.95,  // Slightly scale down to 0.95
+      useNativeDriver: true
+    }).start();
+  };
+
+  const animatePressOut = () => {
+    Animated.spring(scaleAnimation, {
+      toValue: 1,  // Scale back to original size
+      friction: 3,  // Controls "bounciness"/overshoot
+      tension: 60,  // Controls speed
+      useNativeDriver: true
+    }).start();
+  };
+
+  const navigateToMap = (latitude, longitude, room_name) => {
+    router.replace({
+      pathname: "map",
+      params: {
+        room_name,
+        latitude,
+        longitude
+      }
+    });
+  };
 
   return (
-    <TouchableOpacity onPress={toggleExpand} style={styles.itemContainer}>
+    <TouchableOpacity onPress={toggleExpand} style={styles.itemContainer} activeOpacity={1}>
       <View style={isExpanded ? styles.iteamHeaderExpanded : styles.itemHeader}>
         <Text style={isExpanded ? styles.resultTextExpanded : styles.resultText}>{item.room_name}</Text>
         {
@@ -200,7 +334,7 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
           <Text style={styles.detailText}>Floor: {item.floor_level}</Text>
           <Text style={styles.detailText}>Building: {item.building}</Text>
           <Text style={styles.detailText}>Campus: {item.campus}</Text>
-           {
+          {
             item.first_come_first_served !== true && (
               <View style={styles.reservationContainer}>
                 {loadingReservations ? (
@@ -209,34 +343,34 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
                   <>
                     <Text style={styles.reservationTitle}>Reservations:</Text>
                     {Object.entries(reservationResult.reduce((acc, res) => {
-  const dateKey = convertStringToDate(res.start_date).toISOString().slice(0, 10); // Create a unique key per date
-  if (!acc[dateKey]) {
-    acc[dateKey] = [];
-  }
-  acc[dateKey].push(res);
-  return acc;
-}, {})).sort(([dateA], [dateB]) => {
-  // Convert date strings to Date objects and then to Unix time for comparison
-  const dateATime = new Date(dateA).getTime();
-  const dateBTime = new Date(dateB).getTime();
-  return dateATime - dateBTime; // Sort by closest date first
-}).map(([date, reservations]) => (
-  <View key={date} style={styles.reservationItem}>
-    <Text style={styles.reservationDate}>{ getRelativeDate(date) }</Text>
-    {(reservations as TimeSlot[])
-      .sort((a, b) => {
-        // Sort reservations within each date group by start time
-        if (a.start_time < b.start_time) return -1;
-        if (a.start_time > b.start_time) return 1;
-        return 0;
-      })
-      .map((res, idx) => (
-        <Text key={idx} style={styles.reservationText}>
-          {res.start_time} - {res.end_time}
-        </Text>
-      ))}
-  </View>
-))}
+                      const dateKey = convertStringToDate(res.start_date).toISOString().slice(0, 10); // Create a unique key per date
+                      if (!acc[dateKey]) {
+                        acc[dateKey] = [];
+                      }
+                      acc[dateKey].push(res);
+                      return acc;
+                    }, {})).sort(([dateA], [dateB]) => {
+                      // Convert date strings to Date objects and then to Unix time for comparison
+                      const dateATime = new Date(dateA).getTime();
+                      const dateBTime = new Date(dateB).getTime();
+                      return dateATime - dateBTime; // Sort by closest date first
+                    }).map(([date, reservations]) => (
+                      <View key={date} style={styles.reservationItem}>
+                        <Text style={styles.reservationDate}>{getRelativeDate(date)}</Text>
+                        {(reservations as TimeSlot[])
+                          .sort((a, b) => {
+                            // Sort reservations within each date group by start time
+                            if (a.start_time < b.start_time) return -1;
+                            if (a.start_time > b.start_time) return 1;
+                            return 0;
+                          })
+                          .map((res, idx) => (
+                            <Text key={idx} style={styles.reservationText}>
+                              {res.start_time} - {res.end_time}
+                            </Text>
+                          ))}
+                      </View>
+                    ))}
                   </>
                 ) : (
                   <Text style={styles.noReservationText}>No reservations found</Text>
@@ -244,9 +378,34 @@ const RoomItem = ({ item }: { item: RoomInfo }) => {
               </View>
             )
           }
+          {
+            !item.first_come_first_served && (
+              <>
+              <MarkerButton
+                scaleAnimation={scaleAnimation}
+                onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.iconContainer}
+              >
+              <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
+              </MarkerButton>
+              <MarkerButton
+                scaleAnimation={scaleAnimation}
+                onPress={() =>  openModal(item)}
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.makeReservationButton}
+              >
+                <Icon name="calendar-sharp" size={26} color="#007bff" accessibilityLabel="Make Reservation Button" />
+              </MarkerButton>
+              </>
+          )
+          }
         </View>
-      )}
-    </TouchableOpacity>
+      )
+      }
+    </TouchableOpacity >
   );
 };
 

@@ -37,3 +37,9 @@ export type FilterData = {
   first_come_first_served: number | null;
 }
   
+
+export type User = {
+  username : string;
+  password : string;
+  cookie : string;
+};
