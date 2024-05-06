@@ -939,8 +939,9 @@ export const buildings = [
 
   ];
 
-  // Building Groups
-  export const EDBlocket: BuildingGroup = {
+  // Buildings and building groups for filter
+  export const JohannebergData: BuildingGroup[] = [
+    {
       name: "ED-blocket",
       subBuildings: [
         { name: "EDIT trappa A och B"},
@@ -949,52 +950,57 @@ export const buildings = [
         { name: "EDIT trappa F, G och H"},
         { name: "IdIdéläran (NC)"}
       ]
-  }
-
-  export const Samhällsbyggnad: BuildingGroup = {
-    name: "Samhällsbyggnad",
-    subBuildings: [
-      { name: "Samhällsbyggnad I-II"},
-      { name: "Samhällsbyggnad III"},
-      { name: "SB2"}
+    },
+    {
+       name: "Samhällsbyggnad",
+       subBuildings: [
+         { name: "Samhällsbyggnad I-II"},
+         { name: "Samhällsbyggnad III"},
+         { name: "SB2"}
+       ]
+     },
+     {
+       name: "Vasa",
+       subBuildings: [
+         { name: "Vasa Hus 1"},
+         { name: "Vasa Hus 2"},
+         { name: "Vasa Hus 3"}
+       ]
+     },
+     {
+       name: "Maskinteknik",
+       subBuildings: [
+         { name: "M-huset"}
+       ]
+     },
+     {
+       name: "Fysik-Huset",
+       subBuildings: [
+         { name: "Fysik"},
+         { name: "Fysik Origo"},
+         { name: "Forskarhuset Fysik"}
+       ]
+     },
+     {
+       name: "Kemi-Huset",
+       subBuildings: [
+         { name: "Kemi"},
+       ]
+     },
+     {
+       name: "Biblioteket Johanneberg",
+       subBuildings: [
+         { name: "Biblioteket"}
+       ]
+     },
+     { name: "Kårhuset"},
     ]
-  }
+  export const LindholmenData: BuildingGroup[] = [
+    { name: "Kuggen" },
+    { name: "Jupiter" },
+    {name: "Svea" }
+  ]
 
-  export const Vasa: BuildingGroup = {
-    name: "Vasa",
-    subBuildings: [
-      { name: "Vasa Hus 1"},
-      { name: "Vasa Hus 2"},
-      { name: "Vasa Hus 3"}
-    ]
-  }
 
-  export const Maskinteknik: BuildingGroup = {
-    name: "Maskinteknik",
-    subBuildings: [
-      { name: "M-huset"}
-    ]
-  }
 
-  export const FysikHuset: BuildingGroup = {
-    name: "Fysik-Huset",
-    subBuildings: [
-      { name: "Fysik"},
-      { name: "Fysik Origo"},
-      { name: "Forskarhuset Fysik"}
-    ]
-  }
 
-  export const KemiHuset: BuildingGroup = {
-    name: "Kemi-Huset",
-    subBuildings: [
-      { name: "Kemi"},
-    ]
-  }
-
-  export const BiblioteketJohanneberg : BuildingGroup = {
-    name: "Biblioteket Johanneberg",
-    subBuildings: [
-      { name: "Biblioteket"}
-    ]
-  }

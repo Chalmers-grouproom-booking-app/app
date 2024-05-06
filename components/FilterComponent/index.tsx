@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Slider } from '@miblanchard/react-native-slider';
 import { styles } from './styles';
-import { buildings } from '../../constants/buildings';
+import { buildings, JohannebergData, LindholmenData } from '../../constants/buildings';
 import { RoomSizes } from '../../constants/index';
 
 const FilterPanel = ({ handleFilterData, filterData }) => {
@@ -19,43 +19,85 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
         [...prev.equipment, item]
     }));
   };
-  
-  const sortedBuildings = buildings.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+  const sortedJohanebergData = [...JohannebergData].sort((a, b) => a.name.localeCompare(b.name));
+  const sortedLindholmenData = [...LindholmenData].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <View style={styles.container}>
       <ScrollView persistentScrollbar={true}>
-        <View style={styles.pickerContainer}>
-          <Text style={styles.filterTitle}>Building:</Text>
-          {/* <Select
-            placeholder="Select a building"
-            selectedValue={filterData.building}
-            onValueChange={value => handleFilterChange('building', value)}
-          >
-            {sortedBuildings.map((building) => (
-              <Select.Item key={building.name} label={building.name} value={building.name} />
-            ))}
-          </Select> */}
-        </View>
-
-        <View style={styles.pickerContainer}>
-          <Text style={styles.filterTitle}>Campus:</Text>
-          {/* <Select
-            placeholder="Select a campus"
-            selectedValue={filterData.campus}
-            onValueChange={value => handleFilterChange('campus', value)}
-          >
-            <Select.Item label="Johanneberg" value="Johanneberg" />
-            <Select.Item label="Lindholmen" value="Lindholmen" />
-          </Select> */}
-        </View> 
-        
         <View style={styles.checkBoxContainer}>
           <Text style={styles.filterTitle}>Johanneberg:</Text>
-
-
-
+          {sortedJohanebergData.map((building) => {
+            // Use fallback to empty array if filterData.buildings is undefined
+            const isSelected = (filterData.buildings || []).includes(building.name);
+            return (
+              <View key={building.name} style={styles.checkBoxOptionRow}>
+                <Checkbox
+                  value={isSelected}
+                  onValueChange={(newValue) => {
+                    const updatedBuildings = newValue
+                      ? [...(filterData.buildings || []), building.name]
+                      : (filterData.buildings || []).filter(name => name !== building.name);
+                    handleFilterChange('buildings', updatedBuildings);
+                  }}
+                  color={isSelected ? '#81b0ff' : undefined}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    const newValue = !(filterData.buildings || []).includes(building.name);
+                    const updatedBuildings = newValue
+                      ? [...(filterData.buildings || []), building.name]
+                      : (filterData.buildings || []).filter(name => name !== building.name);
+                    handleFilterChange('buildings', updatedBuildings);
+                  }}
+                  style={styles.checkBoxOption}
+                >
+                  <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                    {building.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
         </View>
+
+        <View style={styles.checkBoxContainer}>
+          <Text style={styles.filterTitle}>Lindholmen:</Text>
+          {sortedLindholmenData.map((building) => {
+            // Use fallback to empty array if filterData.buildings is undefined
+            const isSelected = (filterData.buildings || []).includes(building.name);
+            return (
+              <View key={building.name} style={styles.checkBoxOptionRow}>
+                <Checkbox
+                  value={isSelected}
+                  onValueChange={(newValue) => {
+                    const updatedBuildings = newValue
+                      ? [...(filterData.buildings || []), building.name]
+                      : (filterData.buildings || []).filter(name => name !== building.name);
+                    handleFilterChange('buildings', updatedBuildings);
+                  }}
+                  color={isSelected ? '#81b0ff' : undefined}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    const newValue = !(filterData.buildings || []).includes(building.name);
+                    const updatedBuildings = newValue
+                      ? [...(filterData.buildings || []), building.name]
+                      : (filterData.buildings || []).filter(name => name !== building.name);
+                    handleFilterChange('buildings', updatedBuildings);
+                  }}
+                  style={styles.checkBoxOption}
+                >
+                  <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                    {building.name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+      </View>
+
 
         <View style={styles.checkBoxContainer}>
             <Text style={styles.filterTitle}>Room Size:</Text>

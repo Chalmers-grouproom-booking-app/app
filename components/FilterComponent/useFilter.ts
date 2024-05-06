@@ -3,8 +3,8 @@ import { FilterData } from '../../constants/types';
 
 function useFilter() {
     const [filterData, setFilterData] = useState<FilterData>({
-        room_size: '',
-        building: '',
+        room_size: null,
+        building: [],
         campus: '',
         equipment: [],
         first_come_first_served: null
