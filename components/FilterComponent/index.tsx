@@ -85,7 +85,7 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
 
         <View style={styles.checkBoxContainer}>
           <Text style={styles.filterTitle}>Equipment:</Text>
-          {['Projector', 'Whiteboard', 'Digital Screen', 'Data Projector', 'Curtained Section'].map(item => (
+          {['Whiteboard', 'Digital skärm', 'Data-projektor'].map(item => (
             <View key={item} style={styles.checkBoxOptionRow}>
               <Checkbox
                 value={filterData.equipment.includes(item)}
