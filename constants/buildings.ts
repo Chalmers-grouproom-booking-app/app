@@ -944,61 +944,31 @@ export const buildings = [
     {
       name: "ED-blocket",
       subBuildings: [
-        { name: "EDIT trappa A och B"},
-        { name: "EDIT trappa C, D och H"},
-        { name: "EDIT trappa D, E och F"},
-        { name: "EDIT trappa F, G och H"},
         { name: "IdIdéläran (NC)"}
       ]
     },
     {
-       name: "Samhällsbyggnad",
-       subBuildings: [
-         { name: "Samhällsbyggnad I-II"},
-         { name: "Samhällsbyggnad III"},
-         { name: "SB2"}
-       ]
-     },
-     {
-       name: "Vasa",
-       subBuildings: [
-         { name: "Vasa Hus 1"},
-         { name: "Vasa Hus 2"},
-         { name: "Vasa Hus 3"}
-       ]
-     },
-     {
-       name: "Maskinteknik",
-       subBuildings: [
-         { name: "M-huset"}
-       ]
-     },
-     {
-       name: "Fysik-Huset",
-       subBuildings: [
-         { name: "Fysik"},
-         { name: "Fysik Origo"},
-         { name: "Forskarhuset Fysik"}
-       ]
-     },
-     {
-       name: "Kemi-Huset",
-       subBuildings: [
-         { name: "Kemi"},
-       ]
-     },
-     {
-       name: "Biblioteket Johanneberg",
-       subBuildings: [
-         { name: "Biblioteket"}
-       ]
-     },
-     { name: "Kårhuset"},
+      name: "Samhällsbyggnad",
+      subBuildings: [
+        { name: "SB2"}
+      ]
+    },
+    {
+      name: "Maskinteknik",
+      subBuildings: [
+        { name: "M-huset"}
+      ]
+    },
+    { name: "Fysik" },
+    { name: "Kemi" },
+    { name: "Biblioteket" },
+    { name: "Kårhuset"},
+    { name: "Vasa" },
     ]
   export const LindholmenData: BuildingGroup[] = [
     { name: "Kuggen" },
     { name: "Jupiter" },
-    {name: "Svea" }
+    { name: "Svea" }
   ]
 
 

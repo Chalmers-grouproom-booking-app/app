@@ -26,77 +26,62 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
   return (
     <View style={styles.container}>
       <ScrollView persistentScrollbar={true}>
-        <View style={styles.checkBoxContainer}>
-          <Text style={styles.filterTitle}>Johanneberg:</Text>
-          {sortedJohanebergData.map((building) => {
-            // Use fallback to empty array if filterData.buildings is undefined
-            const isSelected = (filterData.buildings || []).includes(building.name);
-            return (
-              <View key={building.name} style={styles.checkBoxOptionRow}>
-                <Checkbox
-                  value={isSelected}
-                  onValueChange={(newValue) => {
-                    const updatedBuildings = newValue
-                      ? [...(filterData.buildings || []), building.name]
-                      : (filterData.buildings || []).filter(name => name !== building.name);
-                    handleFilterChange('buildings', updatedBuildings);
-                  }}
-                  color={isSelected ? '#81b0ff' : undefined}
-                />
-                <TouchableOpacity
-                  onPress={() => {
-                    const newValue = !(filterData.buildings || []).includes(building.name);
-                    const updatedBuildings = newValue
-                      ? [...(filterData.buildings || []), building.name]
-                      : (filterData.buildings || []).filter(name => name !== building.name);
-                    handleFilterChange('buildings', updatedBuildings);
-                  }}
-                  style={styles.checkBoxOption}
-                >
-                  <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
-                    {building.name}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </View>
+      <View style={styles.checkBoxContainer}>
+        <Text style={styles.filterTitle}>Johanneberg:</Text>
+        {sortedJohanebergData.map((buildingGroup) => {
+        const isSelected = filterData.buildings?.name === buildingGroup.name;
+        return (
+          <View key={buildingGroup.name} style={styles.checkBoxOptionRow}>
+            <Checkbox
+              value={isSelected}
+              onValueChange={(newValue) => {
+                handleFilterChange('buildings', newValue ? buildingGroup : null);
+              }}
+              color={isSelected ? '#81b0ff' : undefined}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                handleFilterChange('buildings', isSelected ? null : buildingGroup);
+              }}
+              style={styles.checkBoxOption}
+            >
+              <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                {buildingGroup.name}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
+      </View>
 
         <View style={styles.checkBoxContainer}>
           <Text style={styles.filterTitle}>Lindholmen:</Text>
-          {sortedLindholmenData.map((building) => {
-            // Use fallback to empty array if filterData.buildings is undefined
-            const isSelected = (filterData.buildings || []).includes(building.name);
-            return (
-              <View key={building.name} style={styles.checkBoxOptionRow}>
-                <Checkbox
-                  value={isSelected}
-                  onValueChange={(newValue) => {
-                    const updatedBuildings = newValue
-                      ? [...(filterData.buildings || []), building.name]
-                      : (filterData.buildings || []).filter(name => name !== building.name);
-                    handleFilterChange('buildings', updatedBuildings);
-                  }}
-                  color={isSelected ? '#81b0ff' : undefined}
-                />
-                <TouchableOpacity
-                  onPress={() => {
-                    const newValue = !(filterData.buildings || []).includes(building.name);
-                    const updatedBuildings = newValue
-                      ? [...(filterData.buildings || []), building.name]
-                      : (filterData.buildings || []).filter(name => name !== building.name);
-                    handleFilterChange('buildings', updatedBuildings);
-                  }}
-                  style={styles.checkBoxOption}
-                >
-                  <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
-                    {building.name}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-      </View>
+          {sortedLindholmenData.map((buildingGroup) => {
+          const isSelected = filterData.buildings?.name === buildingGroup.name;
+          return (
+            <View key={buildingGroup.name} style={styles.checkBoxOptionRow}>
+              <Checkbox
+                value={isSelected}
+                onValueChange={(newValue) => {
+                  handleFilterChange('buildings', newValue ? buildingGroup : null);
+                }}
+                color={isSelected ? '#81b0ff' : undefined}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  handleFilterChange('buildings', isSelected ? null : buildingGroup);
+                }}
+                style={styles.checkBoxOption}
+              >
+                <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                  {buildingGroup.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+        </View>
+
 
 
         <View style={styles.checkBoxContainer}>
