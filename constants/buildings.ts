@@ -902,7 +902,7 @@ export const buildings = [
     { name: "Vasa Hus 12", coordinates: VasaHus12 },
     { name: "Vasa Hus 13", coordinates: VasaHus13 },
     { name: "Vasa Hus 15", coordinates: VasaHus15 },
-    { name: "Arvid Hedvalls Backe 4", coordinates: ArvidHedvallsBacke4 },
+    { name: "Arvid Hedvalls Backe 5", coordinates: ArvidHedvallsBacke4 },
     { name: "Samhällsbyggnad I-II", coordinates: Built_Environment_I_and_II },
     { name: "Samhällsbyggnad III", coordinates: Built_Environment_III },
     { name: "SSPA", coordinates: SSPA },

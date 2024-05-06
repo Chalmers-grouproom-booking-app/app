@@ -4,6 +4,7 @@ import Checkbox from 'expo-checkbox';
 import { Slider } from '@miblanchard/react-native-slider';
 import { styles } from './styles';
 import { buildings } from '../../constants/buildings';
+import { RoomSizes } from '../../constants/index';
 
 const FilterPanel = ({ handleFilterData, filterData }) => {
   const handleFilterChange = (field, value) => {
@@ -48,22 +49,43 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
             <Select.Item label="Lindholmen" value="Lindholmen" />
           </Select> */}
         </View> 
+        
+        <View style={styles.checkBoxContainer}>
+          <Text style={styles.filterTitle}>Johanneberg:</Text>
 
-        <View style={styles.sliderContainer}>
-          <Text style={styles.filterTitle}>Room Size:</Text>
-          <Slider
-            value={filterData.room_size}
-            minimumValue={0}
-            maximumValue={20}
-            step={1}
-            onValueChange={value => handleFilterChange('room_size', value)}
-          />
-          <Text>Seats: {filterData.room_size}</Text>
+
+
+        </View>
+
+        <View style={styles.checkBoxContainer}>
+            <Text style={styles.filterTitle}>Room Size:</Text>
+            {Object.entries(RoomSizes).map(([key, {lower, upper}]) => {
+                const sizeLabel = `${key} (${lower}-${upper})`;
+                const isSelected = filterData.room_size && filterData.room_size.lower === lower && filterData.room_size.upper === upper;
+
+                return (
+                    <View key={key} style={styles.checkBoxOptionRow}>
+                        <Checkbox
+                            value={isSelected}
+                            onValueChange={(newValue) => handleFilterChange('room_size', newValue ? { lower, upper } : null)}
+                            color={isSelected ? '#81b0ff' : undefined}
+                        />
+                        <TouchableOpacity
+                            onPress={() => handleFilterChange('room_size', isSelected ? null : { lower, upper })}
+                            style={styles.checkBoxOption}
+                        >
+                            <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                                {sizeLabel}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+            })}
         </View>
 
         <View style={styles.checkBoxContainer}>
           <Text style={styles.filterTitle}>Equipment:</Text>
-          {['Projector', 'Whiteboard', 'Computer', 'Digital Screen', 'Chalkboards', 'Linux', 'Data Projector', 'Windows', 'Overhead', 'Card Reader', 'Curtained Section'].map(item => (
+          {['Projector', 'Whiteboard', 'Digital Screen', 'Data Projector', 'Curtained Section'].map(item => (
             <View key={item} style={styles.checkBoxOptionRow}>
               <Checkbox
                 value={filterData.equipment.includes(item)}

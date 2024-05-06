@@ -30,13 +30,17 @@ export type TimeSlot = {
   };
 
 export type FilterData = {
-  room_size: string;
+  room_size: interval;
   building: string;
   campus: string;
   equipment: string[];
   first_come_first_served: number | null;
 }
-  
+
+export type interval = {
+  lower : number;
+  upper : number;
+}
 
 export type User = {
   username : string;

@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native';
+import { interval } from './types';
 
 
 export const InitRegion = {
@@ -22,4 +23,19 @@ export const Lindholmen = {
     longitude: 11.9368681,
     latitudeDelta: 0.005,
     longitudeDelta: 0.005,
+}
+
+export const RoomSizes = {
+    Small: {
+        lower: 1,
+        upper: 5
+    },
+    Medium: {
+        lower: 6,
+        upper: 10
+    },
+    Large: {
+        lower: 12,
+        upper: 20
+    }
 }
