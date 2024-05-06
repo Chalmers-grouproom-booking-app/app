@@ -10,15 +10,15 @@ import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import {buildings} from '../../constants/buildings'
-import BackToCampus from './BackToCampus';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
-
+import { SpeedDial } from '@rneui/themed';
 
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState<string>(null);
     const [markerCoordinates, setMarkerCoordinates] = useState(null);
     const [isMarkerSelected, setIsMarkerSelected] = useState(false);
+    const [openSpeedDial, setOpenSpeedDial] = useState(false);
     const scaleAnimation = useRef(new Animated.Value(1)).current;
     const scaleAnimation1 = useRef(new Animated.Value(1)).current;
     const mapRef = useRef(null);
@@ -150,7 +150,40 @@ export default function MapViewComponent() {
 
                <Icon name="search" size={32} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
-            <BackToCampus lindholmen={navigateToLindholmen} johanneberg={navigateToJohanneberg} />
+
+            <SpeedDial
+                isOpen={openSpeedDial}
+                icon={{ name: 'menu', color: '#333' }} 
+                openIcon={{ name: 'close', color: '#333' }}
+                onOpen={() => setOpenSpeedDial(!openSpeedDial)}
+                onClose={() => setOpenSpeedDial(!openSpeedDial)}
+                color="#fff"  
+                >
+                <SpeedDial.Action
+                    icon={{ name: 'account-circle', color: '#fff' }}
+                    title="My Account"
+                    onPress={() => router.push('account')}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'bookmark', color: '#fff' }}
+                    title="My Reservations"
+                    onPress={() => router.push('reservations')}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'arrow-back', color: '#fff' }}
+                    title="Navigate to Lindholmen"
+                    onPress={navigateToLindholmen}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'arrow-forward', color: '#fff' }}
+                    title="Navigate to Johanneberg"
+                    onPress={navigateToJohanneberg}
+                    color="#7986CB" 
+                />
+            </SpeedDial>
 
         </View>
     );
