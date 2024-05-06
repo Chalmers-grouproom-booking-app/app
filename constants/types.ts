@@ -35,15 +35,20 @@ export type FilterData = {
   campus: string;
   equipment: string[];
   first_come_first_served: number | null;
-}
+};
 
 export type interval = {
   lower : number;
   upper : number;
-}
+};
 
 export type User = {
   username : string;
   password : string;
   cookie : string;
+};
+
+export type BuildingGroup = {
+  name: string;
+  subBuildings?: BuildingGroup[];
 };

@@ -1,3 +1,5 @@
+import { BuildingGroup } from "./types";
+
 export const StudentUnion = [
     { latitude: 57.688426189008084, longitude: 11.974508362387224 },
     { latitude: 57.68863385665387, longitude: 11.975137057473832 },
@@ -936,3 +938,63 @@ export const buildings = [
     {name: "Anglia", coordinates: Anglia},
 
   ];
+
+  // Building Groups
+  export const EDBlocket: BuildingGroup = {
+      name: "ED-blocket",
+      subBuildings: [
+        { name: "EDIT trappa A och B"},
+        { name: "EDIT trappa C, D och H"},
+        { name: "EDIT trappa D, E och F"},
+        { name: "EDIT trappa F, G och H"},
+        { name: "IdIdéläran (NC)"}
+      ]
+  }
+
+  export const Samhällsbyggnad: BuildingGroup = {
+    name: "Samhällsbyggnad",
+    subBuildings: [
+      { name: "Samhällsbyggnad I-II"},
+      { name: "Samhällsbyggnad III"},
+      { name: "SB2"}
+    ]
+  }
+
+  export const Vasa: BuildingGroup = {
+    name: "Vasa",
+    subBuildings: [
+      { name: "Vasa Hus 1"},
+      { name: "Vasa Hus 2"},
+      { name: "Vasa Hus 3"}
+    ]
+  }
+
+  export const Maskinteknik: BuildingGroup = {
+    name: "Maskinteknik",
+    subBuildings: [
+      { name: "M-huset"}
+    ]
+  }
+
+  export const FysikHuset: BuildingGroup = {
+    name: "Fysik-Huset",
+    subBuildings: [
+      { name: "Fysik"},
+      { name: "Fysik Origo"},
+      { name: "Forskarhuset Fysik"}
+    ]
+  }
+
+  export const KemiHuset: BuildingGroup = {
+    name: "Kemi-Huset",
+    subBuildings: [
+      { name: "Kemi"},
+    ]
+  }
+
+  export const BiblioteketJohanneberg : BuildingGroup = {
+    name: "Biblioteket Johanneberg",
+    subBuildings: [
+      { name: "Biblioteket"}
+    ]
+  }
