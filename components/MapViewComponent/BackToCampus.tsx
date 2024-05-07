@@ -7,7 +7,7 @@ const BackToCampus = ( { lindholmen, johanneberg } ) => {
     const [showOptions, setShowOptions] = useState(false);
     const fadeAnim = useRef(new Animated.Value(1)).current;  // Control opacity of the main button
     const optionsAnim = useRef(new Animated.Value(0)).current;  // For sliding up the options
-
+    
     useEffect(() => {
         let timer;
         if (showOptions) {

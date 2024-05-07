@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button  } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -22,8 +22,8 @@ const Search = () => {
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
-  const { showModal, selectedRoom, openModal, closeModal} = useReservations();
-  const debouncedSearch = useDebounce(searchText, 300); 
+  const { showModal, selectedRoom, openModal, closeModal } = useReservations();
+  const debouncedSearch = useDebounce(searchText, 300);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(ITEMS_PER_PAGE);
@@ -33,9 +33,20 @@ const Search = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
 
+  const [forceCollapse, setForceCollapse] = useState(false);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setForceCollapse(true);
+  }
 
+  useEffect(() => {
+    if (forceCollapse) {
+      // Reset forceCollapse after it has been propagated to children
+      setForceCollapse(false);
+    }
+  }, [forceCollapse]);
+  
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
     if (building) {
@@ -58,6 +69,7 @@ const Search = () => {
       setLoading(false);
     }
     setSearchText(text);
+    paginate(1);
   };
 
   const handleBack = () => {
@@ -87,36 +99,41 @@ const Search = () => {
           <ActivityIndicator size="large" style={{ marginTop: 50 }} />
         ) : searchText && searchResult?.length > 0 ? (
           <>
-          <ScrollView style={styles.resultContainer}>
-            {currentItems.map((item, index) => (
-               <RoomItem key={index} item={item} openModal={openModal} />
-            ))}
-          </ScrollView>
-          <View style={styles.paginationContainer}>
-          <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
-          <Text>{currentPage}</Text>
-          <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
-          </View>
+            <ScrollView style={styles.resultContainer}>
+              {currentItems.map((item, index) => (
+                <RoomItem
+                  key={index}
+                  item={item}
+                  openModal={openModal}
+                  forceCollapse={forceCollapse}
+                />
+              ))}
+            </ScrollView>
+            <View style={styles.paginationContainer}>
+              <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+              <Text>{currentPage}</Text>
+              <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
+            </View>
           </>
         ) : null}
-      {searchText && !searchResult?.length && !loading && (
-        <View>
-        <View style={styles.noResultsContainer}>
-          <SearchNotFoundSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>No rooms found.</Text>
-        </View>
-        {error && <Text style={styles.errorText}>{error}</Text>}
-        {loading ? (
-          <ActivityIndicator size="large" style={{ marginTop: 50 }}  color="#007bff" />
-        ) : searchText && searchResult?.length > 0 ? (
-          <ScrollView style={styles.resultContainer}>
-            {searchResult.map((item, index) => (
-              <RoomItem key={index} item={item} openModal={openModal} />
-            ))}
-          </ScrollView>
-        ) : null}
-        </View>
-      )}
+        {searchText && !searchResult?.length && !loading && (
+          <View>
+            <View style={styles.noResultsContainer}>
+              <SearchNotFoundSVG width={64} height={64} />
+              <Text style={styles.noResultsText}>No rooms found.</Text>
+            </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+            {loading ? (
+              <ActivityIndicator size="large" style={{ marginTop: 50 }} color="#007bff" />
+            ) : searchText && searchResult?.length > 0 ? (
+              <ScrollView style={styles.resultContainer}>
+                {searchResult.map((item, index) => (
+                  <RoomItem key={index} item={item} openModal={openModal} forceCollapse={forceCollapse} />
+                ))}
+              </ScrollView>
+            ) : null}
+          </View>
+        )}
 
         {searchText && !searchResult?.length && !loading && (
           <View style={styles.noResultsContainer}>
@@ -133,13 +150,13 @@ const Search = () => {
         )}
       </View>
       {showModal && (
-          <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
-        )
+        <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
+      )
       }
     </>
   );
 };
-const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: RoomInfo) => void }) => {
+const RoomItem = ({ item, openModal, forceCollapse}: { item: RoomInfo, openModal: (room: RoomInfo) => void, forceCollapse: boolean}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
@@ -152,6 +169,12 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
     }
   };
 
+  useEffect(() => {
+    if (forceCollapse) {
+      setIsExpanded(false);
+    }
+  }, [forceCollapse]);
+
   const fetchReservations = async (roomName) => {
     setLoadingReservations(true);
     try {
@@ -161,7 +184,7 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
           'Accept': 'application/json',
         },
       });
-      if( !response.ok ) {
+      if (!response.ok) {
         setReservationResult([]);
         return;
       }
@@ -179,20 +202,20 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
   const convertStringToDate = (dateString: string) => {
     const [year, month, day] = dateString.split('/').map(Number);
     return new Date(Date.UTC(year, month - 1, day));
-}
+  }
   const getRelativeDate = (dateString: string) => {
     const stockholmOffset = 60; // Stockholm is UTC+1, or +60 minutes
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     today.setMinutes(today.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
-  
+
     const reservationDate = new Date(dateString);
     const reservationStart = new Date(reservationDate.getFullYear(), reservationDate.getMonth(), reservationDate.getDate());
     reservationStart.setMinutes(reservationStart.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
-    
+
     const timeDiff = Number(reservationStart) - Number(today);
     const dayDiff = Math.round(timeDiff / (1000 * 3600 * 24)); // Round to handle edge cases around midnight
-  
+
     if (dayDiff === 0) {
       return 'Today';
     } else if (dayDiff === 1) {
@@ -205,9 +228,9 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
       return reservationDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
   };
-  
-  
-  
+
+
+
   const animatePressIn = () => {
     Animated.spring(scaleAnimation, {
       toValue: 0.95,  // Slightly scale down to 0.95
@@ -301,26 +324,26 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
           {
             !item.first_come_first_served && (
               <>
-              <MarkerButton
-                scaleAnimation={scaleAnimation}
-                onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.iconContainer}
-              >
-              <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
-              </MarkerButton>
-              <MarkerButton
-                scaleAnimation={scaleAnimation}
-                onPress={() =>  openModal(item)}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.makeReservationButton}
-              >
-                <Icon name="calendar-sharp" size={26} color="#007bff" accessibilityLabel="Make Reservation Button" />
-              </MarkerButton>
+                <MarkerButton
+                  scaleAnimation={scaleAnimation}
+                  onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
+                  onPressIn={animatePressIn}
+                  onPressOut={animatePressOut}
+                  custom_style={styles.iconContainer}
+                >
+                  <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
+                </MarkerButton>
+                <MarkerButton
+                  scaleAnimation={scaleAnimation}
+                  onPress={() => openModal(item)}
+                  onPressIn={animatePressIn}
+                  onPressOut={animatePressOut}
+                  custom_style={styles.makeReservationButton}
+                >
+                  <Icon name="calendar-sharp" size={26} color="#007bff" accessibilityLabel="Make Reservation Button" />
+                </MarkerButton>
               </>
-          )
+            )
           }
         </View>
       )
