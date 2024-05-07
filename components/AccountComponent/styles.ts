@@ -1,8 +1,31 @@
 import { StyleSheet } from 'react-native';
 
-// Styles for the modal, inputs, and close button
-// Add your styles here
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    header: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    headerText: {
+        fontSize: 24,
+        marginBottom: 10,
+    },
+    headerSubtitle: {
+        fontSize: 16,
+        marginBottom: 10,
+    },
+});
+
+export const modal = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: "center",
@@ -196,5 +219,3 @@ export const loginStyles = StyleSheet.create({
         textAlign: 'center'
     }
 });
-
-export default styles;

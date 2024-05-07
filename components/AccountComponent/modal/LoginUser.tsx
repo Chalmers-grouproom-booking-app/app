@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { Input } from '@rneui/themed';
-import { loginStyles } from './style';
-import type { LoginResponse } from '../../utils/user';
-import GreenCheckmark from './GreenCheckmark';
+import { loginStyles } from '../styles';
+import type { LoginResponse } from '../../../utils/user';
+import GreenCheckmark from '../icons/GreenCheckmark';
 
 const LoginUser = ({ onLogin, loginCallback, initUserName, initPassword }: 
     { onLogin: (username: string, password: string) => Promise<LoginResponse> , loginCallback: (success: boolean) => void , initUserName: string, initPassword: string}

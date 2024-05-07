@@ -1,11 +1,9 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import AccountComponent from '../components/AccountComponent';
 
 const Account = () => {
     return (
-        <View>
-            <Text>Account Component</Text>
-        </View>
+        <AccountComponent />
     );
 };
 

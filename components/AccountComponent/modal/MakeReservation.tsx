@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Text, Modal, View, Button, TouchableOpacity, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { RoomInfo } from '../../constants/types';
-import {reservationStyles} from './style';
+import { RoomInfo } from '../../../constants/types';
+import {reservationStyles} from '../styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import type { ReservationData, ReservationResponse } from '../../utils/user';
-import GreenCheckmark from './GreenCheckmark';
+import type { ReservationData, ReservationResponse } from '../../../utils/user';
+import GreenCheckmark from '../icons/GreenCheckmark';
 
 const getCurrentHourRounded = () => {
     const currentHour = new Date().getHours();

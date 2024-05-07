@@ -136,7 +136,7 @@ export const getReservations = async (): Promise<ReservationsResponse> => {
     }
 };
 
-const getAccountInfo = async (): Promise<AccountInfo> => {
+export const getAccountInfo = async (): Promise<AccountInfo> => {
     try {
         const data = await performApiRequest('account/me');
         return data as AccountInfo;
@@ -173,4 +173,4 @@ const logoutUser = async (): Promise<boolean> => {
     }
 };
 
-export { loginUser, getUser, checkIfLoggedIn, logoutUser, saveCredentials, getCredentials };
+export { loginUser, getUser, checkIfLoggedIn, logoutUser, saveCredentials, getCredentials, LoginResponse };

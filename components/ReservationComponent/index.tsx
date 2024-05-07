@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, View, TouchableOpacity, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, { useEffect, useRef, useState } from 'react';
+import { Text } from 'react-native';
 import { RoomInfo } from '../../constants/types';
-import styles from './style';
-import MakeReservation from './MakeReservation';
+import MakeReservation from '../AccountComponent/modal/MakeReservation';
 import { checkIfLoggedIn, loginUser, makeReservation, getCredentials } from '../../utils/user';
-import LoginUser from './LoginUser';
+import LoginUser from '../AccountComponent/modal/LoginUser';
+import GeneralModal, { ModalHandles } from '../AccountComponent/modal/GeneralModal';
 
-const ReservationComponent = ({ room_info, showModal, closeModal }: { room_info: RoomInfo, showModal: boolean, closeModal: () => void }) => {
+const ReservationComponent = ({ room_info }: { room_info: RoomInfo }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loginCheckFailed, setLoginCheckFailed] = useState(false);
     const [ initUserName, setInitUserName ] = useState('');
     const [ initPassword, setInitPassword ] = useState('');
+    const modalRef = useRef<ModalHandles>(null);
 
     useEffect(() => {
         const fetchLoginStatus = async () => {
@@ -36,44 +36,26 @@ const ReservationComponent = ({ room_info, showModal, closeModal }: { room_info:
         fetchLoginStatus();
     }, []);
 
-    const handleModalPress = (event) => {
-        if (event.target === event.currentTarget) {
-            closeModal();
-        }
-    };
-
     const loginCallback = (success : boolean) => {
         setIsLoggedIn(success);
     }
 
     return (
-        <Modal
-            animationType="fade"
-            transparent={true}
-            visible={showModal}
-            onRequestClose={closeModal}
-        >
-            <TouchableOpacity style={styles.centeredView} onPress={handleModalPress} activeOpacity={1}>
-                <View style={styles.modalView} onStartShouldSetResponder={() => true}>
-                    <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                        <Icon name="close" size={30} color="#333" />
-                    </TouchableOpacity>
+        <GeneralModal ref={modalRef}>
+            {
+                loginCheckFailed ?
+                <Text>Failed to check login status. Please try again later.</Text> :
+                !isLoggedIn ?
+                <LoginUser onLogin={ loginUser } loginCallback={ loginCallback }  initUserName={ initUserName } initPassword={ initPassword } /> :
+                <>
                     {
-                        loginCheckFailed ?
-                        <Text>Failed to check login status. Please try again later.</Text> :
-                        !isLoggedIn ?
-                        <LoginUser onLogin={ loginUser } loginCallback={ loginCallback }  initUserName={ initUserName } initPassword={ initPassword } /> :
-                        <>
-                            {
-                                room_info && (
-                                    <MakeReservation room_info={room_info} makeReservation={ makeReservation } reservationSuccessCallback={ closeModal } />
-                                )
-                            }
-                        </>
+                        room_info && (
+                            <MakeReservation room_info={room_info} makeReservation={ makeReservation } reservationSuccessCallback={ modalRef.current.closeModal } />
+                        )
                     }
-                </View>
-            </TouchableOpacity>
-        </Modal>
+                </>
+            }
+        </GeneralModal>
     );
 };
 

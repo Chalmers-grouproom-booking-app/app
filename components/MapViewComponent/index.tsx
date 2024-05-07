@@ -20,7 +20,6 @@ export default function MapViewComponent() {
     const [isMarkerSelected, setIsMarkerSelected] = useState(false);
     const [openSpeedDial, setOpenSpeedDial] = useState(false);
     const scaleAnimation = useRef(new Animated.Value(1)).current;
-    const scaleAnimation1 = useRef(new Animated.Value(1)).current;
     const mapRef = useRef(null);
     const { latitude, longitude, room_name } = useLocalSearchParams();
     const [RoomName, setRoomName] = useState(null);
@@ -163,12 +162,6 @@ export default function MapViewComponent() {
                     icon={{ name: 'account-circle', color: '#fff' }}
                     title="My Account"
                     onPress={() => router.push('account')}
-                    color="#7986CB" 
-                />
-                <SpeedDial.Action
-                    icon={{ name: 'bookmark', color: '#fff' }}
-                    title="My Reservations"
-                    onPress={() => router.push('reservations')}
                     color="#7986CB" 
                 />
                 <SpeedDial.Action
