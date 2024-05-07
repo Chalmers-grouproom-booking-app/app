@@ -29,9 +29,50 @@ export type TimeSlot = {
     end_date: string;
   };
   
+  
+export interface AccountInfo {
+    id: string;
+    token: string;
+    email: string;
+    display_name: string;
+    cookies: {};
+}
 
-export type User = {
-  username : string;
-  password : string;
-  cookie : string;
+
+export interface User {
+  username: string;
+  token: string;
+}
+
+export interface FullUser extends User {
+  password: string;
+}
+
+export type Reservation = {
+  id: string;
+  startdate: string;
+  starttime: string;
+  enddate: string;
+  endtime: string;
+  columns: string[];
+};
+
+export type ReservationsResponse = {
+  reservations: Reservation[];
+};
+
+export type LoginResponse = {
+  success: boolean;
+  error?: string;
+};
+
+export type ReservationData = {
+  room_name: string;
+  date: Date;
+  start_time: Date;
+  end_time: Date;
+};
+export type ReservationResponse = {
+  success: boolean;
+  error?: string;
 };

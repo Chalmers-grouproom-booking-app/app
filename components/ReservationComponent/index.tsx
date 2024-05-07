@@ -4,8 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { RoomInfo } from '../../constants/types';
 import styles from './style';
 import MakeReservation from './MakeReservation';
-import { checkIfLoggedIn, loginUser, makeReservation, getUser } from '../../utils/user';
-import type { ReservationData } from '../../utils/user';
+import { checkIfLoggedIn, loginUser, makeReservation, getCredentials } from '../../utils/user';
 import LoginUser from './LoginUser';
 
 const ReservationComponent = ({ room_info, showModal, closeModal }: { room_info: RoomInfo, showModal: boolean, closeModal: () => void }) => {
@@ -20,7 +19,7 @@ const ReservationComponent = ({ room_info, showModal, closeModal }: { room_info:
                 const loggedIn = await checkIfLoggedIn();
                 setIsLoggedIn(loggedIn);
                 if (loggedIn) {
-                    const userData = await getUser();
+                    const userData = await getCredentials();
                     if (userData) {
                         setInitUserName(userData.username);
                         setInitPassword(userData.password);
