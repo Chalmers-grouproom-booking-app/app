@@ -32,10 +32,6 @@ function useRoomSearch() {
         return new URLSearchParams(params).toString();
       };
       
-      
-      
-      
-
     const searchRooms = useCallback(async (searchQuery, filterQuery) => {
         setLoading(true);
         setError('');

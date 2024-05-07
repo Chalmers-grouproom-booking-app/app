@@ -29,19 +29,19 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
       <View style={styles.checkBoxContainer}>
         <Text style={styles.filterTitle}>Johanneberg:</Text>
         {sortedJohanebergData.map((buildingGroup) => {
-        const isSelected = filterData.buildings?.name === buildingGroup.name;
+        const isSelected = filterData.building?.name === buildingGroup.name;
         return (
           <View key={buildingGroup.name} style={styles.checkBoxOptionRow}>
             <Checkbox
               value={isSelected}
               onValueChange={(newValue) => {
-                handleFilterChange('buildings', newValue ? buildingGroup : null);
+                handleFilterChange('building', newValue ? buildingGroup : null);
               }}
               color={isSelected ? '#81b0ff' : undefined}
             />
             <TouchableOpacity
               onPress={() => {
-                handleFilterChange('buildings', isSelected ? null : buildingGroup);
+                handleFilterChange('building', isSelected ? null : buildingGroup);
               }}
               style={styles.checkBoxOption}
             >
@@ -57,19 +57,19 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
         <View style={styles.checkBoxContainer}>
           <Text style={styles.filterTitle}>Lindholmen:</Text>
           {sortedLindholmenData.map((buildingGroup) => {
-          const isSelected = filterData.buildings?.name === buildingGroup.name;
+          const isSelected = filterData.building?.name === buildingGroup.name;
           return (
             <View key={buildingGroup.name} style={styles.checkBoxOptionRow}>
               <Checkbox
                 value={isSelected}
                 onValueChange={(newValue) => {
-                  handleFilterChange('buildings', newValue ? buildingGroup : null);
+                  handleFilterChange('building', newValue ? buildingGroup : null);
                 }}
                 color={isSelected ? '#81b0ff' : undefined}
               />
               <TouchableOpacity
                 onPress={() => {
-                  handleFilterChange('buildings', isSelected ? null : buildingGroup);
+                  handleFilterChange('building', isSelected ? null : buildingGroup);
                 }}
                 style={styles.checkBoxOption}
               >
@@ -81,8 +81,6 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
           );
         })}
         </View>
-
-
 
         <View style={styles.checkBoxContainer}>
             <Text style={styles.filterTitle}>Room Size:</Text>
