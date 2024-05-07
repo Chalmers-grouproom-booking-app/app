@@ -45,7 +45,7 @@ const getUser = async (): Promise<User | null> => {
 };
 
 // Improved utility function for API requests
-async function performApiRequest(endpoint: string, method: string = 'GET', body: any = null, headers = {}, includeAuth: boolean = true): Promise<any> {
+async function performApiRequest(endpoint: string, method: string = 'GET',body: any = null, headers = {}, includeAuth: boolean = true,  content_type: string = 'application/json'): Promise<any> {
     let authHeaders = {};
     if (includeAuth) {
         const user = await getUser();
@@ -57,7 +57,7 @@ async function performApiRequest(endpoint: string, method: string = 'GET', body:
 
     const defaultHeaders = {
         'Accept': 'application/json',
-        'Content-Type': body ? 'application/json' : 'application/x-www-form-urlencoded',
+        'Content-Type': content_type,
         ...headers,
         ...authHeaders
     };
@@ -67,7 +67,6 @@ async function performApiRequest(endpoint: string, method: string = 'GET', body:
         headers: defaultHeaders,
         body: body ? JSON.stringify(body) : body
     };
-
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     const data = await response.json();
     if (!response.ok) {
@@ -79,8 +78,8 @@ async function performApiRequest(endpoint: string, method: string = 'GET', body:
 
 const loginUser = async (username: string, password: string): Promise<LoginResponse> => {
     try {
-        const body = `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=&client_id=&client_secret=`;
-        const data = await performApiRequest('account/token', 'POST', body, {}, false);
+        const body = `grant_type=&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=&client_id=&client_secret=`
+        const data = await performApiRequest('account/token', 'POST', body, {}, false, 'application/x-www-form-urlencoded');
         if (data.access_token) {
             const user: FullUser = {
                 username: username,
@@ -108,14 +107,8 @@ export const makeReservation = async (data: ReservationData): Promise<Reservatio
         const room_id = roomResponse.room_id;
 
         // Step 2: Make the reservation
-        const reservationDetails = {
-            grouproom_id: room_id,
-            date: formatDate(data.date),
-            starttime: formatTime(data.start_time),
-            endtime: formatTime(data.end_time)
-        };
-        const reservationResponse = await performApiRequest('timedit/api/add_reservation', 'POST', reservationDetails);
-
+        const url = `timedit/api/add_reservation?grouproom_id=${room_id}&date=${formatDate(data.date)}&starttime=${formatTime(data.start_time)}&endtime=${formatTime(data.end_time)}`;
+        const reservationResponse = await performApiRequest(url, 'POST');
         // Assuming the API responds with details on success or error in the same way
         if (!reservationResponse.success) {
             throw new Error(reservationResponse.detail ? reservationResponse.detail : 'Unknown error in reservation');
