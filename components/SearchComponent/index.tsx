@@ -13,7 +13,6 @@ import StartSearchSVG from './StartSearch';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MarkerButton from './MarkerButton';
 import ReservationComponent from '../ReservationComponent';
-import useReservations from '../ReservationComponent/useReservations';
 
 const ITEMS_PER_PAGE = 15;
 
@@ -22,7 +21,6 @@ const Search = () => {
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
-  const { showModal, selectedRoom, openModal, closeModal} = useReservations();
   const debouncedSearch = useDebounce(searchText, 300); 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,7 +30,8 @@ const Search = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
-
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<RoomInfo | null>(null);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -89,7 +88,7 @@ const Search = () => {
           <>
           <ScrollView style={styles.resultContainer}>
             {currentItems.map((item, index) => (
-               <RoomItem key={index} item={item} openModal={openModal} />
+               <RoomItem key={index} item={item} openModal={(room) => { setSelectedRoom(room); setShowModal(true) }} />
             ))}
           </ScrollView>
           <View style={styles.paginationContainer}>
@@ -111,7 +110,7 @@ const Search = () => {
         ) : searchText && searchResult?.length > 0 ? (
           <ScrollView style={styles.resultContainer}>
             {searchResult.map((item, index) => (
-              <RoomItem key={index} item={item} openModal={openModal} />
+              <RoomItem key={index} item={item} openModal={(room) => { setSelectedRoom(room); setShowModal(true) }} />
             ))}
           </ScrollView>
         ) : null}
@@ -132,19 +131,16 @@ const Search = () => {
           </View>
         )}
       </View>
-      {showModal && (
-          <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
-        )
-      }
+      <ReservationComponent room_info={selectedRoom} openModal={showModal} closeCallback={() => setShowModal(false)} />
     </>
   );
 };
-const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: RoomInfo) => void }) => {
+const RoomItem = ({ item, openModal }: { item: RoomInfo  , openModal: (room: RoomInfo) => void }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
-  const navigation = useNavigation();
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
     if (!isExpanded && !reservationResult) { // Fetch reservations only if not already fetched

@@ -1,61 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text } from 'react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { RoomInfo } from '../../constants/types';
 import MakeReservation from '../AccountComponent/modal/MakeReservation';
-import { checkIfLoggedIn, loginUser, makeReservation, getCredentials } from '../../utils/user';
-import LoginUser from '../AccountComponent/modal/LoginUser';
-import GeneralModal, { ModalHandles } from '../AccountComponent/modal/GeneralModal';
+import { makeReservation } from '../../utils/user';
+import AccountModal, { ModalHandles } from '../AccountComponent/modal/AccountModal';
 
-const ReservationComponent = ({ room_info }: { room_info: RoomInfo }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loginCheckFailed, setLoginCheckFailed] = useState(false);
-    const [ initUserName, setInitUserName ] = useState('');
-    const [ initPassword, setInitPassword ] = useState('');
-    const modalRef = useRef<ModalHandles>(null);
+const ReservationComponent = ({ room_info , openModal, closeCallback }: { room_info: RoomInfo | null, openModal: boolean,  closeCallback: () => void }) => {
+    const modalRef = useRef<ModalHandles>();
 
     useEffect(() => {
-        const fetchLoginStatus = async () => {
-            try {
-                const loggedIn = await checkIfLoggedIn();
-                setIsLoggedIn(loggedIn);
-                if (loggedIn) {
-                    const userData = await getCredentials();
-                    if (userData) {
-                        setInitUserName(userData.username);
-                        setInitPassword(userData.password);
-                    }
-                }
-            // setIsLoggedIn(false);
-
-            } catch (error) {
-                console.error('Failed to check login status:', error);
-                setLoginCheckFailed(true);
-            }
-        };
-
-        fetchLoginStatus();
+        if (modalRef.current) {
+            modalRef.current.openModal();
+        }
     }, []);
 
-    const loginCallback = (success : boolean) => {
-        setIsLoggedIn(success);
-    }
+    useEffect(() => {
+        if (openModal && modalRef.current) {
+            modalRef.current.openModal();
+        }
+    }, [openModal]);
 
     return (
-        <GeneralModal ref={modalRef}>
+       <AccountModal ref={modalRef} closeCallback={closeCallback}>
             {
-                loginCheckFailed ?
-                <Text>Failed to check login status. Please try again later.</Text> :
-                !isLoggedIn ?
-                <LoginUser onLogin={ loginUser } loginCallback={ loginCallback }  initUserName={ initUserName } initPassword={ initPassword } /> :
-                <>
-                    {
-                        room_info && (
-                            <MakeReservation room_info={room_info} makeReservation={ makeReservation } reservationSuccessCallback={ modalRef.current.closeModal } />
-                        )
-                    }
-                </>
+                room_info && (
+                    <MakeReservation
+                        room_info={room_info}
+                        makeReservation={makeReservation}
+                        reservationSuccessCallback={() => {
+                            if (modalRef.current) {
+                                modalRef.current.closeModal();
+                            }
+                        }}
+                    />
+                )
             }
-        </GeneralModal>
+        </AccountModal>
     );
 };
 

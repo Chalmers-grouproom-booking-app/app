@@ -1,13 +1,18 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { Input } from '@rneui/themed';
 import { loginStyles } from '../styles';
-import type { LoginResponse } from '../../../utils/user';
 import GreenCheckmark from '../icons/GreenCheckmark';
+import { checkIfLoggedIn, loginUser } from '../../../utils/user';
 
-const LoginUser = ({ onLogin, loginCallback, initUserName, initPassword }: 
-    { onLogin: (username: string, password: string) => Promise<LoginResponse> , loginCallback: (success: boolean) => void , initUserName: string, initPassword: string}
-) => {
+interface LoginUserProps {
+    // optional callback function to be called on successful login
+    onLoginSuccess?: (success: boolean) => void;
+    initUserName?: string;
+    initPassword?: string;
+  }
+  
+const LoginUser = ( { onLoginSuccess, initUserName = '', initPassword = '' }: LoginUserProps ) => {
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [username, setUsername] = useState( initUserName );
     const [password, setPassword] = useState( initPassword );
@@ -17,6 +22,18 @@ const LoginUser = ({ onLogin, loginCallback, initUserName, initPassword }:
     const usernameInputRef = useRef(null);
     const passwordInputRef = useRef(null);
 
+    useEffect(() => {
+        async function checkLoginStatus() {
+            const loggedIn = await checkIfLoggedIn();
+            if (loggedIn) {
+                if (onLoginSuccess) {
+                    onLoginSuccess(true);
+                }
+            }
+        }
+        checkLoginStatus();
+    }, []);
+    
     const validateInput = () => {
         let isValid = true;
         setUsernameError('');
@@ -50,7 +67,7 @@ const LoginUser = ({ onLogin, loginCallback, initUserName, initPassword }:
         }
 
         try {
-            const response = await onLogin(username, password);
+            const response = await loginUser(username, password);
             if (!response.success) {
                 setPasswordError( response.error );
                 passwordInputRef.current.shake();
@@ -67,13 +84,15 @@ const LoginUser = ({ onLogin, loginCallback, initUserName, initPassword }:
         setLoginSuccess(true);
         setTimeout(() => {
             setLoginSuccess(false);
-            loginCallback(true);
+            if (onLoginSuccess) {
+                onLoginSuccess(true);
+            }
         }, 1000);
     }
     return (
         <View style={loginStyles.container}>
             <View style={loginStyles.titleContainer}>
-                <Image source={require('../../assets/timeedit_logo.png')}  style={loginStyles.titleImage} />
+                <Image source={require('../../../assets/timeedit_logo.png')}  style={loginStyles.titleImage} />
                 <Text style={loginStyles.title}>Login to TimeEdit</Text>
             </View>
             {

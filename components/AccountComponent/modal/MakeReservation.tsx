@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { RoomInfo } from '../../../constants/types';
 import {reservationStyles} from '../styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import type { ReservationData, ReservationResponse } from '../../../utils/user';
+import type { ReservationData, ReservationResponse } from '../../../constants/types';
 import GreenCheckmark from '../icons/GreenCheckmark';
 
 const getCurrentHourRounded = () => {
