@@ -113,8 +113,8 @@ export default function MapViewComponent() {
                     <Polygon
                         key={building.name + index}
                         coordinates={building.coordinates}
-                        strokeColor="rgba(165, 176, 118, 1)"  // Green similar to park areas
-                        fillColor="rgba(165, 176, 118, 0.5)"  // Transparent green similar to park areas
+                        strokeColor={building.buildingColor[0]}  // Green similar to park areas
+                        fillColor={building.buildingColor[0]}  // Transparent green similar to park areas
                         strokeWidth={3}
                         lineCap="round"
                         lineJoin="round"

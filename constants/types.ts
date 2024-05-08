@@ -35,3 +35,7 @@ export type User = {
   password : string;
   cookie : string;
 };
+
+export type BuildingColor = {
+  color: number[]
+}
