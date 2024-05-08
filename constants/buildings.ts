@@ -899,6 +899,7 @@ const fetchBookedPercentage = async (buildingName) => {
         'Accept': 'application/json',
       },
     });
+    
     if( !response.ok ) {
       //setReservationResult([]);
       //return;
