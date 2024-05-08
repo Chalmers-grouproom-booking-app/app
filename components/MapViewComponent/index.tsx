@@ -9,7 +9,8 @@ import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import {buildings} from '../../constants/buildings'
+import {Allbuildings, getColor } from '../../constants/buildings'
+import type { buildingType } from '../../constants/buildings';
 import BackToCampus from './BackToCampus';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 
@@ -24,6 +25,7 @@ export default function MapViewComponent() {
     const mapRef = useRef(null);
     const { latitude, longitude, room_name } = useLocalSearchParams();
     const [RoomName, setRoomName] = useState(null);
+    const [buildings, setBuildings] = useState<buildingType>( Allbuildings );
     useEffect(() => {
         (async () => {
             let { status } = await requestForegroundPermissionsAsync();
@@ -95,7 +97,20 @@ export default function MapViewComponent() {
             setIsMarkerSelected(false);
         }
     };
-
+    useEffect(() => {
+        async function fetchColorsAndUpdateBuildings() {
+          const buildingPromises = Allbuildings.map(async building => {
+            const color = await getColor(building.name);
+            return { ...building, buildingColor: color };
+          });
+    
+          const updatedBuildings = await Promise.all(buildingPromises);
+          setBuildings(updatedBuildings); // Update the state with the new colors
+        }
+    
+        fetchColorsAndUpdateBuildings();
+      }, []);
+      
     return (
         <View style={globalStyles.container}>
             <MapView
@@ -113,8 +128,8 @@ export default function MapViewComponent() {
                     <Polygon
                         key={building.name + index}
                         coordinates={building.coordinates}
-                        strokeColor={building.buildingColor[0]}  // Green similar to park areas
-                        fillColor={building.buildingColor[0]}  // Transparent green similar to park areas
+                        strokeColor={building.buildingColor}  // Green similar to park areas
+                        fillColor={building.buildingColor}  // Transparent green similar to park areas
                         strokeWidth={3}
                         lineCap="round"
                         lineJoin="round"
