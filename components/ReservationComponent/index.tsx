@@ -7,11 +7,6 @@ import AccountModal, { ModalHandles } from '../AccountComponent/modal/AccountMod
 const ReservationComponent = ({ room_info , openModal, closeCallback }: { room_info: RoomInfo | null, openModal: boolean,  closeCallback: () => void }) => {
     const modalRef = useRef<ModalHandles>();
 
-    useEffect(() => {
-        if (modalRef.current) {
-            modalRef.current.openModal();
-        }
-    }, []);
 
     useEffect(() => {
         if (openModal && modalRef.current) {

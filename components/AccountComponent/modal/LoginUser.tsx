@@ -1,34 +1,52 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable, Image, ActivityIndicator } from 'react-native';
 import { Input } from '@rneui/themed';
 import { loginStyles } from '../styles';
 import GreenCheckmark from '../icons/GreenCheckmark';
-import { checkIfLoggedIn, loginUser } from '../../../utils/user';
-
+import { checkIfLoggedIn, getCredentials, loginUser } from '../../../utils/user';
+import { Skeleton } from '@rneui/themed';
+import { LinearGradient } from 'react-native-svg';
 interface LoginUserProps {
     // optional callback function to be called on successful login
     onLoginSuccess?: (success: boolean) => void;
+    notLoggedIn?: boolean;
     initUserName?: string;
     initPassword?: string;
   }
   
-const LoginUser = ( { onLoginSuccess, initUserName = '', initPassword = '' }: LoginUserProps ) => {
+const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', initPassword = '' }: LoginUserProps ) => {
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [username, setUsername] = useState( initUserName );
     const [password, setPassword] = useState( initPassword );
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-
+    const [loading, setLoading] = useState(true);
     const usernameInputRef = useRef(null);
     const passwordInputRef = useRef(null);
 
     useEffect(() => {
         async function checkLoginStatus() {
-            const loggedIn = await checkIfLoggedIn();
-            if (loggedIn) {
-                if (onLoginSuccess) {
-                    onLoginSuccess(true);
+            try {
+                if (!notLoggedIn) {
+                    const loggedIn = await checkIfLoggedIn();
+                    if (loggedIn) {
+                        if (onLoginSuccess) {
+                            onLoginSuccess(true);
+                        }
+                    }
                 }
+                else {
+                    const userCred = await getCredentials();
+                    if (userCred) {
+                        setUsername(userCred.username);
+                        setPassword(userCred.password);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking login status:', error);
+            }
+            finally {
+                setLoading(false);
             }
         }
         checkLoginStatus();
@@ -87,7 +105,7 @@ const LoginUser = ( { onLoginSuccess, initUserName = '', initPassword = '' }: Lo
             if (onLoginSuccess) {
                 onLoginSuccess(true);
             }
-        }, 1000);
+        }, 2000);
     }
     return (
         <View style={loginStyles.container}>
@@ -96,6 +114,7 @@ const LoginUser = ( { onLoginSuccess, initUserName = '', initPassword = '' }: Lo
                 <Text style={loginStyles.title}>Login to TimeEdit</Text>
             </View>
             {
+                loading ? <ActivityIndicator size="large" color="#0000ff" /> :
                 loginSuccess ? <GreenCheckmark width={60} height={60} style={{'flex': 1, 'alignSelf': 'center', 'marginTop': 20}} /> :
             <>
                 <Text style={loginStyles.subtitle}>Please enter your CID and password</Text>
@@ -126,7 +145,7 @@ const LoginUser = ( { onLoginSuccess, initUserName = '', initPassword = '' }: Lo
                     leftIcon={ { type: 'font-awesome', name: 'lock', size: 24, color: 'gray' } }
                     leftIconContainerStyle={loginStyles.iconContainer}
                 />
-                <Pressable onPress={handleLogin} style={loginStyles.submitButton} accessibilityLabel='Login'>
+                <Pressable onPress={handleLogin} style={loginStyles.submitButton} accessibilityLabel='Login' disabled={loading}>
                     <Text style={loginStyles.submitButtonText}>Login</Text>
                 </Pressable>
             </>

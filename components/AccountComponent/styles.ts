@@ -219,3 +219,65 @@ export const loginStyles = StyleSheet.create({
         textAlign: 'center'
     }
 });
+
+
+export const accountPageStyles = StyleSheet.create({
+    tabContainer: {
+        backgroundColor: '#007bff',
+        padding: 0,
+        margin: 0,
+    },
+    tabButton: {
+        backgroundColor: '#007bff',
+        paddingVertical: 14,
+        margin: 0,
+    }
+});
+
+
+
+export const accountInfoPageStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '900',
+        marginBottom: 10,
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        marginBottom: 5,
+    },
+    label: {
+        fontWeight: 'bold',
+        marginRight: 5,
+    },
+    value: {
+        flex: 1,
+    },
+    input: {
+        fontSize: 16,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    saveButton: {
+        alignSelf: 'flex-start',
+        backgroundColor: '#007bff',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 5,
+    },
+    buttonIcon: {
+        marginLeft: 5,
+    },
+    error:{
+        color: 'red',
+        fontSize: 16,
+        marginBottom: 10,
+    }
+});

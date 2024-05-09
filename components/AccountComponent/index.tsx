@@ -2,38 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput } from 'react-native';
 import { Tab, TabView, Text } from '@rneui/themed';
 import { getAccountInfo, checkIfLoggedIn  } from '../../utils/user';
-import Reservations from './reservations';
-import Reviews from './reviews';
-import { styles } from './styles';
-
+import Reservations from './Reservations';
+import Reviews from './Reviews';
+import { accountPageStyles, styles } from './styles';
+import LoginOnce from './modal/LoginOnce';
+import Loading from './Loading';
+import Info from './Info';
+import { AccountInfo } from '../../constants/types';
 const AccountComponent = () => {
     const [index, setIndex] = useState(0);
     const [displayName, setDisplayName] = useState('');
     const [loggedIn, setLoggedIn] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [accountInfo, setAccountInfo] = useState({} as AccountInfo);
+    const [closeLoading, setCloseLoading] = useState(false);
+
+    const handleLoginSuccess = async () => {
+        try {
+            setAccountInfo(await getAccountInfo());
+        } catch (error) {
+            console.error('Failed to fetch account info:', error);
+        }
+    }
 
     useEffect(() => {
         async function fetchUserInfo() {
-            const isLoggedIn = await checkIfLoggedIn();
-            setLoggedIn(isLoggedIn);
-            if (isLoggedIn) {
-                try {
-                    const info = await getAccountInfo(); // Fetches display name from account
-                    setDisplayName(info.display_name); // Set the fetched display name
-                } catch (error) {
-                    console.error('Failed to fetch account info:', error);
+            try {
+                const isLoggedIn = await checkIfLoggedIn();
+                setLoggedIn(isLoggedIn);
+                if (isLoggedIn) {
+                    await handleLoginSuccess();
                 }
+            } catch (error) {
+                console.error('Error checking login status:', error);
+            }
+            finally {
+                setLoading(false);
             }
         }
         fetchUserInfo();
     }, []);
 
+    if( loading || !closeLoading) {
+        return <Loading done={!loading}  closeLoading={() => setCloseLoading(true)} />;
+    }
 
     if (!loggedIn) {
-        return (
-            <View style={styles.container}>
-                <Text h4>Please log in to view your account</Text>
-            </View>
-        );
+        return <LoginOnce onLoginSuccess={ () => handleLoginSuccess() } />;
     }
 
     return (
@@ -43,38 +58,31 @@ const AccountComponent = () => {
                 onChange={setIndex}
                 indicatorStyle={{
                     backgroundColor: 'white',
-                    height: 2,
                 }}
                 variant="primary"
+                containerStyle={accountPageStyles.tabContainer}
+                buttonStyle={accountPageStyles.tabButton}
             >
                 <Tab.Item
                     title="General"
-                    titleStyle={{ fontSize: 12 }}
+                    titleStyle={{ fontSize: 11 }}
                     icon={{ name: 'settings', type: 'ionicon', color: 'white' }}
                 />
                 <Tab.Item
                     title="Reservations"
-                    titleStyle={{ fontSize: 12 }}
+                    titleStyle={{ fontSize: 11 }}
                     icon={{ name: 'calendar', type: 'ionicon', color: 'white' }}
                 />
                 <Tab.Item
                     title="Reviews"
-                    titleStyle={{ fontSize: 12 }}
+                    titleStyle={{ fontSize: 11 }}
                     icon={{ name: 'star', type: 'ionicon', color: 'white' }}
                 />
             </Tab>
 
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
-                    <View style={styles.container}>
-                        <Text h4>General Account Settings</Text>
-                        <Text style={{ marginTop: 10 }}>Display Name:</Text>
-                        <TextInput
-                            value={displayName}
-                            onChangeText={setDisplayName}
-                            style={styles.headerText}
-                        />
-                    </View>
+                    <Info accountInfo={accountInfo} />
                 </TabView.Item>
                 <TabView.Item style={{ backgroundColor: 'white', width: '100%' }}>
                     <Reservations />

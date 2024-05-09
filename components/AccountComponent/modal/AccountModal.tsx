@@ -1,5 +1,5 @@
-import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
-import { Modal, View, TouchableOpacity, Text } from 'react-native';
+import React, { useState, forwardRef, useImperativeHandle, useCallback } from 'react';
+import { Modal, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { modal } from '../styles';
 import LoginUser from './LoginUser';
@@ -7,6 +7,8 @@ import LoginUser from './LoginUser';
 interface AccountModalProps {
     children: React.ReactNode;
     closeCallback?: () => void;
+    notLoggedIn?: boolean;
+    onLoginSuccess?: (success: boolean) => void;
 }
 
 export interface ModalHandles {
@@ -14,26 +16,27 @@ export interface ModalHandles {
     closeModal: () => void;
 }
 
-const AccountModal = forwardRef<ModalHandles, AccountModalProps>(({ children, closeCallback }, ref) => {
+const AccountModal = forwardRef<ModalHandles, AccountModalProps>(( { children, closeCallback, notLoggedIn = false , onLoginSuccess }, ref) => {
     const [showModal, setShowModal] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useImperativeHandle(ref, () => ({
         openModal: () => setShowModal(true),
-        closeModal: () => setShowModal(false)
+        closeModal: () => handleCloseModal(),
     }));
 
-    // call closeCallback when modal is closed
-    useEffect(() => {
-        if (!showModal && closeCallback) {
+    const handleCloseModal = useCallback(() => {
+        if (closeCallback) {
             closeCallback();
         }
-    }, [showModal, closeCallback]);
-    
-    const handleModalPress = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (event.target === event.currentTarget) {
-            setShowModal(false);
-        }
+        setShowModal(false);
+    }, [closeCallback]);
+
+    const handleModalPress = () => {
+        handleCloseModal();
+    };
+
+    const handleCloseButton = () => {
+        handleCloseModal();
     };
 
     return (
@@ -41,14 +44,21 @@ const AccountModal = forwardRef<ModalHandles, AccountModalProps>(({ children, cl
             animationType="fade"
             transparent={true}
             visible={showModal}
-            onRequestClose={() => setShowModal(false)}
+            onRequestClose={handleCloseModal}
         >
-            <TouchableOpacity style={modal.centeredView} onPress={handleModalPress as any} activeOpacity={1}>
+            <TouchableOpacity style={modal.centeredView} onPress={handleModalPress} activeOpacity={1}>
                 <View style={modal.modalView} onStartShouldSetResponder={() => true}>
-                    <TouchableOpacity style={modal.closeButton} onPress={() => setShowModal(false)}>
+                    <TouchableOpacity style={modal.closeButton} onPress={handleCloseButton}>
                         <Icon name="close" size={30} color="#333" />
                     </TouchableOpacity>
-                    {isLoggedIn ? children : <LoginUser onLoginSuccess={() => setIsLoggedIn(true)} />}
+                    <LoginUser  
+                        notLoggedIn={notLoggedIn} 
+                        onLoginSuccess={(success) => {
+                            if (onLoginSuccess) {
+                                onLoginSuccess(success);
+                            }
+                        }} 
+                    />
                 </View>
             </TouchableOpacity>
         </Modal>

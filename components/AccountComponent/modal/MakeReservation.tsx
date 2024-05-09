@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Text, Modal, View, Button, TouchableOpacity, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, Button, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { RoomInfo } from '../../../constants/types';
 import {reservationStyles} from '../styles';

@@ -119,6 +119,15 @@ export const makeReservation = async (data: ReservationData): Promise<Reservatio
     }
 };
 
+export const changeDisplayName = async (newName: string): Promise<LoginResponse> => {
+    try {
+        const body = { display_name: newName };
+        const data = await performApiRequest('account/display_name',  'PUT', body);
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message || 'Failed to change display name' };
+    }
+};    
 
 export const getReservations = async (): Promise<ReservationsResponse> => {
     try {
