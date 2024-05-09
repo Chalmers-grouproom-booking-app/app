@@ -263,6 +263,7 @@ export const accountInfoPageStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
+        marginBottom: 10,
     },
     saveButton: {
         alignSelf: 'flex-start',

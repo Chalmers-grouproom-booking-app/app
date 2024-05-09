@@ -21,7 +21,7 @@ const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
         } else {
             Toast.show({
                 type: 'error',
-                text1: response.error ?? 'Failed to update display name',
+                text1:(response.error ?? 'An error occurred') + ' 😢',
                 position: 'bottom',
               });
         }

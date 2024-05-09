@@ -1,21 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import type { AccountInfo, ApiResponse, FullUser, LoginResponse, ValidationError, ReservationData, ReservationResponse, ReservationsResponse, User, ValidationErrorResponse, LoginSuccessResponse, getRoomIdResponse  } from '../constants/types';
+import type { AccountInfo, ApiResponse, FullUser, LoginResponse, ValidationError, ReservationData, ReservationResponse, ReservationsResponse, User, ValidationErrorResponse, LoginSuccessResponse, getRoomIdResponse, EditReservationModalProps  } from '../constants/types';
 import { formatDate, formatTime } from './utils';
 
 // Global constants
 const BASE_URL = 'https://strawhats.info/';
 
-// API error class
 class ApiError extends Error {
-    status_code: number;
-    detail: string;
-
-    constructor(status_code: number, detail: string) {
-        super(detail);
-        this.name = 'ApiError';
-        this.status_code = status_code;
-        this.detail = detail;
+    constructor(public status_code: number, public detail: string) {
+        super(detail); // Call the parent Error constructor
+        this.name = 'ApiError'; // Set the error name as ApiError
     }
 }
 
@@ -62,7 +56,7 @@ async function performApiRequest<T>(endpoint: string, method: string = 'GET',bod
     if (includeAuth) {
         const user = await getUser();  // Ensure getUser is defined and returns the expected user object
         if (!user || !user.token) {
-            throw { status_code: 401, detail: 'Authentication error: User not logged in or token missing.' } as ApiError;
+            throw new ApiError(401, 'Authentication error: User not logged in or token missing.');
         }
         authHeaders = { 'Authorization': `Bearer ${user.token}` };
     }
@@ -86,20 +80,15 @@ async function performApiRequest<T>(endpoint: string, method: string = 'GET',bod
         } else if (response.status === 422) {
             const response_data = data as ValidationErrorResponse;
             const errors = response_data.detail.map((error: ValidationError) => error.msg).join(', ');
-            throw { status_code: response.status, detail: errors } as ApiError;
+            throw new ApiError(response.status, errors);
         }
         else {
-            throw { status_code: response.status, detail: data.detail || 'Unknown error' } as ApiError;
+            throw new ApiError(response.status, data.detail ?? 'An error occurred');
         }
     } catch (error) {
         if (error instanceof Error) {
-            // Network or parsing errors are re-thrown as ApiError
-            throw {
-                status_code: 500,
-                detail: `Network or other error: ${error.message}`
-            } as ApiError;
+            throw new ApiError(500, error.message ?? 'An error occurred with the request');
         } else {
-            // Re-throw any custom errors
             throw error;
         }
     }
@@ -135,7 +124,6 @@ export const makeReservation = async (data: ReservationData): Promise<Reservatio
         // Step 2: Make the reservation
         const url = `timedit/api/add_reservation?grouproom_id=${room_id}&date=${formatDate(data.date)}&starttime=${formatTime(data.start_time)}&endtime=${formatTime(data.end_time)}`;
         await performApiRequest<any>(url, 'POST');
-        // If the request is successful, return success
         return { success: true };
     } catch (error) {
         if (error instanceof ApiError) {
@@ -145,12 +133,40 @@ export const makeReservation = async (data: ReservationData): Promise<Reservatio
     }
 };
 
+export const editReservation = async (data: EditReservationModalProps): Promise<ReservationResponse> => {
+    try {
+        const url = `timedit/api/edit_reservation/${data.reservationId}?date=${formatDate(data.date)}&starttime=${formatTime(data.start_time)}&endtime=${formatTime(data.end_time)}`;
+        console.log(url);
+        await performApiRequest<any>(url, 'PUT');
+        return { success: true };
+    } catch (error) {
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to edit reservation' };
+    }
+}
+
+export const deleteReservation = async (reservationId: string): Promise<ReservationResponse> => {
+    try {
+        await performApiRequest<any>(`timedit/api/delete_reservation/${reservationId}`, 'DELETE');
+        return { success: true };
+    } catch (error) {
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to delete reservation' };
+    }
+}
+
+
 export const changeDisplayName = async (newName: string): Promise<LoginResponse> => {
     try {
         const body = { display_name: newName };
         await performApiRequest<any>('account/display_name',  'PUT', body);
         return { success: true };
     } catch (error) {
+        console.log(error)
         if (error instanceof ApiError) {
             return { success: false, error: error.detail };
         }

@@ -18,7 +18,8 @@ export interface ModalHandles {
 
 const AccountModal = forwardRef<ModalHandles, AccountModalProps>(( { children, closeCallback, notLoggedIn = false , onLoginSuccess }, ref) => {
     const [showModal, setShowModal] = useState(false);
-
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    
     useImperativeHandle(ref, () => ({
         openModal: () => setShowModal(true),
         closeModal: () => handleCloseModal(),
@@ -51,14 +52,16 @@ const AccountModal = forwardRef<ModalHandles, AccountModalProps>(( { children, c
                     <TouchableOpacity style={modal.closeButton} onPress={handleCloseButton}>
                         <Icon name="close" size={30} color="#333" />
                     </TouchableOpacity>
-                    <LoginUser  
+                    {isLoggedIn ? children : 
+                    <LoginUser 
                         notLoggedIn={notLoggedIn} 
                         onLoginSuccess={(success) => {
                             if (onLoginSuccess) {
                                 onLoginSuccess(success);
                             }
-                        }} 
-                    />
+                            setIsLoggedIn(success);
+                        }}
+                    />}
                 </View>
             </TouchableOpacity>
         </Modal>

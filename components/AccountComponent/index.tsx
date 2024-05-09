@@ -11,7 +11,6 @@ import Info from './Info';
 import { AccountInfo } from '../../constants/types';
 const AccountComponent = () => {
     const [index, setIndex] = useState(0);
-    const [displayName, setDisplayName] = useState('');
     const [loggedIn, setLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
     const [accountInfo, setAccountInfo] = useState({} as AccountInfo);
@@ -20,8 +19,11 @@ const AccountComponent = () => {
     const handleLoginSuccess = async () => {
         try {
             setAccountInfo(await getAccountInfo());
-        } catch (error) {
-            console.error('Failed to fetch account info:', error);
+            setLoggedIn(true);
+        }
+        catch (error) {
+            console.error('Error fetching account info:', error);
+            setLoggedIn(false);
         }
     }
 
@@ -34,7 +36,6 @@ const AccountComponent = () => {
                     await handleLoginSuccess();
                 }
             } catch (error) {
-                console.error('Error checking login status:', error);
                 setLoggedIn(false);
             }
             finally {

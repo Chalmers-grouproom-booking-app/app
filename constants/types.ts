@@ -14,6 +14,14 @@ export type RoomInfo = {
     stair: string;
   };
   
+export type EditReservationModalProps = {
+  reservationId: string;
+  room_name: string;
+  date: Date;
+  start_time: Date;
+  end_time: Date;
+}
+
 export type RoomData = {
     building?: RoomInfo[];
     room_name?: RoomInfo[];

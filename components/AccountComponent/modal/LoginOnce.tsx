@@ -17,8 +17,8 @@ const LoginOnce = ( {onLoginSuccess}: {onLoginSuccess: (success: boolean) => voi
     const handleLoginSuccess = () => {
         if (modalRef.current) {
             setDisableClose(true);
+            modalRef.current.closeModal();
             onLoginSuccess(true);
-            // modalRef.current.closeModal();
         }
     };
 
