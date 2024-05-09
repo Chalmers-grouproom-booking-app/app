@@ -35,6 +35,7 @@ const AccountComponent = () => {
                 }
             } catch (error) {
                 console.error('Error checking login status:', error);
+                setLoggedIn(false);
             }
             finally {
                 setLoading(false);

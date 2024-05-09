@@ -263,21 +263,15 @@ export const accountInfoPageStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        marginBottom: 10,
     },
     saveButton: {
         alignSelf: 'flex-start',
         backgroundColor: '#007bff',
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingVertical: 0,
         borderRadius: 5,
     },
     buttonIcon: {
         marginLeft: 5,
     },
-    error:{
-        color: 'red',
-        fontSize: 16,
-        marginBottom: 10,
-    }
 });

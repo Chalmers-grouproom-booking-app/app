@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Image, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, Image, ActivityIndicator, TextInput } from 'react-native';
 import { Input } from '@rneui/themed';
 import { loginStyles } from '../styles';
 import GreenCheckmark from '../icons/GreenCheckmark';
@@ -21,9 +21,12 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
     const [usernameError, setUsernameError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [loading, setLoading] = useState(true);
-    const usernameInputRef = useRef(null);
-    const passwordInputRef = useRef(null);
-
+    // Use the correct ref type
+    const usernameInputRef = useRef<CustomInputRef>(null);
+    const passwordInputRef = useRef<CustomInputRef>(null);
+    interface CustomInputRef extends TextInput {
+        shake: () => void;
+    }
     useEffect(() => {
         async function checkLoginStatus() {
             try {
@@ -59,22 +62,22 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
         if (!username) {
             setUsernameError('CID is required');
             isValid = false;
-            usernameInputRef.current.shake();
+            usernameInputRef.current?.shake();
         }
         if (!password) {
             setPasswordError('Password is required');
             isValid = false;
-            passwordInputRef.current.shake();
+            passwordInputRef.current?.shake();
         }
-        if (isValid && !/^( |[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(username)) {
+        if (isValid && !/^(|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(username)) {
             setUsernameError('Invalid CID');
             isValid = false;
-            usernameInputRef.current.shake();
+            usernameInputRef.current?.shake();
         }
         if (isValid && password.length < 8) {
             setPasswordError('Password must be at least 8 characters long');
             isValid = false;
-            passwordInputRef.current.shake();
+            passwordInputRef.current?.shake();
         }
         return isValid;
     };
@@ -87,15 +90,15 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
         try {
             const response = await loginUser(username, password);
             if (!response.success) {
-                setPasswordError( response.error );
-                passwordInputRef.current.shake();
+                setPasswordError( response.error || 'Login failed');
+                passwordInputRef.current?.shake();
             }
             else {
                 await successLogin();
             }
         } catch (e) {
-            setPasswordError('Login failed: ' + e.message);
-            passwordInputRef.current.shake();
+            setPasswordError('Login failed');
+            passwordInputRef.current?.shake();
         }
     };
     const successLogin = () => {

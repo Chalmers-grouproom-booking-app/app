@@ -5,16 +5,25 @@ import { AccountInfo } from '../../constants/types';
 import { accountInfoPageStyles } from './styles';
 import { changeDisplayName } from '../../utils/user';
 import Toast from 'react-native-toast-message';
-const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
 
+const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
+    const [originalDisplayName, setOriginalDisplayName] = useState(accountInfo.display_name);
     const [displayName, setDisplayName] = useState(accountInfo.display_name);
-    const [error, setError] = useState(''); 
     const handleSave = async () => {
         const response = await changeDisplayName(displayName);
         if (response.success) {
-            setError('');
+            Toast.show({
+                type: 'success',
+                text1: 'Display Name Updated 🎉',
+                position: 'bottom',
+              });
+            setOriginalDisplayName(displayName);
         } else {
-            setError(response.error ? response.error : 'An error occurred');
+            Toast.show({
+                type: 'error',
+                text1: response.error ?? 'Failed to update display name',
+                position: 'bottom',
+              });
         }
     };
 
@@ -31,19 +40,18 @@ const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
             </View>
             <View style={accountInfoPageStyles.infoContainer}>
                 <Text style={accountInfoPageStyles.label}>Display Name:</Text>
-                <Text style={accountInfoPageStyles.value}>{accountInfo.display_name}</Text>
+                <Text style={accountInfoPageStyles.value}>{ originalDisplayName }</Text>
             </View>
             <Text style={[accountInfoPageStyles.sectionTitle, { marginTop: 20 }]}>Change Display Name</Text>
             <TextInput
-                value={accountInfo.display_name}
+                value={displayName}
                 style={accountInfoPageStyles.input}
+                onChangeText={setDisplayName}
             />
-            <Text style={accountInfoPageStyles.error}>{error}</Text>
-            <Button radius="sm" type="solid" style={accountInfoPageStyles.saveButton}>
+            <Button radius="sm" type="solid" style={accountInfoPageStyles.saveButton} onPress={handleSave}>
                 Save
                 <Icon name="save" color="white" style={accountInfoPageStyles.buttonIcon} />
             </Button>
-            <Toast />
         </View>
     );
 };

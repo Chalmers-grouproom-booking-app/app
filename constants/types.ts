@@ -76,3 +76,38 @@ export type ReservationResponse = {
   success: boolean;
   error?: string;
 };
+
+export type ValidationErrorResponse = {
+  detail: ValidationError[];
+};
+
+export type ValidationError = {
+  loc: string[];
+  msg: string;
+  type: string;
+};
+
+interface ApiError {
+  status_code: number;
+  detail: string;
+}
+
+// Define success response interface
+interface ApiResponseSuccess<T> {
+  data: T;
+}
+
+export type LoginSuccessResponse = {
+  access_token: string;
+  token_type: string;
+}
+
+export type ApiResponse<T> = ApiResponseSuccess<T>;
+
+
+
+export type getRoomIdResponse = {
+  room_id: number;
+};
+
+

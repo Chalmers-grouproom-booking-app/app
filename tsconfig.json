@@ -1,12 +1,4 @@
 {
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true,
-    "jsx": "react-native",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-    // Add more compiler options as needed
-  }
+  "compilerOptions": {},
+  "extends": "expo/tsconfig.base"
 }
