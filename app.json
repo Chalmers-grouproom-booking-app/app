@@ -47,6 +47,12 @@
         }
       ],
       [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ],
+      [
         "expo-font",
         {
           "fonts": [
@@ -61,7 +67,8 @@
         }
       ],
       "expo-font",
-      "expo-router"
+      "expo-router",
+      "expo-secure-store"
     ],
     "extra": {
       "router": {

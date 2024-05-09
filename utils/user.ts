@@ -1,126 +1,200 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { User  } from '../constants/types';
+import * as SecureStore from 'expo-secure-store';
+import type { AccountInfo, ApiResponse, FullUser, LoginResponse, ValidationError, ReservationData, ReservationResponse, ReservationsResponse, User, ValidationErrorResponse, LoginSuccessResponse, getRoomIdResponse, EditReservationModalProps  } from '../constants/types';
+import { formatDate, formatTime } from './utils';
 
-export type LoginResponse = {
-    success: boolean;
-    error?: string;
-};
-const loginUser = async (username: string, password: string): Promise<LoginResponse> => {
-    try {
-        const response = await fetch('https://strawhats.info/timedit/api/login', {
-            method: 'POST',
-            credentials: "omit",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `grant_type=&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=&client_id=&client_secret=`
-        });
-        const data = await response.json();
+// Global constants
+const BASE_URL = 'https://strawhats.info/';
 
-        if (response.status !== 200) {
-            await AsyncStorage.removeItem('user');
-            return { success: false, error: data.detail ? data.detail : 'Unknown error' };
-        }
-
-        if (response.status === 200 && data.login === "success") {
-            const user: User = {
-                username: username,
-                password: password,
-                cookie: data.cookies
-            };
-            await AsyncStorage.setItem('user', JSON.stringify(user));
-            return { success: true };
-        }
-
-        return { success: false, error: data.detail ? data.detail : 'Unknown error' };
-    } catch (error) {
-        console.error('Error logging in:', error);
-        return { success: false, error: `Failed to login: ${error.message}` };
+class ApiError extends Error {
+    constructor(public status_code: number, public detail: string) {
+        super(detail); // Call the parent Error constructor
+        this.name = 'ApiError'; // Set the error name as ApiError
     }
-};
+}
 
+async function saveCredentials(user: FullUser) {
+    try {
+        await AsyncStorage.setItem('user', JSON.stringify({ username: user.username, token: user.token }));
+        await SecureStore.setItemAsync('password', user.password);
+    } catch (error) {
+        console.error('Error saving credentials:', error);
+    }
+}
 
-// Retrieve user data from AsyncStorage
-const getUser = async () => {
+async function getCredentials(): Promise<FullUser | null> {
     try {
         const userData = await AsyncStorage.getItem('user');
-        return userData ? JSON.parse(userData) : null;
+        const password = await SecureStore.getItemAsync('password');
+        if (userData && password) {
+            const { username, token } = JSON.parse(userData);
+            return { username, password, token };
+        }
+        return null;
+    } catch (error) {
+        console.error('Error retrieving credentials:', error);
+        return null;
+    }
+}
+
+const getUser = async (): Promise<User | null> => {
+    try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+            const { username, token } = JSON.parse(userData);
+            return { username, token };
+        }
+        return null;
     } catch (error) {
         console.error("Error retrieving user data:", error);
         return null;
     }
 };
 
-export type ReservationData = {
-    room_name: string;
-    date: Date;
-    start_time: Date;
-    end_time: Date;
+async function performApiRequest<T>(endpoint: string, method: string = 'GET',body: any = null, headers = {}, includeAuth: boolean = true,  content_type: string = 'application/json'): Promise<ApiResponse<T>> {
+    let authHeaders: Record<string, string> = {};
+    if (includeAuth) {
+        const user = await getUser();  // Ensure getUser is defined and returns the expected user object
+        if (!user || !user.token) {
+            throw new ApiError(401, 'Authentication error: User not logged in or token missing.');
+        }
+        authHeaders = { 'Authorization': `Bearer ${user.token}` };
+    }
+    const defaultHeaders = {
+        'Accept': 'application/json',
+        'Content-Type': content_type,
+        ...headers,
+        ...authHeaders
+    };
+    const config: RequestInit = {
+        method,
+        headers: defaultHeaders,
+        body: body ? JSON.stringify(body) : null
+    };
+    try {
+        const response = await fetch(`${BASE_URL}${endpoint}`, config);
+        const data = await response.json();
+
+        if (response.ok) {
+            return { data: data as T }; // Successful response with data
+        } else if (response.status === 422) {
+            const response_data = data as ValidationErrorResponse;
+            const errors = response_data.detail.map((error: ValidationError) => error.msg).join(', ');
+            throw new ApiError(response.status, errors);
+        }
+        else {
+            throw new ApiError(response.status, data.detail ?? 'An error occurred');
+        }
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new ApiError(500, error.message ?? 'An error occurred with the request');
+        } else {
+            throw error;
+        }
+    }
+}
+
+const loginUser = async (username: string, password: string): Promise<LoginResponse> => {
+    try {
+        const body = `grant_type=&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&scope=&client_id=&client_secret=`
+        const data = await performApiRequest<LoginSuccessResponse>('account/token', 'POST', body, {}, false, 'application/x-www-form-urlencoded');
+        const user: FullUser = {
+            username: username,
+            password: password,
+            token: data.data.access_token
+        };
+        await saveCredentials(user);
+        return { success: true };
+    }
+    catch (error) {
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to login' };
+    }
 };
-export type ReservationResponse = {
-    success: boolean;
-    error?: string;
-};
+
 
 export const makeReservation = async (data: ReservationData): Promise<ReservationResponse> => {
     try {
-        const user = await getUser();
-        if (!user) {
-            throw new Error('User not logged in');
-        }
-        const resp = await fetch( encodeURI(`https://strawhats.info/api/v1/room/id?input=${data.room_name}` ), {method: 'GET',headers: {'accept': 'application/json'}});
-        const resp_json = await resp.json();
-        if (!resp_json.room_id || resp.status !== 200) {
-            throw new Error('Failed to get room id');
-        }
-        const room_id = resp_json.room_id;
-        const cookies = user.cookie;
-        const url = `https://strawhats.info/timedit/api/add_reservation?grouproom_id=${room_id}&date=${formatDate(data.date)}&starttime=${formatTime(data.start_time)}&endtime=${formatTime(data.end_time)}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                "x-cookies": cookies,
-            }
-        });
-        const json = await response.json();
-        console.log(json);
-        if (response.status !== 200) {
-            throw new Error(json.detail ? json.detail : 'Unknown error');
-        }
-        return {success: true};
+        // Step 1: Get the room ID using the room name
+        const roomResponse = await performApiRequest<getRoomIdResponse>(`api/v1/room/id?input=${encodeURIComponent(data.room_name)}`, 'GET');
+        const room_id = roomResponse.data.room_id;
+
+        // Step 2: Make the reservation
+        const url = `timedit/api/add_reservation?grouproom_id=${room_id}&date=${formatDate(data.date)}&starttime=${formatTime(data.start_time)}&endtime=${formatTime(data.end_time)}`;
+        await performApiRequest<any>(url, 'POST');
+        return { success: true };
     } catch (error) {
-        return {success: false, error: error.message};
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to make reservation' };
     }
 };
-const formatTime = (date: Date) => {
-    let hours = date.getHours().toString().padStart(2, "0");
-    let minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-}
 
-const formatDate = (date: Date) => {
-    let year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, "0");
-    let day = date.getDate().toString().padStart(2, "0");
-    return `${year}${month}${day}`;
-}
-
-// Check if user is logged in
-const checkIfLoggedIn = async () => {
+export const editReservation = async (data: EditReservationModalProps): Promise<ReservationResponse> => {
     try {
-        const userData = await AsyncStorage.getItem('user');
-        return userData ? true : false;
+        const url = `timedit/api/edit_reservation/${data.reservationId}?date=${formatDate(data.date)}&starttime=${formatTime(data.start_time)}&endtime=${formatTime(data.end_time)}`;
+        console.log(url);
+        await performApiRequest<any>(url, 'PUT');
+        return { success: true };
     } catch (error) {
-        console.error("Error checking login status:", error);
-        return false;
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to edit reservation' };
     }
+}
+
+export const deleteReservation = async (reservationId: string): Promise<ReservationResponse> => {
+    try {
+        await performApiRequest<any>(`timedit/api/delete_reservation/${reservationId}`, 'DELETE');
+        return { success: true };
+    } catch (error) {
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to delete reservation' };
+    }
+}
+
+
+export const changeDisplayName = async (newName: string): Promise<LoginResponse> => {
+    try {
+        const body = { display_name: newName };
+        await performApiRequest<any>('account/display_name',  'PUT', body);
+        return { success: true };
+    } catch (error) {
+        console.log(error)
+        if (error instanceof ApiError) {
+            return { success: false, error: error.detail };
+        }
+        return { success: false, error: 'Failed to update display name' };
+    }
+};    
+
+export const getReservations = async (): Promise<ReservationsResponse> => {
+    const reservationsData = await performApiRequest<ReservationsResponse>('timedit/api/all_reservations');
+    return reservationsData.data;
 };
 
-// Logout user by removing data from AsyncStorage
-const logoutUser = async () => {
+export const getAccountInfo = async (): Promise<AccountInfo> => {
+    const data = await performApiRequest<AccountInfo>('account/me');
+    return data.data;
+}
+
+
+const checkIfLoggedIn = async (): Promise<boolean> => {
+    await performApiRequest<AccountInfo>('account/me');
+    return true; // If performApiRequest doesn't throw an error, the user is logged in
+};
+
+
+const logoutUser = async (): Promise<boolean> => {
     try {
         await AsyncStorage.removeItem('user');
+        await SecureStore.deleteItemAsync('password');
         return true;
     } catch (error) {
         console.error("Error removing user data:", error);
@@ -128,4 +202,4 @@ const logoutUser = async () => {
     }
 };
 
-export { loginUser, getUser, checkIfLoggedIn, logoutUser };
+export { loginUser, getUser, checkIfLoggedIn, logoutUser, saveCredentials, getCredentials, LoginResponse };
