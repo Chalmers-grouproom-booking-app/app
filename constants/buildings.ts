@@ -887,13 +887,6 @@ export const The_Copper_Dome = [
 export async function getColor(name): Promise<string> {
   const bookedPercentage: number = await fetchBookedPercentage(name)
 
-  if(name == "Kemi") {
-    console.log("kemi")
-    const percentage = 1
-
-    return `rgba(${20 * percentage}, ${20 * (1 - percentage)}, 0, 0.6)`;
-  }
-
   if(bookedPercentage == undefined)
   {
       return "rgba(160, 160, 160, 0.6)"
