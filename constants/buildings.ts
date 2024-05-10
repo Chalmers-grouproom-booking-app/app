@@ -886,6 +886,7 @@ export const The_Copper_Dome = [
 
 export async function getColor(name): Promise<string> {
   const bookedPercentage: number = await fetchBookedPercentage(name)
+  console.log(bookedPercentage)
 
   if(bookedPercentage == undefined)
   {
@@ -917,7 +918,6 @@ const fetchBookedPercentage = async (buildingName) => {
     }
 
     const json = await response.json();
-    const cool: number = json[0].booked_percentage || 0
     return json[0].booked_percentage || 0;
 
     //setReservationResult(json as TimeSlot[]);
