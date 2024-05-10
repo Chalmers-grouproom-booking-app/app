@@ -885,25 +885,27 @@ export const The_Copper_Dome = [
   ];
 
 export async function getColor(name): Promise<string> {
-  const bookedPercentage: number = await fetchBookedPercentage(name) || 0
+  const bookedPercentage: number = await fetchBookedPercentage(name)
 
-  if(bookedPercentage == -1) {
-    return "rgba(128, 128, 128, 0.5)"
-  }
-  else if(bookedPercentage == 0.0) {
-    return "rgba(200, 0, 0, 1)"
-  }
-  else if(bookedPercentage < 0.4) {
-    return "rgba(0,200,0,1)"
-  }
-  else if(bookedPercentage < 0.90) {
-    return "rgba(150,150,0,1)"
-  }
-  else {
-    return "rgba(180,0,0,1)"
+  if(name == "Kemi") {
+    console.log("kemi")
+    const percentage = 1
+
+    return `rgba(${20 * percentage}, ${20 * (1 - percentage)}, 0, 0.6)`;
   }
 
-  //return "rgba(" + String(255 * bookedPercentage) + ", " + String(255 * bookedPercentage) + ", 0, 1)"
+  if(bookedPercentage == undefined)
+  {
+      return "rgba(160, 160, 160, 0.6)"
+  } else
+  {
+    if(bookedPercentage == 1) // darker/black color when fully booked
+      {
+        return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
+      }
+
+    return `rgba(${220 * bookedPercentage}, ${220 * (1 - bookedPercentage)}, 0, 0.6)`;
+  }
 }
 
 const fetchBookedPercentage = async (buildingName) => {
