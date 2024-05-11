@@ -223,14 +223,20 @@ export const loginStyles = StyleSheet.create({
 
 export const accountPageStyles = StyleSheet.create({
     tabContainer: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#34495E', // Dark blue-gray to match the header
         padding: 0,
         margin: 0,
+        borderBottomWidth: 2, // subtle underline to improve separation
+        borderBottomColor: '#2C3E50', // slightly darker than the container for depth
+        
     },
     tabButton: {
-        backgroundColor: '#007bff',
-        paddingVertical: 14,
+        paddingVertical: 10, // Adjusted for better touch area without being too bulky
         margin: 0,
+    },
+    tabTitleStyle: {
+        fontSize: 14,
+        color: '#ECF0F1' // light gray to match header text
     }
 });
 
@@ -266,11 +272,10 @@ export const accountInfoPageStyles = StyleSheet.create({
         marginBottom: 10,
     },
     saveButton: {
-        alignSelf: 'flex-start',
         backgroundColor: '#007bff',
-        paddingHorizontal: 15,
         paddingVertical: 0,
         borderRadius: 5,
+        width: 20,
     },
     buttonIcon: {
         marginLeft: 5,

@@ -18,10 +18,10 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     coomingSoon: {
-        fontSize: 24,
-        marginBottom: 10,
-        color: '#666',
-        fontWeight: 'bold',
+        fontSize: 20,
+        color: 'gray',
+        textAlign: 'center',
+        marginTop: 20
     },
 });
 

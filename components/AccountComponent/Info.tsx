@@ -6,8 +6,7 @@ import { accountInfoPageStyles } from './styles';
 import { changeDisplayName } from '../../utils/user';
 import Toast from 'react-native-toast-message';
 
-const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
-    const [originalDisplayName, setOriginalDisplayName] = useState(accountInfo.display_name);
+const Info = ({ accountInfo, setNewDisplayName }: { accountInfo: AccountInfo, setNewDisplayName: (displayName: string) => void}) => {
     const [displayName, setDisplayName] = useState(accountInfo.display_name);
     const handleSave = async () => {
         const response = await changeDisplayName(displayName);
@@ -17,7 +16,7 @@ const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
                 text1: 'Display Name Updated 🎉',
                 position: 'bottom',
               });
-            setOriginalDisplayName(displayName);
+            setNewDisplayName(displayName);
         } else {
             Toast.show({
                 type: 'error',
@@ -29,20 +28,7 @@ const Info = ({ accountInfo }: { accountInfo: AccountInfo }) => {
 
     return (
         <View style={accountInfoPageStyles.container}>
-            <Text style={accountInfoPageStyles.sectionTitle}>General Account Settings</Text>
-            <View style={accountInfoPageStyles.infoContainer}>
-                <Text style={accountInfoPageStyles.label}>ID:</Text>
-                <Text style={accountInfoPageStyles.value}>{accountInfo.id}</Text>
-            </View>
-            <View style={accountInfoPageStyles.infoContainer}>
-                <Text style={accountInfoPageStyles.label}>CID:</Text>
-                <Text style={accountInfoPageStyles.value}>{accountInfo.email}</Text>
-            </View>
-            <View style={accountInfoPageStyles.infoContainer}>
-                <Text style={accountInfoPageStyles.label}>Display Name:</Text>
-                <Text style={accountInfoPageStyles.value}>{ originalDisplayName }</Text>
-            </View>
-            <Text style={[accountInfoPageStyles.sectionTitle, { marginTop: 20 }]}>Change Display Name</Text>
+            <Text style={[accountInfoPageStyles.sectionTitle]}>Change Display Name</Text>
             <TextInput
                 value={displayName}
                 style={accountInfoPageStyles.input}
