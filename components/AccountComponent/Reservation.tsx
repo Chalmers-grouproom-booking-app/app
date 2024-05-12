@@ -6,7 +6,8 @@ import ReservationList from './ReservationList';  // Assume this component is cr
 import { useNavigation } from 'expo-router';
 import EditReservation from '../ReservationComponent/EditReservation';
 import Toast from 'react-native-toast-message';
-const Reservations = () => {
+
+const ReservationComponent = () => {
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [editReservation, setEditReservation] = useState<EditReservationModalProps | null>(null);
     const [isEditing , setIsEditing] = useState(false);
@@ -75,4 +76,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Reservations;
+export default ReservationComponent;

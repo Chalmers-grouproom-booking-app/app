@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 
-const Reviews = () => {
+const ReviewComponent = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.coomingSoon}>Coming Soon!</Text>
@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     coomingSoon: {
-        fontSize: 24,
-        marginBottom: 10,
-        color: '#666',
-        fontWeight: 'bold',
+        fontSize: 20,
+        color: 'gray',
+        textAlign: 'center',
+        marginTop: 20
     },
 });
 
 
-export default Reviews;
+export default ReviewComponent;

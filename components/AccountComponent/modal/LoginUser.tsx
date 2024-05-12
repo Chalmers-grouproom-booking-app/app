@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, Image, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, Pressable, Image, ActivityIndicator, TextInput ,Animated} from 'react-native';
 import { Input } from '@rneui/themed';
 import { loginStyles } from '../styles';
 import GreenCheckmark from '../icons/GreenCheckmark';
 import { checkIfLoggedIn, getCredentials, loginUser } from '../../../utils/user';
-import { Skeleton } from '@rneui/themed';
-import { LinearGradient } from 'react-native-svg';
+
 interface LoginUserProps {
-    // optional callback function to be called on successful login
     onLoginSuccess?: (success: boolean) => void;
     notLoggedIn?: boolean;
     initUserName?: string;
@@ -15,6 +13,8 @@ interface LoginUserProps {
   }
   
 const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', initPassword = '' }: LoginUserProps ) => {
+    const scaleAnim = useRef(new Animated.Value(1)).current; 
+
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [username, setUsername] = useState( initUserName );
     const [password, setPassword] = useState( initPassword );
@@ -27,6 +27,23 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
     interface CustomInputRef extends TextInput {
         shake: () => void;
     }
+        
+    const pressIn = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 0.95,
+            friction: 5,
+            useNativeDriver: true
+        }).start();
+    };
+
+    const pressOut = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            friction: 5,
+            useNativeDriver: true
+        }).start(() => handleLogin());
+    };
+
     useEffect(() => {
         async function checkLoginStatus() {
             try {
@@ -110,6 +127,9 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
             }
         }, 2000);
     }
+
+    const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
     return (
         <View style={loginStyles.container}>
             <View style={loginStyles.titleContainer}>
@@ -148,9 +168,18 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
                     leftIcon={ { type: 'font-awesome', name: 'lock', size: 24, color: 'gray' } }
                     leftIconContainerStyle={loginStyles.iconContainer}
                 />
-                <Pressable onPress={handleLogin} style={loginStyles.submitButton} accessibilityLabel='Login' disabled={loading}>
+                <AnimatedPressable
+                        onPressIn={pressIn}
+                        onPressOut={pressOut}
+                        style={[
+                            loginStyles.submitButton, 
+                            { transform: [{ scale: scaleAnim }] } // Correct use of animated value
+                        ]}
+                        accessibilityLabel='Login'
+                        disabled={loading}
+                >
                     <Text style={loginStyles.submitButtonText}>Login</Text>
-                </Pressable>
+                </AnimatedPressable>
             </>
             }
         </View>
