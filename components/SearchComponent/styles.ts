@@ -54,11 +54,33 @@ export const styles = StyleSheet.create({
       color: 'black',
       fontSize: 16,
     },
+    badgeStyle: {
+      paddingHorizontal: 5,
+      height: 20,
+    },
+    timeLeftText: {
+      color: '#333',
+      fontSize: 12,
+      opacity: 0.8,
+    },
     resultTextExpanded: {
       fontWeight: 'bold',
       color: 'black',
       fontSize: 16,
       borderBottomWidth: 0
+    },
+    resultStatus: {
+      color: 'black',
+      fontSize: 16,
+      marginBottom: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ccc',
+      paddingVertical: 10,
+    },
+    resultStatusExpanded: {
+      color: 'black',
+      fontSize: 16,
+      paddingVertical: 10,
     },
     resultTextFirstComeFirstServed: {
       color: 'black',
@@ -137,6 +159,11 @@ export const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: '#ccc',
       justifyContent: 'space-between',
+    },
+    itemHeaderLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 7,
     },
     iteamHeaderExpanded: {
       width: '100%',

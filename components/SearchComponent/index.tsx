@@ -6,14 +6,14 @@ import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import useDebounce from './useDebounce';
 import useRoomSearch from './useRoomSearch';
-import type { RoomInfo, TimeSlot } from '../../constants/types';
+import type { RoomInfo, RoomInfoV2, TimeSlot } from '../../constants/types';
 import { useLocalSearchParams, router } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MarkerButton from './MarkerButton';
 import ReservationComponent from '../ReservationComponent';
-
+import { Badge } from '@rneui/themed';
 const ITEMS_PER_PAGE = 15;
 
 const Search = () => {
@@ -159,7 +159,7 @@ const Search = () => {
     </>
   );
 };
-const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfo  , openModal: (room: RoomInfo) => void, forceCollapse: boolean}) => {
+const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , openModal: (room: RoomInfoV2) => void, forceCollapse: boolean}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
@@ -264,7 +264,14 @@ const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfo  , openMo
   return (
     <TouchableOpacity onPress={toggleExpand} style={styles.itemContainer} activeOpacity={1}>
       <View style={isExpanded ? styles.iteamHeaderExpanded : styles.itemHeader}>
-        <Text style={isExpanded ? styles.resultTextExpanded : styles.resultText}>{item.room_name}</Text>
+        <View style={styles.itemHeaderLeft}>
+          <Text style={isExpanded ? styles.resultTextExpanded : styles.resultText}>{item.room_name}</Text>
+          <Badge 
+            status={item.status === 'available' ? 'success' : item.status === 'occupied' ? 'error' : 'warning'} 
+            value={item.status === 'available' ? 'Available' : item.status === 'occupied' ? 'Occupied' : 'Occupied Soon'}
+            badgeStyle={styles.badgeStyle}
+           />
+        </View>
         {
           item.first_come_first_served && (
             <Text style={styles.fcfText}>First come first served</Text>
