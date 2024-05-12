@@ -95,6 +95,13 @@ export default function MapViewComponent() {
         }
     };
 
+
+        // takes a function and runs it when the speed dial is closed
+    const closeSpeedDial = ( func: () => void ) => {
+        setOpenSpeedDial( false );
+        func();
+    };
+
     return (
         <View style={globalStyles.container}>
             <MapView
@@ -161,19 +168,19 @@ export default function MapViewComponent() {
                 <SpeedDial.Action
                     icon={{ name: 'account-circle', color: '#fff' }}
                     title="My Account"
-                    onPress={() => router.push('account')}
+                    onPress={() => closeSpeedDial(() => router.push('account'))}
                     color="#7986CB" 
                 />
                 <SpeedDial.Action
                     icon={{ name: 'arrow-back', color: '#fff' }}
                     title="Navigate to Lindholmen"
-                    onPress={navigateToLindholmen}
+                    onPress={() => closeSpeedDial(navigateToLindholmen)}
                     color="#7986CB" 
                 />
                 <SpeedDial.Action
                     icon={{ name: 'arrow-forward', color: '#fff' }}
                     title="Navigate to Johanneberg"
-                    onPress={navigateToJohanneberg}
+                    onPress={() => closeSpeedDial(navigateToJohanneberg)}
                     color="#7986CB" 
                 />
             </SpeedDial>

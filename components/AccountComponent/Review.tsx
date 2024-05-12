@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 
-const Reviews = () => {
+const ReviewComponent = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.coomingSoon}>Coming Soon!</Text>
@@ -26,4 +26,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Reviews;
+export default ReviewComponent;

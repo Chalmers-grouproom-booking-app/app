@@ -228,7 +228,6 @@ export const accountPageStyles = StyleSheet.create({
         margin: 0,
         borderBottomWidth: 2, // subtle underline to improve separation
         borderBottomColor: '#2C3E50', // slightly darker than the container for depth
-        
     },
     tabButton: {
         paddingVertical: 10, // Adjusted for better touch area without being too bulky
@@ -244,13 +243,15 @@ export const accountPageStyles = StyleSheet.create({
 
 export const accountInfoPageStyles = StyleSheet.create({
     container: {
+        display: 'flex',
+        flexDirection: 'column',
         flex: 1,
         padding: 20,
     },
     sectionTitle: {
         fontSize: 18,
-        fontWeight: '900',
         marginBottom: 10,
+        color: '#2C3E50', // Dark blue-gray to match the header
     },
     infoContainer: {
         flexDirection: 'row',
@@ -272,12 +273,14 @@ export const accountInfoPageStyles = StyleSheet.create({
         marginBottom: 10,
     },
     saveButton: {
-        backgroundColor: '#007bff',
-        paddingVertical: 0,
+        // stronger green to indicate success
+        backgroundColor: '#2faa4b',
+        padding: 10,
+        width: 120,
+        alignSelf: 'flex-end',
         borderRadius: 5,
-        width: 20,
     },
     buttonIcon: {
-        marginLeft: 5,
+        marginRight: 5,
     },
 });

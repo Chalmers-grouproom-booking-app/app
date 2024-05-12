@@ -33,10 +33,11 @@ const Info = ({ accountInfo, setNewDisplayName }: { accountInfo: AccountInfo, se
                 value={displayName}
                 style={accountInfoPageStyles.input}
                 onChangeText={setDisplayName}
+                placeholder="Display Name"
             />
-            <Button radius="sm" type="solid" style={accountInfoPageStyles.saveButton} onPress={handleSave}>
-                Save
+            <Button radius="sm" type="solid" buttonStyle={accountInfoPageStyles.saveButton} onPress={handleSave}>
                 <Icon name="save" color="white" style={accountInfoPageStyles.buttonIcon} />
+                Save
             </Button>
         </View>
     );
