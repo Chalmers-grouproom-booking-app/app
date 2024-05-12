@@ -113,7 +113,7 @@ export default function MapViewComponent() {
                 followsUserLocation={false}
                 showsCompass={false}
                 onPress={handleMapPress}
-                //provider={PROVIDER_GOOGLE}
+                provider={PROVIDER_GOOGLE}
             >
                 {buildings.map((building, index) => (
                     <Polygon
