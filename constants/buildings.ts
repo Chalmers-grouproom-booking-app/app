@@ -915,7 +915,8 @@ export const JohannebergData: BuildingGroup[] = [
   {
     name: "ED-blocket",
     subBuildings: [
-      { name: "Idéläran (NC)"}
+      { name: "Idéläran (NC)"},
+      { name: "EDIT"}
     ]
   },
   {

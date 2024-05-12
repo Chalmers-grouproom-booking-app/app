@@ -5,7 +5,6 @@ function useFilter() {
     const [filterData, setFilterData] = useState<FilterData>({
         room_size: null,
         building: null,
-        campus: '',
         equipment: [],
         first_come_first_served: null
       });

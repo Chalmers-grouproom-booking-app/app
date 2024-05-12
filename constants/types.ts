@@ -32,7 +32,6 @@ export type TimeSlot = {
 export type FilterData = {
   room_size: interval | null;
   building: BuildingGroup | null;
-  campus: string;
   equipment: string[];
   first_come_first_served: number | null;
 };
@@ -50,5 +49,6 @@ export type User = {
 
 export type BuildingGroup = {
   name: string;
+  label?: string;
   subBuildings?: BuildingGroup[];
 };

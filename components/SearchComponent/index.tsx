@@ -58,6 +58,10 @@ const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
     setCurrentPage(Math.max(1, Math.min(pageNumber, totalPageCount)));
   };
 
+ useEffect(() => {
+  console.log(filterData);
+ }, [filterData]); 
+
   useEffect(() => {
     if (building) {
       setSearchText(building);

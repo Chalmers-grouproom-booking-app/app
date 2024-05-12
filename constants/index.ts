@@ -25,7 +25,7 @@ export const Lindholmen = {
     longitudeDelta: 0.005,
 }
 
-export const RoomSizes = {
+export const RoomSizes: { Small: interval, Medium: interval, Large: interval} = {
     Small: {
         lower: 1,
         upper: 5
