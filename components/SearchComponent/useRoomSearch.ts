@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-import { RoomInfo } from '../../constants/types'; // Importing types from your constants
+import { RoomInfo, RoomInfoV2 } from '../../constants/types'; // Importing types from your constants
 
 function useRoomSearch() {
-    const [searchResult, setSearchResult] = useState<RoomInfo[] | null>(null);
+    const [searchResult, setSearchResult] = useState<RoomInfoV2[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
 
@@ -10,7 +10,7 @@ function useRoomSearch() {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://strawhats.info/api/v1/search?input=${encodeURIComponent(searchQuery)}`, {
+            const response = await fetch(`https://strawhats.info/api/v2/search?input=${encodeURIComponent(searchQuery)}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',

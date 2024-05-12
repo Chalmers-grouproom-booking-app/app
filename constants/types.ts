@@ -14,6 +14,15 @@ export type RoomInfo = {
     stair: string;
   };
   
+export enum RoomStatus {
+    available = "available",
+    occupied = "occupied",
+    soon_occupied = "soon_occupied",
+  }
+export type RoomInfoV2 = RoomInfo & {
+  status:  RoomStatus;
+  time_left: number;
+};
 export type EditReservationModalProps = {
   reservationId: string;
   room_name: string;
