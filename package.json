@@ -40,7 +40,9 @@
     "react-native-ui-lib": "^7.20.0",
     "react-native-web": "~0.19.6",
     "set-cookie-parser": "^2.6.0",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "expo-dev-client": "~4.0.13",
+    "expo-updates": "~0.25.11"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
