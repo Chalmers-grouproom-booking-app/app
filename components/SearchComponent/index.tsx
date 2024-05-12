@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -109,9 +109,16 @@ const Search = () => {
               ))}
             </ScrollView>
             <View style={styles.paginationContainer}>
-              <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+              <Pressable onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={18} color={currentPage === 1 ? 'gray' : 'black'}  style={{ marginRight: 5 }} />
+                <Text style={{ color: currentPage === 1 ? 'gray' : 'black' }}>Prev</Text>
+              </Pressable>
               <Text>{currentPage}</Text>
-              <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
+
+              <Pressable onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} style={styles.backButton}>
+                <Text style={{ color: currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black' }}>Next</Text>
+                <Ionicons name="arrow-forward-outline" size={18} color={currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black'} style={{ marginLeft: 5 }} />
+              </Pressable>
             </View>
           </>
         ) : null}
