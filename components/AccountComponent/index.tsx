@@ -71,7 +71,7 @@ const AccountComponent = () => {
                 <View style={styles.userInfo}>
                     <Text style={styles.infoText}><Text style={styles.infoLabel}>ID:</Text> { accountInfo.id }</Text>
                     <Text style={styles.infoText}><Text style={styles.infoLabel}>CID:</Text> { accountInfo.email }</Text>
-                    <Text style={styles.infoText}><Text style={styles.infoLabel}>Display name:</Text> {accountInfo.display_name}</Text>
+                    <Text style={styles.infoText}><Text style={styles.infoLabel}>Display name:</Text> {displayName}</Text>
                 </View>
                 <View style={styles.certifiedContainer}>
                     <MateIcon name="account-check-outline" size={18} color="#9dffdd"  style={{ marginRight: 1 }} />
