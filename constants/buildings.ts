@@ -898,7 +898,7 @@ export async function getColor(name): Promise<string> {
         return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
       }
 
-    return `rgba(${220 * bookedPercentage}, ${220 * (1 - bookedPercentage)}, 0, 0.6)`;
+    return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
   }
 }
 
