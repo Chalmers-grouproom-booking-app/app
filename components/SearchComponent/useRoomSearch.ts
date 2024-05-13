@@ -52,7 +52,8 @@ function useRoomSearch() {
     }
 
     const formatEquipment = (equipment: string[]): string => {
-        return equipment.join(',');
+        equipment.sort();
+        return equipment.join(", ");
     }
 
     const formatFirstComeFirstServed = (firstComeFirstServed: number): string => {
@@ -64,11 +65,7 @@ function useRoomSearch() {
         setError('');
         try {
             const queryString: string = createQueryString(searchQuery, filterQuery);
-            console.log(queryString)
-            if (filterQuery.room_size !== null){
-                console.log(formatRoomSize(filterQuery.room_size))
-            }
-            const response = await fetch(`https://strawhats.info/api/v1/search?${queryString}`, {
+            const response = await fetch(`https://strawhats.info/api/v3/search?${queryString}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

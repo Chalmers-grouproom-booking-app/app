@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Button, Pressable } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { Slider } from '@miblanchard/react-native-slider';
 import { styles } from './styles';
@@ -20,6 +20,15 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
     }));
   };
 
+  const handleResetFilters = () => {
+    handleFilterData({
+        building: null,
+        room_size: null,
+        equipment: [],
+        first_come_first_served: null
+    });
+  };
+
   const sortedJohanebergData = [...JohannebergData].sort((a, b) => a.name.localeCompare(b.name));
   const sortedLindholmenData = [...LindholmenData].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -37,7 +46,7 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
               onValueChange={(newValue) => {
                 handleFilterChange('building', newValue ? buildingGroup : null);
               }}
-              color={isSelected ? '#81b0ff' : undefined}
+              color={isSelected ? '#007bff' : undefined}
             />
             <TouchableOpacity
               onPress={() => {
@@ -45,7 +54,7 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
               }}
               style={styles.checkBoxOption}
             >
-              <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+              <Text style={{ marginLeft: 10, color: isSelected ? '#007bff' : '#000000' }}>
                 {buildingGroup.name}
               </Text>
             </TouchableOpacity>
@@ -65,7 +74,7 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
                 onValueChange={(newValue) => {
                   handleFilterChange('building', newValue ? buildingGroup : null);
                 }}
-                color={isSelected ? '#81b0ff' : undefined}
+                color={isSelected ? '#007bff' : undefined}
               />
               <TouchableOpacity
                 onPress={() => {
@@ -73,7 +82,7 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
                 }}
                 style={styles.checkBoxOption}
               >
-                <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                <Text style={{ marginLeft: 10, color: isSelected ? '#007bff' : '#000000' }}>
                   {buildingGroup.name}
                 </Text>
               </TouchableOpacity>
@@ -93,13 +102,13 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
                         <Checkbox
                             value={isSelected}
                             onValueChange={(newValue) => handleFilterChange('room_size', newValue ? { lower, upper } : null)}
-                            color={isSelected ? '#81b0ff' : undefined}
+                            color={isSelected ? '#007bff' : undefined}
                         />
                         <TouchableOpacity
                             onPress={() => handleFilterChange('room_size', isSelected ? null : { lower, upper })}
                             style={styles.checkBoxOption}
                         >
-                            <Text style={{ marginLeft: 10, color: isSelected ? '#81b0ff' : '#000000' }}>
+                            <Text style={{ marginLeft: 10, color: isSelected ? '#007bff' : '#000000' }}>
                                 {sizeLabel}
                             </Text>
                         </TouchableOpacity>
@@ -115,13 +124,13 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
               <Checkbox
                 value={filterData.equipment.includes(item)}
                 onValueChange={newValue => handleEquipmentChange(item)}
-                color={filterData.equipment.includes(item) ? '#81b0ff' : undefined}
+                color={filterData.equipment.includes(item) ? '#007bff' : undefined}
               />
               <TouchableOpacity
                 onPress={() => handleEquipmentChange(item)}
                 style={styles.checkBoxOption}
               >
-                <Text style={{ marginLeft: 10, color: filterData.equipment.includes(item) ? '#81b0ff' : '#000000' }}>
+                <Text style={{ marginLeft: 10, color: filterData.equipment.includes(item) ? '#007bff' : '#000000' }}>
                   {item}
                 </Text>
               </TouchableOpacity>
@@ -139,19 +148,38 @@ const FilterPanel = ({ handleFilterData, filterData }) => {
               <Checkbox
                 value={filterData.first_come_first_served === option.value}
                 onValueChange={newValue => handleFilterChange('first_come_first_served', newValue === true ? option.value : null)}
-                color={filterData.first_come_first_served === option.value ? '#81b0ff' : undefined}
+                color={filterData.first_come_first_served === option.value ? '#007bff' : undefined}
               />
               <TouchableOpacity
                 onPress={() => handleFilterChange('first_come_first_served', filterData.first_come_first_served === option.value ? null : option.value)}
                 style={styles.checkBoxOption}
               >
-                <Text style={{ marginLeft: 10, color: filterData.first_come_first_served === option.value ? '#81b0ff' : '#000000' }}>
+                <Text style={{ marginLeft: 10, color: filterData.first_come_first_served === option.value ? '#007bff' : '#000000' }}>
                   {option.label}
                 </Text>
               </TouchableOpacity>
             </View>
           ))}
         </View>
+
+        <View style={styles.resetButtonContainer}>
+          <Pressable
+            onPress={handleResetFilters}
+            style={({ pressed }) => [
+              styles.button,
+              {
+                backgroundColor: pressed ? '#0056b3' : '#007bff'
+              }
+            ]}
+          >
+            {({ pressed }) => (
+              <Text style={styles.buttonText}>
+                {pressed ? 'Reset Filters' : 'Reset Filters'}
+              </Text>
+            )}
+          </Pressable>
+      </View>
+
       </ScrollView>
     </View>
   );

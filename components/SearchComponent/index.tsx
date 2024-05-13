@@ -43,7 +43,7 @@ const SearchDrawer = () => {
 };
 
 const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
-  const ITEMS_PER_PAGE = 13;  // Set items per page
+  const ITEMS_PER_PAGE = 12;  // Set items per page
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
@@ -58,9 +58,6 @@ const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
     setCurrentPage(Math.max(1, Math.min(pageNumber, totalPageCount)));
   };
 
- useEffect(() => {
-  console.log(filterData);
- }, [filterData]); 
 
   useEffect(() => {
     if (building) {
@@ -97,7 +94,7 @@ const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
   const renderContent = () => {
     if (loading) {
       return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
-    } else if (searchText && searchResult?.length > 0) {
+    } else if ((searchText || filterDataHasActiveFilters(filterData)) && searchResult?.length > 0) {
       return (
         <FlatList
           data={searchResult.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)}
