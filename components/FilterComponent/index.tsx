@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Button, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import Checkbox from 'expo-checkbox';
-import { Slider } from '@miblanchard/react-native-slider';
 import { styles } from './styles';
-import { buildings, JohannebergData, LindholmenData } from '../../constants/buildings';
+import { JohannebergData, LindholmenData } from '../../constants/buildings';
 import { RoomSizes } from '../../constants/index';
 
 const FilterPanel = ({ handleFilterData, filterData }) => {
