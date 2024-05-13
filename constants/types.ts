@@ -55,12 +55,6 @@ export interface AccountInfo {
     cookies: {};
 }
 
-
-export interface User {
-  username: string;
-  token: string;
-}
-
 export interface FullUser extends User {
   password: string;
 }
@@ -128,3 +122,13 @@ export type getRoomIdResponse = {
 };
 
 
+export type User = {
+  username : string;
+  token: string;
+  password : string;
+  cookie : string;
+};
+
+export type BuildingColor = {
+  color: number[]
+}

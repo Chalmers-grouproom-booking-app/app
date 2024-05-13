@@ -202,6 +202,8 @@ const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , open
       setLoadingReservations(false);
     }
   };
+
+
   const convertStringToDate = (dateString: string) => {
     const [year, month, day] = dateString.split('/').map(Number);
     return new Date(Date.UTC(year, month - 1, day));

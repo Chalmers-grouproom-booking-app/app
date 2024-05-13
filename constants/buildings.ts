@@ -1,3 +1,5 @@
+import { FloatingButton } from "react-native-ui-lib";
+
 export const StudentUnion = [
     { latitude: 57.688426189008084, longitude: 11.974508362387224 },
     { latitude: 57.68863385665387, longitude: 11.975137057473832 },
@@ -881,58 +883,109 @@ export const The_Copper_Dome = [
     { latitude: 57.704532104424715, longitude: 11.936608962828453 },
     { latitude: 57.704285961107544, longitude: 11.936375356328446 }
   ];
-  
-export const buildings = [
-    { name: "Kårhuset", coordinates: StudentUnion },
-    { name: "Fysik", coordinates: Fysik },
-    { name: "Fysik Soliden", coordinates: PhysicsSoliden },
-    { name: "Keram", coordinates: Keram },
-    { name: "MV-Huset", coordinates: MathematicalSciences },
-    { name: "Biblioteket", coordinates: Library },
-    { name: "Kemi", coordinates: Kemi },
-    { name: "MC2", coordinates: MC2 },
-    { name: "Vasa Hus 1", coordinates: VasaHus1 },
-    { name: "Vasa Hus 2", coordinates: VasaHus2 },
-    { name: "Vasa Hus 3", coordinates: VasaHus3 },
-    { name: "Vasa Hus 4", coordinates: VasaHus4 },
-    { name: "Vasa Hus 5", coordinates: VasaHus5 },
-    { name: "Vasa Hus 7", coordinates: VasaHus7 },
-    { name: "Vasa Hus 8", coordinates: VasaHus8 },
-    { name: "Vasa Hus 9", coordinates: VasaHus9 },
-    { name: "Vasa Hus 12", coordinates: VasaHus12 },
-    { name: "Vasa Hus 13", coordinates: VasaHus13 },
-    { name: "Vasa Hus 15", coordinates: VasaHus15 },
-    { name: "Arvid Hedvalls Backe 4", coordinates: ArvidHedvallsBacke4 },
-    { name: "Samhällsbyggnad I-II", coordinates: Built_Environment_I_and_II },
-    { name: "Samhällsbyggnad III", coordinates: Built_Environment_III },
-    { name: "SSPA", coordinates: SSPA },
-    { name: "Kraftcentralen", coordinates: Chalmers_Power_Central },
-    { name: "M-huset", coordinates: M_huset },
-    { name: "Gamla M-huset", coordinates: Gamla_M_huset },
-    { name: "HA", coordinates: HA },
-    { name: "HB", coordinates: HB },
-    { name: "HC", coordinates: HC },
-    { name: "EDIT trappa D, E och F", coordinates: EDIT_trappa_D_E_F },
-    { name: "EDIT trappa F, G och H", coordinates: EDIT_trappa_F_G_H },
-    { name: "EDIT trappa C, D och H", coordinates: EDIT_trappa_C_D_H },
-    { name: "Linsen", coordinates: Linsen },
-    { name: "EDIT trappa A och B", coordinates: EDIT_trappa_A_B },
-    { name: "EDIT entrehall", coordinates: EDIT_entrehall },
-    { name: "Kopparbunken", coordinates: The_Copper_Dome },
-    { name: "NC", coordinates: NC },
-    { name: "HSB Living Lab", coordinates: HSB_Living_Lab },
-    { name: "Eklandagatan 86", coordinates: Eklandagatan_86 },
+
+export async function getColor(name): Promise<string> {
+  const bookedPercentage: number = await fetchBookedPercentage(name)
+  console.log(bookedPercentage)
+
+  if(bookedPercentage == undefined)
+  {
+      return "rgba(160, 160, 160, 0.6)"
+  } else
+  {
+    if(bookedPercentage == 1) // darker/black color when fully booked
+      {
+        return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
+      }
+
+    return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
+  }
+}
+
+const fetchBookedPercentage = async (buildingName) => {
+  //setLoadingReservations(true);
+  try {
+    const response = await fetch(`https://strawhats.info/api/v1/building/percentage?input=${encodeURIComponent(buildingName)}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    });
+    
+    if( !response.ok ) {
+      //setReservationResult([]);
+      //return;
+    }
+
+    const json = await response.json();
+    return json[0].booked_percentage || 0;
+
+    //setReservationResult(json as TimeSlot[]);
+  } catch (error) {
+    //console.error('Failed to fetch building:', error);
+    //setReservationResult([]); // Handle error by setting empty result
+  }
+  finally {
+    //setLoadingReservations(false);
+  }
+};
+
+interface Ibuilding {
+  name: string;
+  coordinates: Array<{latitude: number, longitude: number}>;
+  buildingColor: string;
+}
+export type buildingType = Ibuilding[];
+export const Allbuildings: buildingType = [
+    { name: "Kårhuset", coordinates: StudentUnion, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Fysik", coordinates: Fysik, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Fysik Soliden", coordinates: PhysicsSoliden, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Keram", coordinates: Keram, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "MV-Huset", coordinates: MathematicalSciences, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Biblioteket", coordinates: Library, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Kemi", coordinates: Kemi, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "MC2", coordinates: MC2, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 1", coordinates: VasaHus1, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 2", coordinates: VasaHus2, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 3", coordinates: VasaHus3, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 4", coordinates: VasaHus4, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 5", coordinates: VasaHus5, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 7", coordinates: VasaHus7, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Vasa Hus 8", coordinates: VasaHus8, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 9", coordinates: VasaHus9, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 12", coordinates: VasaHus12, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Vasa Hus 13", coordinates: VasaHus13, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Vasa Hus 15", coordinates: VasaHus15, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Arvid Hedvalls Backe 4", coordinates: ArvidHedvallsBacke4, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Samhällsbyggnad I-II", coordinates: Built_Environment_I_and_II, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Samhällsbyggnad III", coordinates: Built_Environment_III, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "SSPA", coordinates: SSPA, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Kraftcentralen", coordinates: Chalmers_Power_Central, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "M-huset", coordinates: M_huset, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Gamla M-huset", coordinates: Gamla_M_huset, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "HA", coordinates: HA, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "HB", coordinates: HB, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "HC", coordinates: HC, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "EDIT trappa D, E och F", coordinates: EDIT_trappa_D_E_F, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "EDIT trappa F, G och H", coordinates: EDIT_trappa_F_G_H, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "EDIT trappa C, D och H", coordinates: EDIT_trappa_C_D_H, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Linsen", coordinates: Linsen, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "EDIT trappa A och B", coordinates: EDIT_trappa_A_B, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "EDIT entrehall", coordinates: EDIT_entrehall, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Kopparbunken", coordinates: The_Copper_Dome, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "NC", coordinates: NC, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "HSB Living Lab", coordinates: HSB_Living_Lab, buildingColor: 'rgba(128, 128, 128, 0.5)'},
+    { name: "Eklandagatan 86", coordinates: Eklandagatan_86, buildingColor: 'rgba(128, 128, 128, 0.5)'},
 
     /////////////////////LINDHOLMEN///////////////////////////
-    {name: "Kuggen", coordinates: Kuggen},
-    {name: "Jupiter", coordinates: Jupiter},
-    {name: "Tessin", coordinates: Tessin},
-    {name: "Najaden", coordinates: Najaden},
-    {name: "Kårhus Lindholmen", coordinates: StudentUnion_Lindholmen},
-    {name: "Patricia", coordinates: Patricia},
-    {name: "Svea", coordinates: Svea},
-    {name: "Saga", coordinates: Saga},
-    {name: "Äran", coordinates: Aran},
-    {name: "Anglia", coordinates: Anglia},
-
-  ];
+    { name: "Kuggen", coordinates: Kuggen, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Jupiter", coordinates: Jupiter, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Tessin", coordinates: Tessin, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Najaden", coordinates: Najaden, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Svea", coordinates: Svea, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "StudentUnion_Lindholmen", coordinates: StudentUnion_Lindholmen, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Patricia", coordinates: Patricia, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Saga", coordinates: Saga, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Aran", coordinates: Aran, buildingColor: 'rgba(128, 128, 128, 0.5)' },
+    { name: "Anglia", coordinates: Anglia, buildingColor: 'rgba(128, 128, 128, 0.5)' }
+]
