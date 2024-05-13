@@ -30,13 +30,13 @@ export type TimeSlot = {
   };
 
 export type FilterData = {
-  room_size: interval | null;
+  room_size: Interval | null;
   building: BuildingGroup | null;
   equipment: string[];
   first_come_first_served: number | null;
 };
 
-export type interval = {
+export type Interval = {
   lower : number;
   upper : number;
 };

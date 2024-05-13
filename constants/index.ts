@@ -1,5 +1,5 @@
 import { Dimensions } from 'react-native';
-import { interval } from './types';
+import { Interval } from './types';
 
 
 export const InitRegion = {
@@ -25,7 +25,7 @@ export const Lindholmen = {
     longitudeDelta: 0.005,
 }
 
-export const RoomSizes: { Small: interval, Medium: interval, Large: interval} = {
+export const RoomSizes: { Small: Interval, Medium: Interval, Large: Interval} = {
     Small: {
         lower: 1,
         upper: 5
