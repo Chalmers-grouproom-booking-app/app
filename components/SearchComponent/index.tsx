@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button  } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated, Button, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import useDebounce from './useDebounce';
 import useRoomSearch from './useRoomSearch';
-import type { RoomInfo, TimeSlot } from '../../constants/types';
+import type { RoomInfo, RoomInfoV2, TimeSlot } from '../../constants/types';
 import { useLocalSearchParams, router } from 'expo-router';
 import SearchNotFoundSVG from './SearchNotFound';
 import StartSearchSVG from './StartSearch';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MarkerButton from './MarkerButton';
 import ReservationComponent from '../ReservationComponent';
-import useReservations from '../ReservationComponent/useReservations';
-
+import { Badge } from '@rneui/themed';
 const ITEMS_PER_PAGE = 15;
 
 const Search = () => {
@@ -22,7 +21,6 @@ const Search = () => {
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
   const { searchResult, error, loading, setLoading, searchRooms } = useRoomSearch();
-  const { showModal, selectedRoom, openModal, closeModal} = useReservations();
   const debouncedSearch = useDebounce(searchText, 300); 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,10 +30,22 @@ const Search = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = searchResult ? searchResult.slice(indexOfFirstItem, indexOfLastItem) : [];
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<RoomInfo | null>(null);
+  const [forceCollapse, setForceCollapse] = useState(false);
 
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setForceCollapse(true);
+  }
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
+  useEffect(() => {
+    if (forceCollapse) {
+      // Reset forceCollapse after it has been propagated to children
+      setForceCollapse(false);
+    }
+  }, [forceCollapse]);
+  
   // if building is passed in params, search for rooms in that building
   useEffect(() => {
     if (building) {
@@ -58,6 +68,7 @@ const Search = () => {
       setLoading(false);
     }
     setSearchText(text);
+    paginate(1);
   };
 
   const handleBack = () => {
@@ -87,36 +98,48 @@ const Search = () => {
           <ActivityIndicator size="large" style={{ marginTop: 50 }} />
         ) : searchText && searchResult?.length > 0 ? (
           <>
-          <ScrollView style={styles.resultContainer}>
-            {currentItems.map((item, index) => (
-               <RoomItem key={index} item={item} openModal={openModal} />
-            ))}
-          </ScrollView>
-          <View style={styles.paginationContainer}>
-          <Button title="Prev" onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
-          <Text>{currentPage}</Text>
-          <Button title="Next" onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} />
-          </View>
+            <ScrollView style={styles.resultContainer}>
+              {currentItems.map((item, index) => (
+                <RoomItem
+                  key={index}
+                  item={item}
+                  openModal={(room) => { setSelectedRoom(room); setShowModal(true) }}
+                  forceCollapse={forceCollapse}
+                />
+              ))}
+            </ScrollView>
+            <View style={styles.paginationContainer}>
+              <Pressable onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} style={styles.backButton}>
+                <Ionicons name="arrow-back-outline" size={18} color={currentPage === 1 ? 'gray' : 'black'}  style={{ marginRight: 5 }} />
+                <Text style={{ color: currentPage === 1 ? 'gray' : 'black' }}>Prev</Text>
+              </Pressable>
+              <Text>{currentPage}</Text>
+
+              <Pressable onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} style={styles.backButton}>
+                <Text style={{ color: currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black' }}>Next</Text>
+                <Ionicons name="arrow-forward-outline" size={18} color={currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black'} style={{ marginLeft: 5 }} />
+              </Pressable>
+            </View>
           </>
         ) : null}
-      {searchText && !searchResult?.length && !loading && (
-        <View>
-        <View style={styles.noResultsContainer}>
-          <SearchNotFoundSVG width={64} height={64} />
-          <Text style={styles.noResultsText}>No rooms found.</Text>
-        </View>
-        {error && <Text style={styles.errorText}>{error}</Text>}
-        {loading ? (
-          <ActivityIndicator size="large" style={{ marginTop: 50 }}  color="#007bff" />
-        ) : searchText && searchResult?.length > 0 ? (
-          <ScrollView style={styles.resultContainer}>
-            {searchResult.map((item, index) => (
-              <RoomItem key={index} item={item} openModal={openModal} />
-            ))}
-          </ScrollView>
-        ) : null}
-        </View>
-      )}
+        {searchText && !searchResult?.length && !loading && (
+          <View>
+            <View style={styles.noResultsContainer}>
+              <SearchNotFoundSVG width={64} height={64} />
+              <Text style={styles.noResultsText}>No rooms found.</Text>
+            </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+            {loading ? (
+              <ActivityIndicator size="large" style={{ marginTop: 50 }} color="#007bff" />
+            ) : searchText && searchResult?.length > 0 ? (
+              <ScrollView style={styles.resultContainer}>
+                {searchResult.map((item, index) => (
+                  <RoomItem key={index} item={item} openModal={(room) => { setSelectedRoom(room); setShowModal(true) }} forceCollapse={forceCollapse} />
+                ))}
+              </ScrollView>
+            ) : null}
+          </View>
+        )}
 
         {searchText && !searchResult?.length && !loading && (
           <View style={styles.noResultsContainer}>
@@ -132,25 +155,28 @@ const Search = () => {
           </View>
         )}
       </View>
-      {showModal && (
-          <ReservationComponent room_info={selectedRoom} showModal={showModal} closeModal={closeModal} />
-        )
-      }
+      <ReservationComponent room_info={selectedRoom} openModal={showModal} closeCallback={() => setShowModal(false)} />
     </>
   );
 };
-const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: RoomInfo) => void }) => {
+const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , openModal: (room: RoomInfoV2) => void, forceCollapse: boolean}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
   const [loadingReservations, setLoadingReservations] = useState(false);
   const scaleAnimation = useRef(new Animated.Value(1)).current;
-  const navigation = useNavigation();
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
     if (!isExpanded && !reservationResult) { // Fetch reservations only if not already fetched
       fetchReservations(item.room_name);
     }
   };
+
+  useEffect(() => {
+    if (forceCollapse) {
+      setIsExpanded(false);
+    }
+  }, [forceCollapse]);
 
   const fetchReservations = async (roomName) => {
     setLoadingReservations(true);
@@ -161,7 +187,7 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
           'Accept': 'application/json',
         },
       });
-      if( !response.ok ) {
+      if (!response.ok) {
         setReservationResult([]);
         return;
       }
@@ -181,20 +207,20 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
   const convertStringToDate = (dateString: string) => {
     const [year, month, day] = dateString.split('/').map(Number);
     return new Date(Date.UTC(year, month - 1, day));
-}
+  }
   const getRelativeDate = (dateString: string) => {
     const stockholmOffset = 60; // Stockholm is UTC+1, or +60 minutes
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     today.setMinutes(today.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
-  
+
     const reservationDate = new Date(dateString);
     const reservationStart = new Date(reservationDate.getFullYear(), reservationDate.getMonth(), reservationDate.getDate());
     reservationStart.setMinutes(reservationStart.getMinutes() + stockholmOffset); // Adjust for Stockholm time zone
-    
+
     const timeDiff = Number(reservationStart) - Number(today);
     const dayDiff = Math.round(timeDiff / (1000 * 3600 * 24)); // Round to handle edge cases around midnight
-  
+
     if (dayDiff === 0) {
       return 'Today';
     } else if (dayDiff === 1) {
@@ -207,9 +233,9 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
       return reservationDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
   };
-  
-  
-  
+
+
+
   const animatePressIn = () => {
     Animated.spring(scaleAnimation, {
       toValue: 0.95,  // Slightly scale down to 0.95
@@ -240,7 +266,14 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
   return (
     <TouchableOpacity onPress={toggleExpand} style={styles.itemContainer} activeOpacity={1}>
       <View style={isExpanded ? styles.iteamHeaderExpanded : styles.itemHeader}>
-        <Text style={isExpanded ? styles.resultTextExpanded : styles.resultText}>{item.room_name}</Text>
+        <View style={styles.itemHeaderLeft}>
+          <Text style={isExpanded ? styles.resultTextExpanded : styles.resultText}>{item.room_name}</Text>
+          <Badge 
+            status={item.status === 'available' ? 'success' : item.status === 'occupied' ? 'error' : 'warning'} 
+            value={item.status === 'available' ? 'Available' : item.status === 'occupied' ? 'Occupied' : 'Occupied Soon'}
+            badgeStyle={styles.badgeStyle}
+           />
+        </View>
         {
           item.first_come_first_served && (
             <Text style={styles.fcfText}>First come first served</Text>
@@ -303,26 +336,26 @@ const RoomItem = ({ item , openModal }: { item: RoomInfo  , openModal: (room: Ro
           {
             !item.first_come_first_served && (
               <>
-              <MarkerButton
-                scaleAnimation={scaleAnimation}
-                onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.iconContainer}
-              >
-              <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
-              </MarkerButton>
-              <MarkerButton
-                scaleAnimation={scaleAnimation}
-                onPress={() =>  openModal(item)}
-                onPressIn={animatePressIn}
-                onPressOut={animatePressOut}
-                custom_style={styles.makeReservationButton}
-              >
-                <Icon name="calendar-sharp" size={26} color="#007bff" accessibilityLabel="Make Reservation Button" />
-              </MarkerButton>
+                <MarkerButton
+                  scaleAnimation={scaleAnimation}
+                  onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
+                  onPressIn={animatePressIn}
+                  onPressOut={animatePressOut}
+                  custom_style={styles.iconContainer}
+                >
+                  <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
+                </MarkerButton>
+                <MarkerButton
+                  scaleAnimation={scaleAnimation}
+                  onPress={() => openModal(item)}
+                  onPressIn={animatePressIn}
+                  onPressOut={animatePressOut}
+                  custom_style={styles.makeReservationButton}
+                >
+                  <Icon name="calendar-sharp" size={26} color="#007bff" accessibilityLabel="Make Reservation Button" />
+                </MarkerButton>
               </>
-          )
+            )
           }
         </View>
       )

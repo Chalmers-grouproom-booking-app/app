@@ -11,17 +11,16 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import {Allbuildings, getColor } from '../../constants/buildings'
 import type { buildingType } from '../../constants/buildings';
-import BackToCampus from './BackToCampus';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
-
+import { SpeedDial } from '@rneui/themed';
 
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState<string>(null);
     const [markerCoordinates, setMarkerCoordinates] = useState(null);
     const [isMarkerSelected, setIsMarkerSelected] = useState(false);
+    const [openSpeedDial, setOpenSpeedDial] = useState(false);
     const scaleAnimation = useRef(new Animated.Value(1)).current;
-    const scaleAnimation1 = useRef(new Animated.Value(1)).current;
     const mapRef = useRef(null);
     const { latitude, longitude, room_name } = useLocalSearchParams();
     const [RoomName, setRoomName] = useState(null);
@@ -111,6 +110,14 @@ export default function MapViewComponent() {
         fetchColorsAndUpdateBuildings();
       }, []);
       
+
+
+        // takes a function and runs it when the speed dial is closed
+    const closeSpeedDial = ( func: () => void ) => {
+        setOpenSpeedDial( false );
+        func();
+    };
+
     return (
         <View style={globalStyles.container}>
             <MapView
@@ -165,7 +172,34 @@ export default function MapViewComponent() {
 
                <Icon name="search" size={32} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
-            <BackToCampus lindholmen={navigateToLindholmen} johanneberg={navigateToJohanneberg} />
+
+            <SpeedDial
+                isOpen={openSpeedDial}
+                icon={{ name: 'menu', color: '#333' }} 
+                openIcon={{ name: 'close', color: '#333' }}
+                onOpen={() => setOpenSpeedDial(!openSpeedDial)}
+                onClose={() => setOpenSpeedDial(!openSpeedDial)}
+                color="#fff"  
+                >
+                <SpeedDial.Action
+                    icon={{ name: 'account-circle', color: '#fff' }}
+                    title="My Account"
+                    onPress={() => closeSpeedDial(() => router.push('account'))}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'arrow-back', color: '#fff' }}
+                    title="Navigate to Lindholmen"
+                    onPress={() => closeSpeedDial(navigateToLindholmen)}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'arrow-forward', color: '#fff' }}
+                    title="Navigate to Johanneberg"
+                    onPress={() => closeSpeedDial(navigateToJohanneberg)}
+                    color="#7986CB" 
+                />
+            </SpeedDial>
 
         </View>
     );

@@ -54,11 +54,33 @@ export const styles = StyleSheet.create({
       color: 'black',
       fontSize: 16,
     },
+    badgeStyle: {
+      paddingHorizontal: 5,
+      height: 20,
+    },
+    timeLeftText: {
+      color: '#333',
+      fontSize: 12,
+      opacity: 0.8,
+    },
     resultTextExpanded: {
       fontWeight: 'bold',
       color: 'black',
       fontSize: 16,
       borderBottomWidth: 0
+    },
+    resultStatus: {
+      color: 'black',
+      fontSize: 16,
+      marginBottom: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ccc',
+      paddingVertical: 10,
+    },
+    resultStatusExpanded: {
+      color: 'black',
+      fontSize: 16,
+      paddingVertical: 10,
     },
     resultTextFirstComeFirstServed: {
       color: 'black',
@@ -138,6 +160,11 @@ export const styles = StyleSheet.create({
       borderBottomColor: '#ccc',
       justifyContent: 'space-between',
     },
+    itemHeaderLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 7,
+    },
     iteamHeaderExpanded: {
       width: '100%',
       flexDirection: 'row',
@@ -182,14 +209,12 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 0.3,
-      },
-      shadowOpacity: 0.22,
-      shadowRadius: 2.22,
-      elevation: 3,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      padding: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
     },
     touchableArea: {
       flexDirection: 'row',
