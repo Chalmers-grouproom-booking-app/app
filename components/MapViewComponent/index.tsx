@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Animated, Text } from 'react-native';
-import MapView, { Polygon, Marker } from 'react-native-maps';
+import MapView, { Polygon, Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import { globalStyles } from '../../styles/styles';
 import { mapStyle } from '../../styles/map';
 import { InitRegion, Johanneberg, Lindholmen } from '../../constants';
@@ -13,6 +13,7 @@ import {Allbuildings, getColor } from '../../constants/buildings'
 import type { buildingType } from '../../constants/buildings';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SpeedDial } from '@rneui/themed';
+import { Platform } from 'react-native';
 
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
@@ -129,7 +130,7 @@ export default function MapViewComponent() {
                 followsUserLocation={false}
                 showsCompass={false}
                 onPress={handleMapPress}
-                provider={PROVIDER_GOOGLE}
+                provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
             >
                 {buildings.map((building, index) => (
                     <Polygon
