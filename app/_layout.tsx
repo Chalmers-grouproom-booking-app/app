@@ -1,7 +1,8 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { globalStyles } from '../styles/styles';
 import { Stack } from 'expo-router/stack';
-
+import Toast from 'react-native-toast-message';
+import 'react-native-reanimated';
 export default function AppLayout() {
   return (
     <SafeAreaView style={globalStyles.container}>
@@ -11,6 +12,7 @@ export default function AppLayout() {
           animation: 'fade',
         }}
       />
+      <Toast />
     </SafeAreaView>
   );
 }

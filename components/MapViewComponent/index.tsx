@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Animated, Text } from 'react-native';
-import MapView, { Polygon, Marker } from 'react-native-maps';
+import MapView, { Polygon, Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import { globalStyles } from '../../styles/styles';
 import { mapStyle } from '../../styles/map';
 import { InitRegion, Johanneberg, Lindholmen } from '../../constants';
@@ -9,21 +9,23 @@ import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import 'react-native-gesture-handler';
-import {buildings} from '../../constants/buildings'
-import BackToCampus from './BackToCampus';
-
+import {Allbuildings, getColor } from '../../constants/buildings'
+import type { buildingType } from '../../constants/buildings';
+import { PROVIDER_GOOGLE } from 'react-native-maps';
+import { SpeedDial } from '@rneui/themed';
+import { Platform } from 'react-native';
 
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState<string>(null);
     const [markerCoordinates, setMarkerCoordinates] = useState(null);
     const [isMarkerSelected, setIsMarkerSelected] = useState(false);
+    const [openSpeedDial, setOpenSpeedDial] = useState(false);
     const scaleAnimation = useRef(new Animated.Value(1)).current;
-    const scaleAnimation1 = useRef(new Animated.Value(1)).current;
     const mapRef = useRef(null);
     const { latitude, longitude, room_name } = useLocalSearchParams();
     const [RoomName, setRoomName] = useState(null);
+    const [buildings, setBuildings] = useState<buildingType>( Allbuildings );
     useEffect(() => {
         (async () => {
             let { status } = await requestForegroundPermissionsAsync();
@@ -95,6 +97,27 @@ export default function MapViewComponent() {
             setIsMarkerSelected(false);
         }
     };
+    useEffect(() => {
+        async function fetchColorsAndUpdateBuildings() {
+          const buildingPromises = Allbuildings.map(async building => {
+            const color = await getColor(building.name);
+            return { ...building, buildingColor: color };
+          });
+    
+          const updatedBuildings = await Promise.all(buildingPromises);
+          setBuildings(updatedBuildings); // Update the state with the new colors
+        }
+    
+        fetchColorsAndUpdateBuildings();
+      }, []);
+      
+
+
+        // takes a function and runs it when the speed dial is closed
+    const closeSpeedDial = ( func: () => void ) => {
+        setOpenSpeedDial( false );
+        func();
+    };
 
     return (
         <View style={globalStyles.container}>
@@ -107,13 +130,14 @@ export default function MapViewComponent() {
                 followsUserLocation={false}
                 showsCompass={false}
                 onPress={handleMapPress}
+                provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
             >
                 {buildings.map((building, index) => (
                     <Polygon
                         key={building.name + index}
                         coordinates={building.coordinates}
-                        strokeColor="rgba(165, 176, 118, 1)"  // Green similar to park areas
-                        fillColor="rgba(165, 176, 118, 0.5)"  // Transparent green similar to park areas
+                        strokeColor={building.buildingColor}  // Green similar to park areas
+                        fillColor={building.buildingColor}  // Transparent green similar to park areas
                         strokeWidth={3}
                         lineCap="round"
                         lineJoin="round"
@@ -149,7 +173,34 @@ export default function MapViewComponent() {
 
                <Icon name="search" size={32} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
-            <BackToCampus lindholmen={navigateToLindholmen} johanneberg={navigateToJohanneberg} />
+
+            <SpeedDial
+                isOpen={openSpeedDial}
+                icon={{ name: 'menu', color: '#333' }} 
+                openIcon={{ name: 'close', color: '#333' }}
+                onOpen={() => setOpenSpeedDial(!openSpeedDial)}
+                onClose={() => setOpenSpeedDial(!openSpeedDial)}
+                color="#fff"  
+                >
+                <SpeedDial.Action
+                    icon={{ name: 'account-circle', color: '#fff' }}
+                    title="My Account"
+                    onPress={() => closeSpeedDial(() => router.push('account'))}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'arrow-back', color: '#fff' }}
+                    title="Navigate to Lindholmen"
+                    onPress={() => closeSpeedDial(navigateToLindholmen)}
+                    color="#7986CB" 
+                />
+                <SpeedDial.Action
+                    icon={{ name: 'arrow-forward', color: '#fff' }}
+                    title="Navigate to Johanneberg"
+                    onPress={() => closeSpeedDial(navigateToJohanneberg)}
+                    color="#7986CB" 
+                />
+            </SpeedDial>
 
         </View>
     );

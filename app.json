@@ -19,6 +19,11 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB2XjadQ3HoE0nQiXYi5p0y9hGl3w2nxgo"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
@@ -42,9 +47,17 @@
         }
       ],
       [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ],
+      [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Roboto-Black.ttf"]
+          "fonts": [
+            "./assets/fonts/Roboto-Black.ttf"
+          ]
         }
       ],
       [
@@ -54,7 +67,19 @@
         }
       ],
       "expo-font",
-      "expo-router"
-    ]
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9fe60a6f-796b-49c6-b21b-446524cfd2f5"
+    }
   }
 }

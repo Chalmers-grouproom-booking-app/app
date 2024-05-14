@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
-import { FilterData, RoomInfo, BuildingGroup, Interval } from '../../constants/types'; // Importing types from your constants
+import { FilterData, BuildingGroup, Interval } from '../../constants/types'; // Importing types from your constants
+import { RoomInfo, RoomInfoV2 } from '../../constants/types'; // Importing types from your constants
 
 function useRoomSearch() {
-    const [searchResult, setSearchResult] = useState<RoomInfo[] | null>(null);
+    const [searchResult, setSearchResult] = useState<RoomInfoV2[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
     
@@ -65,8 +66,7 @@ function useRoomSearch() {
         setError('');
         try {
             const queryString: string = createQueryString(searchQuery, filterQuery);
-            const response = await fetch(`https://strawhats.info/api/v3/search?${queryString}`, {
-                method: 'GET',
+            const response = await fetch(`https://strawhats.info/api/v3/search?${queryString}`, { method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',

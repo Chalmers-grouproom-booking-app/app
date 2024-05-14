@@ -1,8 +1,31 @@
 import { StyleSheet } from 'react-native';
 
-// Styles for the modal, inputs, and close button
-// Add your styles here
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    header: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    headerText: {
+        fontSize: 24,
+        marginBottom: 10,
+    },
+    headerSubtitle: {
+        fontSize: 16,
+        marginBottom: 10,
+    },
+});
+
+export const modal = StyleSheet.create({
     centeredView: {
         flex: 1,
         justifyContent: "center",
@@ -197,4 +220,67 @@ export const loginStyles = StyleSheet.create({
     }
 });
 
-export default styles;
+
+export const accountPageStyles = StyleSheet.create({
+    tabContainer: {
+        backgroundColor: '#34495E', // Dark blue-gray to match the header
+        padding: 0,
+        margin: 0,
+        borderBottomWidth: 2, // subtle underline to improve separation
+        borderBottomColor: '#2C3E50', // slightly darker than the container for depth
+    },
+    tabButton: {
+        paddingVertical: 10, // Adjusted for better touch area without being too bulky
+        margin: 0,
+    },
+    tabTitleStyle: {
+        fontSize: 14,
+        color: '#ECF0F1' // light gray to match header text
+    }
+});
+
+
+
+export const accountInfoPageStyles = StyleSheet.create({
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
+        padding: 20,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        marginBottom: 10,
+        color: '#2C3E50', // Dark blue-gray to match the header
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        marginBottom: 5,
+    },
+    label: {
+        fontWeight: 'bold',
+        marginRight: 5,
+    },
+    value: {
+        flex: 1,
+    },
+    input: {
+        fontSize: 16,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    saveButton: {
+        // stronger green to indicate success
+        backgroundColor: '#2faa4b',
+        padding: 10,
+        width: 120,
+        alignSelf: 'flex-end',
+        borderRadius: 5,
+    },
+    buttonIcon: {
+        marginRight: 5,
+    },
+});
