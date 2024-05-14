@@ -128,59 +128,38 @@ const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
         {error && <Text style={styles.errorText}>{error}</Text>}
         {loading ? (
           <ActivityIndicator size="large" style={{ marginTop: 50 }} />
-        ) : (searchText || filterDataHasActiveFilters(filterData)) && searchResult?.length > 0 ? (
-          <>
-            <ScrollView style={styles.resultContainer}>
-              {currentItems.map((item, index) => (
-                <RoomItem
-                  key={index}
-                  item={item}
-                  openModal={(room) => { setSelectedRoom(room); setShowModal(true) }}
-                  forceCollapse={forceCollapse}
-                />
-              ))}
-            </ScrollView>
-            <View style={styles.paginationContainer}>
-              <Pressable onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} style={styles.button}>
-                <Ionicons name="arrow-back-outline" size={18} color={currentPage === 1 ? 'gray' : 'black'}  style={{ marginRight: 5 }} />
-                <Text style={{ color: currentPage === 1 ? 'gray' : 'black' }}>Prev</Text>
-              </Pressable>
-              <Text>{currentPage}</Text>
-
-              <Pressable onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} style={styles.button}>
-                <Text style={{ color: currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black' }}>Next</Text>
-                <Ionicons name="arrow-forward-outline" size={18} color={currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black'} style={{ marginLeft: 5 }} />
-              </Pressable>
-            </View>
-          </>
-        ) : null}
-        {searchText && !searchResult?.length && !loading && (
-          <View>
+        ) : searchText || filterDataHasActiveFilters(filterData) ? (
+          searchResult?.length > 0 ? (
+            <>
+              <ScrollView style={styles.resultContainer}>
+                {currentItems.map((item, index) => (
+                  <RoomItem
+                    key={index}
+                    item={item}
+                    openModal={(room) => { setSelectedRoom(room); setShowModal(true); }}
+                    forceCollapse={forceCollapse}
+                  />
+                ))}
+              </ScrollView>
+              <View style={styles.paginationContainer}>
+                <Pressable onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} style={styles.button}>
+                  <Ionicons name="arrow-back-outline" size={18} color={currentPage === 1 ? 'gray' : 'black'} style={{ marginRight: 5 }} />
+                  <Text style={{ color: currentPage === 1 ? 'gray' : 'black' }}>Prev</Text>
+                </Pressable>
+                <Text>{currentPage}</Text>
+                <Pressable onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} style={styles.button}>
+                  <Text style={{ color: currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black' }}>Next</Text>
+                  <Ionicons name="arrow-forward-outline" size={18} color={currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black'} style={{ marginLeft: 5 }} />
+                </Pressable>
+              </View>
+            </>
+          ) : (
             <View style={styles.noResultsContainer}>
               <SearchNotFoundSVG width={64} height={64} />
               <Text style={styles.noResultsText}>No rooms found.</Text>
             </View>
-            {error && <Text style={styles.errorText}>{error}</Text>}
-            {loading ? (
-              <ActivityIndicator size="large" style={{ marginTop: 50 }} color="#007bff" />
-            ) : searchText && searchResult?.length > 0 ? (
-              <ScrollView style={styles.resultContainer}>
-                {searchResult.map((item, index) => (
-                  <RoomItem key={index} item={item} openModal={(room) => { setSelectedRoom(room); setShowModal(true) }} forceCollapse={forceCollapse} />
-                ))}
-              </ScrollView>
-            ) : null}
-          </View>
-        )}
-
-        {searchText && !searchResult?.length && !loading && (
-          <View style={styles.noResultsContainer}>
-            <SearchNotFoundSVG width={64} height={64} />
-            <Text style={styles.noResultsText}>No rooms found.</Text>
-          </View>
-        )}
-
-        {!searchText && (
+          )
+        ) : (
           <View style={styles.noResultsContainer}>
             <StartSearchSVG width={64} height={64} />
             <Text style={styles.noResultsText}>Search for rooms by name, building, or campus.</Text>
