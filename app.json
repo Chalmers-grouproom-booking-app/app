@@ -77,9 +77,6 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/9fe60a6f-796b-49c6-b21b-446524cfd2f5"
     }
   }
 }
