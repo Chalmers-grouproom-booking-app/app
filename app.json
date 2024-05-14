@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Chalmers Grouproom Booking",
-    "slug": "chalmers-grouproom-booking",
+    "slug": "chalmers-grouproom-booking-rjqhqtyrv0ed-ktjpvrjj",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -73,6 +73,9 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "2b4aaba7-c749-46ed-9721-15dd999786a0"
       }
     },
     "runtimeVersion": {
@@ -80,6 +83,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/9fe60a6f-796b-49c6-b21b-446524cfd2f5"
-    }
+    },
+    "owner": "chalmersgrouproombooking"
   }
 }
