@@ -16,7 +16,7 @@ import ReservationComponent from '../ReservationComponent';
 import { Badge } from '@rneui/themed';
 import { Drawer } from 'react-native-drawer-layout';
 import FilterPanel from '../FilterComponent';
-import useFilter  from '../FilterComponent/useFilter';
+import useFilter from '../FilterComponent/useFilter';
 
 const ITEMS_PER_PAGE = 15;
 
@@ -121,6 +121,9 @@ const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
             containerStyle={styles.searchBarContainer}
             inputContainerStyle={styles.searchInputContainer}
           />
+          <TouchableOpacity onPress={toggleFilter} style={styles.button}>
+            <Ionicons name="filter" size={26} color="gray" />
+          </TouchableOpacity>
         </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
         {loading ? (
@@ -395,4 +398,4 @@ const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , open
 };
 
 
-export default Search;
+export default SearchDrawer;
