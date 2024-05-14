@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       padding: 10,
     },
-    backButton: {
+    button: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: 'white',
@@ -201,7 +201,7 @@ export const styles = StyleSheet.create({
         borderRadius: 20, // Rounded corners for the touchable area
         backgroundColor: '#fff',
       },
-    button: {
+    markerButton: {
       position: 'absolute',
       backgroundColor: '#fff',
       borderRadius: 6,

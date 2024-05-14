@@ -14,9 +14,38 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MarkerButton from './MarkerButton';
 import ReservationComponent from '../ReservationComponent';
 import { Badge } from '@rneui/themed';
+import { Drawer } from 'react-native-drawer-layout';
+import FilterPanel from '../FilterComponent';
+import useFilter from '../FilterComponent/useFilter';
+
 const ITEMS_PER_PAGE = 15;
 
-const Search = () => {
+const SearchDrawer = () => {
+  const [visible, setVisible] = useState(false);
+  const { filterData, setFilterData, filterDataHasActiveFilters } = useFilter();
+
+  return (
+      <Drawer
+        open={visible}
+        onOpen={() => setVisible(true)}
+        onClose={ () => setVisible(false)}
+        renderDrawerContent={() => {
+          return (
+            <FilterPanel handleFilterData={setFilterData} filterData={filterData} />
+          );
+        }}
+        drawerPosition='right'
+        drawerType='front'
+        drawerStyle={{ width : '73%'}}
+        overlayStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+      >
+      <Search toggleFilter={() => setVisible(!visible)} filterDataHasActiveFilters={filterDataHasActiveFilters}  filterData={filterData} />
+    </Drawer>
+  );
+
+};
+
+const Search = ({ toggleFilter, filterDataHasActiveFilters, filterData }) => {
   const { building } = useLocalSearchParams() as { building: string };
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation();
@@ -57,10 +86,10 @@ const Search = () => {
 
   // Search room whenever debouncedSearch changes
   useEffect(() => {
-    if (debouncedSearch) {
-      searchRooms(debouncedSearch);
+    if (debouncedSearch || filterDataHasActiveFilters(filterData)) {
+      searchRooms(debouncedSearch, filterData);
     }
-  }, [debouncedSearch, searchRooms]);
+  }, [debouncedSearch, filterData]);
 
   const handleSearchChange = (text) => {
     setLoading(true);
@@ -80,7 +109,7 @@ const Search = () => {
     <>
       <View style={styles.container}>
         <View style={styles.searchContainer}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <TouchableOpacity onPress={handleBack} style={styles.button}>
             <Ionicons name="arrow-back" size={26} color="gray" />
           </TouchableOpacity>
           <SearchBar
@@ -92,11 +121,14 @@ const Search = () => {
             containerStyle={styles.searchBarContainer}
             inputContainerStyle={styles.searchInputContainer}
           />
+          <TouchableOpacity onPress={toggleFilter} style={styles.button}>
+            <Ionicons name="filter" size={26} color="gray" />
+          </TouchableOpacity>
         </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
         {loading ? (
           <ActivityIndicator size="large" style={{ marginTop: 50 }} />
-        ) : searchText && searchResult?.length > 0 ? (
+        ) : (searchText || filterDataHasActiveFilters(filterData)) && searchResult?.length > 0 ? (
           <>
             <ScrollView style={styles.resultContainer}>
               {currentItems.map((item, index) => (
@@ -109,13 +141,13 @@ const Search = () => {
               ))}
             </ScrollView>
             <View style={styles.paginationContainer}>
-              <Pressable onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} style={styles.backButton}>
+              <Pressable onPress={() => paginate(currentPage - 1)} disabled={currentPage === 1} style={styles.button}>
                 <Ionicons name="arrow-back-outline" size={18} color={currentPage === 1 ? 'gray' : 'black'}  style={{ marginRight: 5 }} />
                 <Text style={{ color: currentPage === 1 ? 'gray' : 'black' }}>Prev</Text>
               </Pressable>
               <Text>{currentPage}</Text>
 
-              <Pressable onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} style={styles.backButton}>
+              <Pressable onPress={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(searchResult.length / itemsPerPage)} style={styles.button}>
                 <Text style={{ color: currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black' }}>Next</Text>
                 <Ionicons name="arrow-forward-outline" size={18} color={currentPage === Math.ceil(searchResult.length / itemsPerPage) ? 'gray' : 'black'} style={{ marginLeft: 5 }} />
               </Pressable>
@@ -159,6 +191,7 @@ const Search = () => {
     </>
   );
 };
+
 const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , openModal: (room: RoomInfoV2) => void, forceCollapse: boolean}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [reservationResult, setReservationResult] = useState<TimeSlot[] | null>(null);
@@ -365,4 +398,4 @@ const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , open
 };
 
 
-export default Search;
+export default SearchDrawer;
