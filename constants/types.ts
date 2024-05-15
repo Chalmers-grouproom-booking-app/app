@@ -134,12 +134,10 @@ room_id: number;
 };
 
 
-export type User = {
-username : string;
-token: string;
-password : string;
-cookie : string;
-};
+export interface User {
+  username: string;
+  token: string;
+}
 
 export type BuildingGroup = {
 name: string;
