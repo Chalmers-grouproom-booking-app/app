@@ -114,6 +114,7 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
                 await successLogin();
             }
         } catch (e) {
+            console.error('Error logging in:', e);
             setPasswordError('Login failed');
             passwordInputRef.current?.shake();
         }

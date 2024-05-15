@@ -14,12 +14,13 @@ import type { buildingType } from '../../constants/buildings';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SpeedDial } from '@rneui/themed';
 import { Platform } from 'react-native';
-
+import QuickBookComponent from '../QuickBookComponent';
 export default function MapViewComponent() {
     const [locationPermission, setLocationPermission] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState<string>(null);
     const [markerCoordinates, setMarkerCoordinates] = useState(null);
     const [isMarkerSelected, setIsMarkerSelected] = useState(false);
+    const [showQuickBookModal, setShowQuickBookModal] = useState(false);
     const [openSpeedDial, setOpenSpeedDial] = useState(false);
     const scaleAnimation = useRef(new Animated.Value(1)).current;
     const mapRef = useRef(null);
@@ -97,23 +98,22 @@ export default function MapViewComponent() {
             setIsMarkerSelected(false);
         }
     };
-    useEffect(() => {
-        async function fetchColorsAndUpdateBuildings() {
-          const buildingPromises = Allbuildings.map(async building => {
-            const color = await getColor(building.name);
-            return { ...building, buildingColor: color };
-          });
+    // useEffect(() => {
+    //     async function fetchColorsAndUpdateBuildings() {
+    //       const buildingPromises = Allbuildings.map(async building => {
+    //         const color = await getColor(building.name);
+    //         return { ...building, buildingColor: color };
+    //       });
     
-          const updatedBuildings = await Promise.all(buildingPromises);
-          setBuildings(updatedBuildings); // Update the state with the new colors
-        }
+    //       const updatedBuildings = await Promise.all(buildingPromises);
+    //       setBuildings(updatedBuildings); // Update the state with the new colors
+    //     }
     
-        fetchColorsAndUpdateBuildings();
-      }, []);
+    //     fetchColorsAndUpdateBuildings();
+    //   }, []);
       
 
 
-        // takes a function and runs it when the speed dial is closed
     const closeSpeedDial = ( func: () => void ) => {
         setOpenSpeedDial( false );
         func();
@@ -174,6 +174,18 @@ export default function MapViewComponent() {
                <Icon name="search" size={32} color="#333" accessibilityLabel="Search Button" />
             </MapButton>
 
+                {/* Quick booking button */}
+            <MapButton
+                scaleAnimation={scaleAnimation}
+                onPress={ () => setShowQuickBookModal(true) }
+                onPressIn={animatePressIn}
+                onPressOut={animatePressOut}
+                custom_style={styles.quickBookButton}
+            >
+                <Text style={styles.quickBookButtonText}>Quick Book</Text>
+                <Icon name="event" size={32} color="#00000" accessibilityLabel="Quick Book Button" style={styles.quickBookButtonIcon} />
+            </MapButton>
+
             <SpeedDial
                 isOpen={openSpeedDial}
                 icon={{ name: 'menu', color: '#333' }} 
@@ -201,7 +213,8 @@ export default function MapViewComponent() {
                     color="#7986CB" 
                 />
             </SpeedDial>
-
+            
+            <QuickBookComponent openModal={showQuickBookModal} closeCallback={() => setShowQuickBookModal(false)} />
         </View>
     );
 }

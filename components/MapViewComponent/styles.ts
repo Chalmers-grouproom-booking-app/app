@@ -1,3 +1,4 @@
+import { screenWidth } from '@/constants';
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -68,6 +69,38 @@ export default StyleSheet.create({
   SearchBarButton: {
     top: 8, 
     left: 8,
+  },
+  quickBookButton: {
+    position: 'absolute',
+    bottom: 18,
+    left: screenWidth * 0.5 - 95,
+    paddingHorizontal: 18,
+    paddingVertical: 2,
+    backgroundColor: '#007bff', // Urgent orange color
+    borderRadius: 25, 
+    elevation: 5, 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 0.3,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+  },
+  quickBookButtonText: {
+    color: 'white',
+    fontSize: 20, 
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
+    paddingHorizontal: 5,
+  },
+  quickBookButtonIcon: {
+    color: 'white',
+    fontSize: 30,
+    paddingHorizontal: 5,
   },
   UserLocationButton: {
     bottom: 8, 
