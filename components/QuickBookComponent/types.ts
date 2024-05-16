@@ -19,7 +19,7 @@ export const roomSizeMapping = {
 
 export enum Equipment {
     Whiteboard = 'Whiteboard',
-    Display = 'Display',
+    Display = 'digital skärm',
 }
 export type PanelFilter = {
     selectedLocation: Location;

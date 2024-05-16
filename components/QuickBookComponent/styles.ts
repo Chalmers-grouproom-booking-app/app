@@ -22,6 +22,11 @@ export default StyleSheet.create({
         marginLeft: 0,
         marginRight: 0,
     },
+    buttonGroupContainer2: {
+        marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
+    },
     buttonGroupText: {
         color: '#000',
     },
@@ -43,5 +48,38 @@ export default StyleSheet.create({
     selectedText: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    equimentContainer: {
+        marginBottom: 20,
+    },
+    noRoomsText: {
+        textAlign: 'center',
+        fontSize: 20,
+        color: '#333',
+        opacity: 0.8,
+    },
+    selectedEq: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#333',
+    },
+    resultContainer : {
+        height: 'auto',
+        maxHeight: height - 300,
+        padding: 20,
+    },
+    resultScrollView: {
+        height: 'auto',
+        maxHeight: height - 350,
+    },
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        paddingHorizontal: 20,
+    },
+    backButton: {
+        marginTop: 20,
+        width: screenWidth - 90,
+        backgroundColor: '#ff0000',
     },
 });

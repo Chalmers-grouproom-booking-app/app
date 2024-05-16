@@ -53,35 +53,47 @@ const Panel = ( {filter, setFilterCallback}:  {  filter: PanelFilter,setFilterCa
                selectedTextStyle={styles.selectedText}    
             />
 
-            <Text style={styles.label}>Select Equipment</Text>
-            <ButtonGroup
-                buttons={equipmentOptions.map((eq, index) => ({
-                    element: () => (
-                        <View style={styles.iconContainer}>
-                            <Icon
-                                name={
-                                    eq === Equipment.Display
-                                        ? 'desktop-windows'
-                                        : eq === Equipment.Whiteboard
-                                        ? 'edit'
-                                        : 'clear'
-                                }
-                                color={equipmentIndexes.includes(index) ? 'white' : '#000'}
-                                size={16}
-                            />
-                            
-                            <Text style={{ color: equipmentIndexes.includes(index) ? 'white' : '#000' }}>{eq}</Text>
-                        </View>
-                    )
-                }))}
-                selectMultiple
-                selectedIndexes={equipmentIndexes}
-                onPress={value => setEquipmentIndexes(value)}
-                containerStyle={styles.buttonGroupContainer}
-                selectedTextStyle={styles.selectedText}      
-                selectedButtonStyle={styles.selectedButton}
-            />
-
+            <View style={ styles.equimentContainer} >
+                <Text style={styles.label}>Select Equipment</Text>
+                <ButtonGroup
+                    buttons={equipmentOptions.map((eq, index) => ({
+                        element: () => (
+                            <View style={styles.iconContainer}>
+                                <Icon
+                                    name={
+                                        eq === Equipment.Display
+                                            ? 'desktop-windows'
+                                            : eq === Equipment.Whiteboard
+                                            ? 'edit'
+                                            : 'clear'
+                                    }
+                                    color={equipmentIndexes.includes(index) ? 'white' : '#000'}
+                                    size={16}
+                                />
+                                
+                                <Text style={{ color: equipmentIndexes.includes(index) ? 'white' : '#000' }}>{ eq === Equipment.Display ? 'Display' : eq }</Text>
+                            </View>
+                        )
+                    }))}
+                    selectMultiple
+                    selectedIndexes={equipmentIndexes}
+                    onPress={value => setEquipmentIndexes(value)}
+                    containerStyle={styles.buttonGroupContainer2}
+                    selectedTextStyle={styles.selectedText}      
+                    selectedButtonStyle={styles.selectedButton}
+                    />
+                    {
+                        equipmentIndexes.length === 0 && <Text style={styles.selectedEq}>Selected Equipment: None</Text>
+                    }
+                    {
+                        equipmentIndexes.length === equipmentOptions.length && <Text style={styles.selectedEq}>Selected Equipment: All</Text>
+                    }
+                    {
+                        equipmentIndexes.length > 0 && equipmentIndexes.length < equipmentOptions.length && <Text style={styles.selectedEq}>{'Selected Equipment: ' + equipmentIndexes.map(
+                            index => equipmentOptions[index] === Equipment.Display ? 'Display' : equipmentOptions[index] ).join(', ')
+                        }</Text>
+                    }
+            </View>
             <Button
                 title="Quick Book"
                 buttonStyle={styles.bookButton}
