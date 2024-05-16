@@ -927,11 +927,11 @@ export function getColor(bookedPercentage: number): string {
     return colors[4]
   }
   
-  if(bookedPercentage < 1.0) {
-    return colors[5]              // Pretty much full (Red)
+  if(bookedPercentage < 1.0) {  // Pretty much full (Red)
+    return colors[5]
   }
 
-  return colors[6] // Fully full (Red/black)
+  return colors[6] // Fully full (Black)
 }   
 
 export const fetchBookedPercentage = async () => {
