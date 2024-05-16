@@ -885,22 +885,22 @@ export const The_Copper_Dome = [
   ];
 
 export async function getColor(name): Promise<string> {
-  const bookedPercentage: number = await fetchBookedPercentage(name)
-  //console.log(bookedPercentage)
+  const buildings = ["Kårhuset", "Fysik", "Kemi", "M-huset", "Biblioteket", "EDIT trappa A och B", "EDIT trappa C, D och H", "Samhällsbyggnad I-II", "Samhällsbyggnad III", "Vasa Hus 1", "Vasa Hus 2", "Vasa Hus 3", "Svea", "Jupiter", "Kuggen"]
 
-  if(bookedPercentage == undefined)
-  {
-      return "rgba(160, 160, 160, 0.6)"
-  } else
-  {
-    if(bookedPercentage == 1) // darker/black color when fully booked
-      {
-        return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
-      }
-
-    return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
+  if(!buildings.includes(name)) {
+    return "rgba(160, 160, 160, 0.6)"
   }
+
+  const bookedPercentage: number = await fetchBookedPercentage(name)
+  
+  if(bookedPercentage == 1) // darker/black color when fully booked
+    {
+      return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
+    }
+
+  return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
 }
+
 
 const fetchBookedPercentage = async (buildingName) => {
   //setLoadingReservations(true);
@@ -914,15 +914,17 @@ const fetchBookedPercentage = async (buildingName) => {
     
     if( !response.ok ) {
       //setReservationResult([]);
-      //return;
+      return;
     }
 
-    const percentage = parseFloat(await response.text());
-    //console.log(percentage)
+    const percentage = await response.json()
+    console.log(buildingName, percentage)
     return percentage
 
     //setReservationResult(json as TimeSlot[]);
   } catch (error) {
+    console.log(error)
+
     //console.error('Failed to fetch building:', error);
     //setReservationResult([]); // Handle error by setting empty result
   }
