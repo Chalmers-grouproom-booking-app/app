@@ -884,8 +884,7 @@ export const The_Copper_Dome = [
     { latitude: 57.704285961107544, longitude: 11.936375356328446 }
   ];
 
-export function getColor(bookedPercentage): string {
-  
+export function getColor(bookedPercentage: number): string {
   if(bookedPercentage == undefined || bookedPercentage == -1) {
       return "rgba(160, 160, 160, 0.6)"
   } else {
@@ -897,9 +896,9 @@ export function getColor(bookedPercentage): string {
   }
 }
 
-export const fetchBookedPercentage = async (interval_forward_minutes) => {
+export const fetchBookedPercentage = async () => {
   try {
-    const response = await fetch(`https://strawhats.info/api/v1/building/percentage/all?interval_forward_minutes=${encodeURIComponent(interval_forward_minutes)}`, {
+    const response = await fetch(`https://strawhats.info/api/v1/building/percentage/all`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -907,7 +906,6 @@ export const fetchBookedPercentage = async (interval_forward_minutes) => {
     });
 
     if (response.ok) {
-      console.log(response.json());
       return await response.json();
     }
     

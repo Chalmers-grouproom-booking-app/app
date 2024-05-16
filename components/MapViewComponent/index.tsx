@@ -99,34 +99,27 @@ export default function MapViewComponent() {
     };
     useEffect(() => {
         async function fetchColorsAndUpdateBuildings() {
-        const percentages = await fetchBookedPercentage(30);
-
-          /*
-          colors = {
-
-            "Fysik": "0.3",
-            "Matematik": "0.5",
-            "Kemi": "0.7",
-            "Elektro": "0.9",
-
-          }
-          
-          */
-
-
-        const buildingPromises = Allbuildings.map(async building => {
-            const color = await getColor(percentages[building.name]);
-            return { ...building, buildingColor: color };
-        });
-
-        const updatedBuildings = await Promise.all(buildingPromises);
-        setBuildings(updatedBuildings); // Update the state with the new colors
-    }
+            try {
+                const percentages = await fetchBookedPercentage();
+                const buildingPromises = Allbuildings.map(async building => {
+                    try {
+                        const color = getColor(percentages[building.name]);
+                        return { ...building, buildingColor: color };
+                    } catch (error) {
+                        console.error("Error fetching color:", error);
+                        return building; // Return building without color
+                    }
+                });
     
+                const updatedBuildings = await Promise.all(buildingPromises);
+                setBuildings(updatedBuildings); // Update the state with the new colors
+            } catch (error) {
+                console.error("Error fetching percentages:", error);
+            }
+        }
+        
         fetchColorsAndUpdateBuildings();
-      }, []);
-      
-
+    }, []);
 
         // takes a function and runs it when the speed dial is closed
     const closeSpeedDial = ( func: () => void ) => {
