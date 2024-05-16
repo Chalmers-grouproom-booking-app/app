@@ -896,16 +896,43 @@ export const Anglia = [
 ];
 
 export function getColor(bookedPercentage: number): string {
+  const opacity = 0.7
+  const colors = [
+    `rgba(160, 160, 160, ${opacity})`,  // Grey
+    `rgba(68, 206, 27, ${opacity})`,    // Empty (Green)
+    `rgba(180, 230, 30, ${opacity})`,   // Less empty (Less green)
+    `rgba(247, 227, 50, ${opacity})`,   // Medium full (Yellow)
+    `rgba(242, 161, 52, ${opacity})`,   // Almost full (A little red)
+    `rgba(229, 31, 31, ${opacity})`,    // Pretty much full (Red)
+    `rgba(0, 0, 0, ${opacity})`,       // Fully full (Black)
+  ]
+
   if(bookedPercentage == undefined || bookedPercentage == -1) {
-      return "rgba(160, 160, 160, 0.6)"
-  } else {
-    if(bookedPercentage == 1) { // darker/black color when fully booked
-      return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
-    }
-    
-    return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
+      return colors[0]
   }
-}
+  
+  if(bookedPercentage < 0.3) { // Empty (Green)
+    return colors[1]
+  }
+
+  if(bookedPercentage < 0.5) { //Less empty (Less green)
+    return colors[2]
+  }
+  
+  if(bookedPercentage < 0.75) {  // Medium full (Yellow)
+    return colors[3]
+  }
+
+  if(bookedPercentage < 0.9) {  // Almost full (A little red)
+    return colors[4]
+  }
+  
+  if(bookedPercentage < 1.0) {
+    return colors[5]              // Pretty much full (Red)
+  }
+
+  return colors[6] // Fully full (Red/black)
+}   
 
 export const fetchBookedPercentage = async () => {
   try {
