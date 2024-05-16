@@ -12,9 +12,6 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true
     },
@@ -31,8 +28,7 @@
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
-      ],
-      "package": "com.anonymous.chalmersgrouproombooking"
+      ]    
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -69,21 +65,6 @@
       "expo-font",
       "expo-router",
       "expo-secure-store"
-    ],
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "2b4aaba7-c749-46ed-9721-15dd999786a0"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/9fe60a6f-796b-49c6-b21b-446524cfd2f5"
-    },
-    "owner": "chalmersgrouproombooking"
+    ]
   }
 }
