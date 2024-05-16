@@ -9,7 +9,7 @@ import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import {Allbuildings, getColor } from '../../constants/buildings'
+import {Allbuildings, getColor, fetchBookedPercentage} from '../../constants/buildings'
 import type { buildingType } from '../../constants/buildings';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SpeedDial } from '@rneui/themed';
@@ -99,14 +99,29 @@ export default function MapViewComponent() {
     };
     useEffect(() => {
         async function fetchColorsAndUpdateBuildings() {
-          const buildingPromises = Allbuildings.map(async building => {
-            const color = await getColor(building.name);
+        const percentages = await fetchBookedPercentage(30);
+
+          /*
+          colors = {
+
+            "Fysik": "0.3",
+            "Matematik": "0.5",
+            "Kemi": "0.7",
+            "Elektro": "0.9",
+
+          }
+          
+          */
+
+
+        const buildingPromises = Allbuildings.map(async building => {
+            const color = await getColor(percentages[building.name]);
             return { ...building, buildingColor: color };
-          });
-    
-          const updatedBuildings = await Promise.all(buildingPromises);
-          setBuildings(updatedBuildings); // Update the state with the new colors
-        }
+        });
+
+        const updatedBuildings = await Promise.all(buildingPromises);
+        setBuildings(updatedBuildings); // Update the state with the new colors
+    }
     
         fetchColorsAndUpdateBuildings();
       }, []);

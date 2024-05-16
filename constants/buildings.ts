@@ -884,50 +884,35 @@ export const The_Copper_Dome = [
     { latitude: 57.704285961107544, longitude: 11.936375356328446 }
   ];
 
-export async function getColor(name): Promise<string> {
-  const bookedPercentage: number = await fetchBookedPercentage(name)
-  //console.log(bookedPercentage)
-
-  if(bookedPercentage == undefined)
-  {
+export function getColor(bookedPercentage): string {
+  
+  if(bookedPercentage == undefined || bookedPercentage == -1) {
       return "rgba(160, 160, 160, 0.6)"
-  } else
-  {
-    if(bookedPercentage == 1) // darker/black color when fully booked
-      {
-        return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
-      }
-
+  } else {
+    if(bookedPercentage == 1) { // darker/black color when fully booked
+      return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
+    }
+    
     return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
   }
 }
 
-const fetchBookedPercentage = async (buildingName) => {
-  //setLoadingReservations(true);
+export const fetchBookedPercentage = async (interval_forward_minutes) => {
   try {
-    const response = await fetch(`https://strawhats.info/api/v1/building/percentage?input=${encodeURIComponent(buildingName)}`, {
+    const response = await fetch(`https://strawhats.info/api/v1/building/percentage/all?interval_forward_minutes=${encodeURIComponent(interval_forward_minutes)}`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
     });
-    
-    if( !response.ok ) {
-      //setReservationResult([]);
-      //return;
+
+    if (response.ok) {
+      console.log(response.json());
+      return await response.json();
     }
-
-    const percentage = parseFloat(await response.text());
-    //console.log(percentage)
-    return percentage
-
-    //setReservationResult(json as TimeSlot[]);
+    
   } catch (error) {
-    //console.error('Failed to fetch building:', error);
-    //setReservationResult([]); // Handle error by setting empty result
-  }
-  finally {
-    //setLoadingReservations(false);
+    console.error('Error:', error);
   }
 };
 
@@ -989,4 +974,22 @@ export const Allbuildings: buildingType = [
     { name: "Saga", coordinates: Saga, buildingColor: 'rgba(128, 128, 128, 0.5)' },
     { name: "Aran", coordinates: Aran, buildingColor: 'rgba(128, 128, 128, 0.5)' },
     { name: "Anglia", coordinates: Anglia, buildingColor: 'rgba(128, 128, 128, 0.5)' }
+]
+
+export const AllbuildingsWithRooms: string[] = [
+  "Kårhuset",
+  "Fysik",
+  "Biblioteket",
+  "Kemi",
+  "Vasa Hus 1",
+  "Vasa Hus 2",
+  "Vasa Hus 3",
+  "Samhällsbyggnad I-II",
+  "Samhällsbyggnad III",
+  "M-huset",
+  "EDIT trappa C, D och H",
+  "EDIT trappa A och B",
+  "Kuggen",
+  "Jupiter",
+  "Svea",
 ]
