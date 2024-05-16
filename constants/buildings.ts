@@ -918,7 +918,6 @@ const fetchBookedPercentage = async (buildingName) => {
     }
 
     const percentage = await response.json()
-    console.log(buildingName, percentage)
     return percentage
 
     //setReservationResult(json as TimeSlot[]);
