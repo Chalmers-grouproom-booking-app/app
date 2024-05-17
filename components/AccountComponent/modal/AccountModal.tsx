@@ -1,8 +1,9 @@
-import React, { useState, forwardRef, useImperativeHandle, useCallback } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect } from 'react';
 import { Modal, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { modal } from '../styles';
 import LoginUser from './LoginUser';
+import { checkIfLoggedIn } from '@/utils/user';
 
 interface AccountModalProps {
     children: React.ReactNode;
@@ -19,7 +20,13 @@ export interface ModalHandles {
 const AccountModal = forwardRef<ModalHandles, AccountModalProps>(( { children, closeCallback, notLoggedIn = false , onLoginSuccess }, ref) => {
     const [showModal, setShowModal] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            setIsLoggedIn(await checkIfLoggedIn());
+        }
+        checkLoginStatus();
+    }, []);
     useImperativeHandle(ref, () => ({
         openModal: () => setShowModal(true),
         closeModal: () => handleCloseModal(),

@@ -47,8 +47,8 @@ const LoginUser = ( { onLoginSuccess,  notLoggedIn = false, initUserName = '', i
     useEffect(() => {
         async function checkLoginStatus() {
             try {
+                const loggedIn = await checkIfLoggedIn();
                 if (!notLoggedIn) {
-                    const loggedIn = await checkIfLoggedIn();
                     if (loggedIn) {
                         if (onLoginSuccess) {
                             onLoginSuccess(true);

@@ -1,7 +1,7 @@
 import { screenWidth } from '@/constants';
 import { StyleSheet, Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default StyleSheet.create({
     header: {
@@ -52,34 +52,103 @@ export default StyleSheet.create({
     equimentContainer: {
         marginBottom: 20,
     },
-    noRoomsText: {
-        textAlign: 'center',
-        fontSize: 20,
-        color: '#333',
-        opacity: 0.8,
-    },
     selectedEq: {
         marginTop: 10,
         fontSize: 16,
         color: '#333',
     },
-    resultContainer : {
-        height: 'auto',
-        maxHeight: height - 300,
-        padding: 20,
-    },
-    resultScrollView: {
-        height: 'auto',
-        maxHeight: height - 350,
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Example for modal background, adjust as needed
     },
     container: {
-        display: 'flex',
-        flexDirection: 'column',
-        paddingHorizontal: 20,
+        flex: 1,
+        justifyContent: 'flex-start',
+        padding: 20,
+        backgroundColor: 'white', // Ensures the container has a visible background
+    },
+    noRoomsText: {
+        textAlign: 'center',
+        marginTop: 20,
+    },
+    resultScrollView: {
+        flex: 1,
+        width: '100%',
+    },
+    resultScrollViewContent: {
+        flexGrow: 1,
+        alignItems: 'center',
+        paddingBottom: 20, // Add some padding to avoid cutting off the last item
     },
     backButton: {
-        marginTop: 20,
-        width: screenWidth - 90,
-        backgroundColor: '#ff0000',
+        marginTop: 10,
+    },
+});
+
+
+
+export const itemStyle = StyleSheet.create({
+    container: {
+        position: 'relative',
+        flexDirection: 'row',
+        width: '100%',
+        marginBottom: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
+        elevation: 5,
+    },
+    roomNameContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+
+    },
+    leftContainer: {
+        flex: 1,
+        alignItems: 'flex-start',
+        width: '80%',
+    },
+    rightContainer: {
+        flex: 1,
+        alignItems: 'flex-end',
+    },
+    roomName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    status: {
+        fontSize: 14,
+        color: '#4CAF50',
+    },
+    details: {
+        fontSize: 14,
+        color: '#666',
+    },
+    distance: {
+        fontSize: 14,
+        color: '#333',
+        marginBottom: 2,
+    },
+    buttonContainer: {
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        width: '40%',
+        marginTop: 10,
+        gap : 10,
+    },
+    iconButton: {
+        padding: 10,
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: '#007AFF',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
