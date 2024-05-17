@@ -895,50 +895,60 @@ export const Anglia = [
   { latitude: 57.704285961107544, longitude: 11.936375356328446 }
 ];
 
-export async function getColor(name): Promise<string> {
-  const bookedPercentage: number = await fetchBookedPercentage(name)
-  //console.log(bookedPercentage)
+export function getColor(bookedPercentage: number): string {
+  const opacity = 0.7
+  const colors = [
+    `rgba(160, 160, 160, ${opacity})`,  // Grey
+    `rgba(68, 206, 27, ${opacity})`,    // Empty (Green)
+    `rgba(180, 230, 30, ${opacity})`,   // Less empty (Less green)
+    `rgba(247, 227, 50, ${opacity})`,   // Medium full (Yellow)
+    `rgba(242, 161, 52, ${opacity})`,   // Almost full (A little red)
+    `rgba(229, 31, 31, ${opacity})`,    // Pretty much full (Red)
+    `rgba(0, 0, 0, ${opacity})`,       // Fully full (Black)
+  ]
 
-  if(bookedPercentage == undefined)
-  {
-      return "rgba(160, 160, 160, 0.6)"
-  } else
-  {
-    if(bookedPercentage == 1) // darker/black color when fully booked
-      {
-        return `rgba(${20 * bookedPercentage}, ${20 * (1 - bookedPercentage)}, 0, 0.6)`;
-      }
-
-    return `rgba(${200 * bookedPercentage}, ${200 * (1 - bookedPercentage)}, 0, 0.6)`;
+  if(bookedPercentage == undefined || bookedPercentage == -1) {
+      return colors[0]
   }
-}
+  
+  if(bookedPercentage < 0.3) { // Empty (Green)
+    return colors[1]
+  }
 
-const fetchBookedPercentage = async (buildingName) => {
-  //setLoadingReservations(true);
+  if(bookedPercentage < 0.5) { //Less empty (Less green)
+    return colors[2]
+  }
+  
+  if(bookedPercentage < 0.75) {  // Medium full (Yellow)
+    return colors[3]
+  }
+
+  if(bookedPercentage < 0.9) {  // Almost full (A little red)
+    return colors[4]
+  }
+  
+  if(bookedPercentage < 1.0) {  // Pretty much full (Red)
+    return colors[5]
+  }
+
+  return colors[6] // Fully full (Black)
+}   
+
+export const fetchBookedPercentage = async () => {
   try {
-    const response = await fetch(`https://strawhats.info/api/v1/building/percentage?input=${encodeURIComponent(buildingName)}`, {
+    const response = await fetch(`https://strawhats.info/api/v1/building/percentage/all`, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
     });
-    
-    if( !response.ok ) {
-      //setReservationResult([]);
-      //return;
+
+    if (response.ok) {
+      return await response.json();
     }
-
-    const percentage = parseFloat(await response.text());
-    //console.log(percentage)
-    return percentage
-
-    //setReservationResult(json as TimeSlot[]);
+    
   } catch (error) {
-    //console.error('Failed to fetch building:', error);
-    //setReservationResult([]); // Handle error by setting empty result
-  }
-  finally {
-    //setLoadingReservations(false);
+    console.error('Error:', error);
   }
 };
 
@@ -1000,4 +1010,22 @@ export const Allbuildings: buildingType = [
     { name: "Saga", coordinates: Saga, buildingColor: 'rgba(128, 128, 128, 0.5)' },
     { name: "Aran", coordinates: Aran, buildingColor: 'rgba(128, 128, 128, 0.5)' },
     { name: "Anglia", coordinates: Anglia, buildingColor: 'rgba(128, 128, 128, 0.5)' }
+]
+
+export const AllbuildingsWithRooms: string[] = [
+  "Kårhuset",
+  "Fysik",
+  "Biblioteket",
+  "Kemi",
+  "Vasa Hus 1",
+  "Vasa Hus 2",
+  "Vasa Hus 3",
+  "Samhällsbyggnad I-II",
+  "Samhällsbyggnad III",
+  "M-huset",
+  "EDIT trappa C, D och H",
+  "EDIT trappa A och B",
+  "Kuggen",
+  "Jupiter",
+  "Svea",
 ]

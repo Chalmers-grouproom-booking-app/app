@@ -9,7 +9,7 @@ import MapButton from './MapButton';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import {Allbuildings, getColor } from '../../constants/buildings'
+import {Allbuildings, getColor, fetchBookedPercentage} from '../../constants/buildings'
 import type { buildingType } from '../../constants/buildings';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SpeedDial } from '@rneui/themed';
@@ -98,21 +98,29 @@ export default function MapViewComponent() {
             setIsMarkerSelected(false);
         }
     };
-    // useEffect(() => {
-    //     async function fetchColorsAndUpdateBuildings() {
-    //       const buildingPromises = Allbuildings.map(async building => {
-    //         const color = await getColor(building.name);
-    //         return { ...building, buildingColor: color };
-    //       });
+    useEffect(() => {
+        async function fetchColorsAndUpdateBuildings() {
+            try {
+                const percentages = await fetchBookedPercentage();
+                const buildingPromises = Allbuildings.map(async building => {
+                    try {
+                        const color = getColor(percentages[building.name]);
+                        return { ...building, buildingColor: color };
+                    } catch (error) {
+                        console.error("Error fetching color:", error);
+                        return building; // Return building without color
+                    }
+                });
     
-    //       const updatedBuildings = await Promise.all(buildingPromises);
-    //       setBuildings(updatedBuildings); // Update the state with the new colors
-    //     }
-    
-    //     fetchColorsAndUpdateBuildings();
-    //   }, []);
-      
-
+                const updatedBuildings = await Promise.all(buildingPromises);
+                setBuildings(updatedBuildings); // Update the state with the new colors
+            } catch (error) {
+                console.error("Error fetching percentages:", error);
+            }
+        }
+        
+        fetchColorsAndUpdateBuildings();
+    }, []);
 
     const closeSpeedDial = ( func: () => void ) => {
         setOpenSpeedDial( false );
