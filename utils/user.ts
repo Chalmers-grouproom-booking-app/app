@@ -18,7 +18,6 @@ async function saveCredentials(user: FullUser) {
         await AsyncStorage.setItem('user', JSON.stringify({ username: user.username, token: user.token }));
         await SecureStore.setItemAsync('password', user.password);
     } catch (error) {
-        console.error('Error saving credentials:', error);
     }
 }
 
@@ -32,7 +31,6 @@ async function getCredentials(): Promise<FullUser | null> {
         }
         return null;
     } catch (error) {
-        console.error('Error retrieving credentials:', error);
         return null;
     }
 }
@@ -46,7 +44,6 @@ const getUser = async (): Promise<User | null> => {
         }
         return null;
     } catch (error) {
-        console.error("Error retrieving user data:", error);
         return null;
     }
 };
@@ -197,7 +194,6 @@ const logoutUser = async (): Promise<boolean> => {
         await SecureStore.deleteItemAsync('password');
         return true;
     } catch (error) {
-        console.error("Error removing user data:", error);
         return false;
     }
 };
