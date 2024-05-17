@@ -301,6 +301,15 @@ const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , open
           <Text style={styles.detailText}>Floor: {item.floor_level}</Text>
           <Text style={styles.detailText}>Building: {item.building}</Text>
           <Text style={styles.detailText}>Campus: {item.campus}</Text>
+          <MarkerButton
+                  scaleAnimation={scaleAnimation}
+                  onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
+                  onPressIn={animatePressIn}
+                  onPressOut={animatePressOut}
+                  custom_style={styles.iconContainer}
+                >
+                  <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
+                </MarkerButton>
           {
             item.first_come_first_served !== true && (
               <View style={styles.reservationContainer}>
@@ -348,15 +357,6 @@ const RoomItem = ({ item, openModal, forceCollapse }: { item: RoomInfoV2  , open
           {
             !item.first_come_first_served && (
               <>
-                <MarkerButton
-                  scaleAnimation={scaleAnimation}
-                  onPress={() => navigateToMap(item.latitude, item.longitude, item.room_name)}
-                  onPressIn={animatePressIn}
-                  onPressOut={animatePressOut}
-                  custom_style={styles.iconContainer}
-                >
-                  <Icon name="location-sharp" size={26} color="#007bff" accessibilityLabel="Marker Button" />
-                </MarkerButton>
                 <MarkerButton
                   scaleAnimation={scaleAnimation}
                   onPress={() => openModal(item)}

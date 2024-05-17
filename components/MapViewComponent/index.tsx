@@ -48,7 +48,7 @@ export default function MapViewComponent() {
             });
 
             // Animate to the region if the mapRef is defined
-            mapRef.current?.animateToRegion({
+            mapRef.current.animateToRegion({
                 latitude: lat,
                 longitude: lng,
                 latitudeDelta: 0.005,

@@ -840,7 +840,7 @@ export const Aran = [
   { latitude: 57.70548127999616, longitude: 11.937221049954905 },
   { latitude: 57.7048693325583, longitude: 11.936645127552639 }
 ];
-  
+
 
 // Buildings and building groups for filter
 export const JohannebergData: BuildingGroup[] = [
