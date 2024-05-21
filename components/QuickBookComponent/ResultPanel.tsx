@@ -40,14 +40,16 @@ const FilterPanel = ({ filter, goBack }: { filter: PanelFilter, goBack: () => vo
                 url.search = params.toString();
                 const response = await fetch(url.toString());
                 const data = await response.json() as RoomData;
-                const filteredRooms: RoomInfoV2[] = [];
+                const tmp_rooms: RoomInfoV2[] = [];
                 for (const key in data) {
                     for (const room of data[key]) {
-                        if (!filteredRooms.find(r => r.room_name === room.room_name) && !room.first_come_first_served) {
-                            filteredRooms.push(room);
+                        // remove duplicates and first come first served rooms
+                        if (!tmp_rooms.some(r => r.room_name === room.room_name)) {
+                            tmp_rooms.push(room);
                         }
                     }
                 }
+                const filteredRooms = tmp_rooms.filter(room => !room.first_come_first_served) as RoomInfoV2[];
                 // magic code
                 // @ts-ignore
                 if(filteredRooms[0] === "N"){
